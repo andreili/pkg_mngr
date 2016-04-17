@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="pkg_mngr" />
+		<Option pch_mode="2" />
+		<Option compiler="gnu_gcc_compiler_w64" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/pkg_mngr" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gnu_gcc_compiler_w64" />
+				<Option parameters="--install sys-kernel/linux-headers" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="include" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/pkg_mngr" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gnu_gcc_compiler_w64" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=c++11" />
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add option="-DUNICODE" />
+			<Add option="-D_UNICODE" />
+			<Add directory="include" />
+			<Add directory="sqlite3" />
+		</Compiler>
+		<Linker>
+			<Add library="crypto" />
+			<Add library="curl" />
+		</Linker>
+		<Unit filename="include/Category.h" />
+		<Unit filename="include/ConfigurationAlias.h" />
+		<Unit filename="include/ConfigurationOption.h" />
+		<Unit filename="include/Fetch.h" />
+		<Unit filename="include/Package.h" />
+		<Unit filename="include/PackageDB.h" />
+		<Unit filename="include/PackageManager.h" />
+		<Unit filename="include/PackageMeta.h" />
+		<Unit filename="include/SQLiteCpp/Assertion.h" />
+		<Unit filename="include/SQLiteCpp/Backup.h" />
+		<Unit filename="include/SQLiteCpp/Column.h" />
+		<Unit filename="include/SQLiteCpp/Database.h" />
+		<Unit filename="include/SQLiteCpp/Exception.h" />
+		<Unit filename="include/SQLiteCpp/SQLiteCpp.h" />
+		<Unit filename="include/SQLiteCpp/Statement.h" />
+		<Unit filename="include/SQLiteCpp/Transaction.h" />
+		<Unit filename="include/Variables.h" />
+		<Unit filename="include/stream.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="sqlite3/sqlite3.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sqlite3/sqlite3.h" />
+		<Unit filename="src/Backup.cpp" />
+		<Unit filename="src/Category.cpp" />
+		<Unit filename="src/Column.cpp" />
+		<Unit filename="src/ConfigurationAlias.cpp" />
+		<Unit filename="src/ConfigurationOption.cpp" />
+		<Unit filename="src/Database.cpp" />
+		<Unit filename="src/Fetch.cpp" />
+		<Unit filename="src/Package.cpp" />
+		<Unit filename="src/PackageDB.cpp" />
+		<Unit filename="src/PackageManager.cpp" />
+		<Unit filename="src/PackageMeta.cpp" />
+		<Unit filename="src/Statement.cpp" />
+		<Unit filename="src/Transaction.cpp" />
+		<Unit filename="src/Variables.cpp" />
+		<Unit filename="src/stream.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

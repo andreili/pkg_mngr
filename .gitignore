@@ -1,0 +1,46 @@
+# Compiled Object files
+*.o
+*.obj
+obj
+bin/
+sqlite3/
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+sd_editor/bin
+*.layout
+*.depend
+
+# Qt files
+*.user
+build-*
+*.res
+sd_editor/sd_editor.pro.user.701e164
+
+# Android builds
+.gradle
+local.properties
+.idea/workspace.xml
+.idea/libraries
+.DS_Store
+build
+captures
