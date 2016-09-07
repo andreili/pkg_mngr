@@ -6,6 +6,8 @@
 #include "PackageMeta.h"
 #include "ConfigurationOption.h"
 
+class Stream;
+
 namespace package_manager
 {
     enum EInstallationState
@@ -70,6 +72,9 @@ namespace package_manager
             std::string     m_version;
             std::string		m_source;
 
+            bool            m_log_enabled;
+            Stream          *m_log;
+
             std::string     m_tmp_dir;
 
             bool            m_fetched;
@@ -91,6 +96,10 @@ namespace package_manager
             bool stage_merge();
 
             bool run_cmd(const std::string &dir, const std::string &cmd);
+            void log_start();
+            void log_stop();
+            void log_str(std::string &line);
+            void log_data(uint8_t *buf, int buf_size);
             void print_opts();
             void store_installed_files(std::string &root, std::string &dir);
     };

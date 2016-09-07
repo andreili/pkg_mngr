@@ -4,6 +4,7 @@
 #include "Fetch.h"
 #include "Variables.h"
 #include "FileSystem.h"
+#include "stream.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -13,6 +14,7 @@ namespace package_manager
 
 Package::Package(PackageMeta *meta, SQLite::Statement &data)
     : m_state (INST_STATE_UNK)
+    , m_log_enabled (false)
     , m_fetched (false)
     , m_fetch_running (false)
     , m_fetch_in_queue (false)
@@ -108,6 +110,8 @@ void Package::fetch()
 
 bool Package::install()
 {
+    log_start();
+
     printf("Installing package ");
     print_short_info();
 
@@ -167,6 +171,8 @@ bool Package::install()
 
     PackageManager::get_db_obj()->print_posinst(m_meta);
     printf("Installation suscessful.\n");
+
+    log_stop();
     return true;
 }
 
@@ -409,16 +415,52 @@ bool Package::stage_merge()
 bool Package::run_cmd(const std::string &dir, const std::string &cmd)
 {
     //printf("%s %s\n", dir.c_str(), cmd.c_str());
+    log_str(cmd + '\n');
+
     chdir(dir.c_str());
     FILE *in;
     std::string cmd_ex = cmd + " 2>&1";
     if(!(in = popen(cmd_ex.c_str(), "r")))
         return false;
     const int BUFSIZE = 1000;
-    char buf[BUFSIZE];
-    while(fgets(buf, BUFSIZE, in))  {}
+    uint8_t buf[BUFSIZE];
+    while(fgets((char*)buf, BUFSIZE, in))
+        log_data(buf, BUFSIZE);
     pclose(in);
     return true;
+}
+
+void Package::log_start()
+{
+    m_log = new Stream(m_tmp_dir + "/pkg.log", FILE_OPEN_WRITE_ST);
+    m_log_enabled = true;
+}
+
+void Package::log_stop()
+{
+    if (m_log_enabled)
+    {
+        m_log_enabled = false;
+        delete m_log;
+    }
+}
+
+void Package::log_str(std::string &line)
+{
+    if (m_log_enabled)
+    {
+        m_log->writeStr(line);
+        m_log->write("\n", 1);
+    }
+}
+
+void Package::log_data(uint8_t *buf, int buf_size)
+{
+    if (m_log_enabled)
+    {
+        m_log->write(buf, buf_size);
+        m_log->write("\n", 1);
+    }
 }
 
 void Package::print_opts()
