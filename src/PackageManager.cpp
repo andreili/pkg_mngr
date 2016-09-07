@@ -143,6 +143,28 @@ void PackageManager::proc()
         for(auto pkg=m_packages_to_action_list.rbegin() ; pkg!=m_packages_to_action_list.rend() ; pkg++)
             (*pkg)->print_short_info();
 
+        if (m_ask)
+        {
+            char reply[100];
+            do
+            {
+                printf(COLOR_GREEN BOLD_ON "Start apply changes? [" "Y" COLOR_RED "/n] " COLOR_RESET);
+
+                fgets(reply, 100, stdin);
+
+                if ((strcmp(reply, "n\n") == 0) || (strcmp(reply, "N\n") == 0))
+                {
+                    printf("Nothing to work, exiting!\n");
+                    return;
+                }
+
+                if ((strlen(reply) == 1) || (strcmp(reply, "y\n") == 0) || (strcmp(reply, "Y\n") == 0))
+                    break;
+
+                printf("Wrong answer, retry...\n");
+            } while (1);
+        }
+
         for(auto pkg=m_packages_to_action_list.rbegin() ; pkg!=m_packages_to_action_list.rend() ; pkg++)
             m_fetch->add_to_queue(*pkg);
         m_fetch->start_fetch();
