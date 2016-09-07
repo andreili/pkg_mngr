@@ -115,8 +115,6 @@ bool Package::install()
     printf("Installing package ");
     print_short_info();
 
-    //stage_clean();
-
     ///printf("%i %i %i\n", m_fetched, m_fetch_in_queue, m_fetch_running);
     // wait, if sources not loaded
     while (!m_fetched && (m_fetch_in_queue || m_fetch_running))
@@ -125,40 +123,24 @@ bool Package::install()
         ///printf("%i %i %i\n", m_fetched, m_fetch_in_queue, m_fetch_running);
     }
 
-    if (!m_fetched)
+    if (!m_fetched
+        //|| !stage_clean()
+        || !stage_unpack()
+        || !stage_prepare()
+        || !stage_configure()
+        || !stage_compile()
+        || !stage_install()
+        || !stage_postinstall()
+        || !stage_clean_unneeded()
+        || !stage_strip()
+        || !stage_mkpkg()
+        //|| !stage_merge()
+        //|| !stage_clean()
+        )
+    {
+        log_stop();
         return false;
-
-    if (!stage_unpack())
-        return false;
-
-    if (!stage_prepare())
-        return false;
-
-    if (!stage_configure())
-        return false;
-
-    if (!stage_compile())
-        return false;
-
-    if (!stage_install())
-        return false;
-
-    if (!stage_postinstall())
-        return false;
-
-    if (!stage_clean_unneeded())
-        return false;
-
-    if (!stage_strip())
-        return false;
-
-    if (!stage_mkpkg())
-        return false;
-
-    /*if (!stage_merge())
-        return false;
-
-    stage_clean();*/
+    }
 
     PackageManager::get_db_obj()->set_installed(this);
     for (config_opt_rec_t &opt : m_options)
