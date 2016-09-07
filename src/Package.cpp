@@ -324,7 +324,7 @@ bool Package::stage_install()
                                                       if (!run_cmd(dir_ex, Variables::get_instance()->parse_vars(this, cmd)))
                                                         ret = false;
                                                   });
-    return true;
+    return ret;
 }
 
 bool Package::stage_postinstall()
@@ -410,7 +410,9 @@ bool Package::run_cmd(const std::string dir, const std::string cmd)
     uint8_t buf[BUFSIZE];
     while(fgets((char*)buf, BUFSIZE, in))
         log_data(buf, BUFSIZE);
-    pclose(in);
+    int exit_code = pclose(in);
+    if (exit_code)
+        return false;
     return true;
 }
 
@@ -418,7 +420,7 @@ void Package::log_start()
 {
     FileSystem::mkpath(m_tmp_dir, 0700);
 
-    m_log = new Stream(m_tmp_dir + "/pkg.log", FILE_OPEN_WRITE_ST);
+    m_log = new Stream(m_tmp_dir + "/pkg.log", FILE_OPEN_WRITE_ST | FILE_CREATE_ALWAYS);
     m_log_enabled = true;
 }
 
