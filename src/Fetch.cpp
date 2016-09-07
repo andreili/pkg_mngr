@@ -94,7 +94,10 @@ void Fetch::fetch_proc()
         while ((!m_fetch_active) || (m_list.size() == 0))
         {
             if (m_fetch_break)
+            {
+                m_fetch_active = false;
                 return;
+            }
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
 
@@ -106,7 +109,10 @@ void Fetch::fetch_proc()
 
             // exit, if fetch aborted
             if (m_fetch_break)
+            {
+                m_fetch_active = false;
                 return;
+            }
         }
 
         m_lock.lock();
@@ -119,6 +125,7 @@ void Fetch::fetch_proc()
             m_list.clear();
         m_lock.unlock();
     }
+
 }
 
 #define MD5_CHAIN_SIZE 10 * 1024 * 1024
