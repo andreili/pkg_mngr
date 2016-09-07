@@ -1,10 +1,10 @@
+#include <curl/curl.h>
+#include <openssl/md5.h>
 #include "Fetch.h"
 #include "Package.h"
 #include "Variables.h"
 #include "PackageManager.h"
 #include "stream.h"
-#include <curl/curl.h>
-#include <openssl/md5.h>
 
 namespace package_manager
 {
