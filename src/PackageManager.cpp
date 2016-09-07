@@ -167,10 +167,14 @@ bool PackageManager::prepare()
             size_t idx = 0;
             while (idx < m_packages_to_action_list.size())
             {
+                /**printf("%s %i %i\n", (*pkg_it)->get_meta()->get_name().c_str(),
+                       (*pkg_it)->check_installed(),
+                       (*pkg_it)->not_changed());*/
                 if (((*pkg_it)->check_installed()) && ((*pkg_it)->not_changed()))
                     m_packages_to_action_list.erase(pkg_it);
+                else
+                    idx++;
                 pkg_it++;
-                idx++;
             }
         }
     }
