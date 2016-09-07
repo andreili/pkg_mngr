@@ -317,9 +317,9 @@ bool Package::stage_install()
     bool ret = true;
     PackageManager::get_db_obj()->get_pkg_install(this, [this, &ret](std::string dir, std::string cmd)
                                                   {
-                                                      FileSystem::mkpath(Variables::get_instance()->parse_vars(this, dir), 0700);
-                                                      if (!run_cmd(Variables::get_instance()->parse_vars(this, dir),
-                                                                   Variables::get_instance()->parse_vars(this, cmd)))
+                                                      std::string dir_ex = Variables::get_instance()->parse_vars(this, dir);
+                                                      FileSystem::mkpath(dir_ex, 0700);
+                                                      if (!run_cmd(dir_ex, Variables::get_instance()->parse_vars(this, cmd)))
                                                         ret = false;
                                                   });
     return true;
@@ -331,9 +331,9 @@ bool Package::stage_postinstall()
     bool ret = true;
     PackageManager::get_db_obj()->get_pkg_postinstall(this, [this, &ret](std::string dir, std::string cmd)
                                                   {
-                                                      FileSystem::mkpath(Variables::get_instance()->parse_vars(this, dir), 0700);
-                                                      if (!run_cmd(Variables::get_instance()->parse_vars(this, dir),
-                                                                   Variables::get_instance()->parse_vars(this, cmd)))
+                                                      std::string dir_ex = Variables::get_instance()->parse_vars(this, dir);
+                                                      FileSystem::mkpath(dir_ex, 0700);
+                                                      if (!run_cmd(dir_ex, Variables::get_instance()->parse_vars(this, cmd)))
                                                         ret = false;
                                                   });
     return true;
