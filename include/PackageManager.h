@@ -42,6 +42,8 @@ namespace package_manager
             static void add_opt(ConfigurationOption *opt);
             static ConfigurationOption* get_opt(int opt_id);
             static ConfigurationOption* get_opt(std::string &name);
+
+            static bool is_verbose() { return m_instance->m_verbose; }
         protected:
         private:
             PackageDB   *m_db;

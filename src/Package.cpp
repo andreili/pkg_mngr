@@ -139,6 +139,7 @@ bool Package::install()
         //|| !stage_clean()
         )
     {
+        printf(COLOR_RED "Error!\n" COLOR_RESET);
         log_stop();
         return false;
     }
@@ -456,8 +457,8 @@ void Package::print_opts()
     for (config_opt_rec_t &opt : m_options)
     {
         std::string color = (opt.default_on ? "\x1B[33m" :
-                             (opt.changed ? "\x1B[1;32m" :
-                              ((opt.state == EOptState::OPT_SET) ? "\x1B[32m" : "\x1B[31m")));
+                             (opt.changed ? COLOR_GREEN :
+                              ((opt.state == EOptState::OPT_SET) ? "\x1B[32m" : COLOR_RED)));
         printf("%s%s%s\x1B[0m ", color.c_str(), (opt.state == EOptState::OPT_SET) ? "+" : "-", opt.option->get_name().c_str());
     }
 }

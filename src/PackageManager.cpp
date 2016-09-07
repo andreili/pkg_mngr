@@ -107,18 +107,21 @@ bool PackageManager::prepare()
                             this->m_packages_to_action_list.push_back(new_pkg);
                     });
             // delete installed packages
-            auto pkg_it = m_packages_to_action_list.begin();
-            size_t idx = 0;
-            while (idx < m_packages_to_action_list.size())
+            if (!m_empty)
             {
-                /**printf("%s %i %i\n", (*pkg_it)->get_meta()->get_name().c_str(),
-                       (*pkg_it)->check_installed(),
-                       (*pkg_it)->not_changed());*/
-                if (((*pkg_it)->check_installed()) && ((*pkg_it)->not_changed()))
-                    m_packages_to_action_list.erase(pkg_it);
-                else
-                    idx++;
-                pkg_it++;
+                auto pkg_it = m_packages_to_action_list.begin();
+                size_t idx = 0;
+                while (idx < m_packages_to_action_list.size())
+                {
+                    /**printf("%s %i %i\n", (*pkg_it)->get_meta()->get_name().c_str(),
+                           (*pkg_it)->check_installed(),
+                           (*pkg_it)->not_changed());*/
+                    if (((*pkg_it)->check_installed()) && ((*pkg_it)->not_changed()))
+                        m_packages_to_action_list.erase(pkg_it);
+                    else
+                        idx++;
+                    pkg_it++;
+                }
             }
         }
     }
