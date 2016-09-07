@@ -95,10 +95,10 @@ namespace package_manager
             bool stage_mkpkg();
             bool stage_merge();
 
-            bool run_cmd(const std::string &dir, const std::string &cmd);
+            bool run_cmd(const std::string dir, const std::string cmd);
             void log_start();
             void log_stop();
-            void log_str(std::string &line);
+            void log_str(const std::string line);
             void log_data(uint8_t *buf, int buf_size);
             void print_opts();
             void store_installed_files(std::string &root, std::string &dir);

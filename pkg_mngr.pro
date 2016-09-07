@@ -9,8 +9,11 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
-INCLUDEPATH += ./include/
-INCLUDEPATH += ./include/SQLiteCpp/
+INCLUDEPATH += ./include/ ./include/SQLiteCpp/
+
+LIBS += -lcrypto -lcurl -lsqlite3
+
+WIN32:SOURCES += sqlite3/sqlite3.c
 
 SOURCES += main.cpp \
     src/Category.cpp \
@@ -29,7 +32,8 @@ SOURCES += main.cpp \
     src/SQLiteCpp/Database.cpp \
     src/SQLiteCpp/Statement.cpp \
     src/SQLiteCpp/Transaction.cpp \
-    sqlite3/sqlite3.c
+    src/CmdlineParser.cpp \
+    src/Utils.cpp
 
 HEADERS += \
     include/Category.h \
@@ -51,4 +55,6 @@ HEADERS += \
     include/SQLiteCpp/SQLiteCpp.h \
     include/SQLiteCpp/Statement.h \
     include/SQLiteCpp/Transaction.h \
-    sqlite3/sqlite3.h
+    sqlite3/sqlite3.h \
+    include/CmdlineParser.h \
+    include/Utils.h

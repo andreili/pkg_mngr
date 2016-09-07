@@ -343,12 +343,12 @@ StreamSize Stream::write(const void* buf, StreamSize count)
     return m_methods->write(this, buf, count);
 }
 
-StreamSize Stream::writeStr(std::string &str)
+StreamSize Stream::writeStr(const std::string &str)
 {
     return write(str.c_str(), str.length() * sizeof(char));
 }
 
-StreamSize Stream::writeWideStr(std::wstring &str)
+StreamSize Stream::writeWideStr(const std::wstring &str)
 {
     return write(str.c_str(), str.length() * sizeof(wchar_t));
 }

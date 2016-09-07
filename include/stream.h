@@ -130,8 +130,8 @@ public:
     std::wstring readWideStrLen(int32_t len);
 
     StreamSize write(const void* buf, StreamSize count);
-    StreamSize writeStr(std::string &str);
-    StreamSize writeWideStr(std::wstring &str);
+    StreamSize writeStr(const std::string &str);
+    StreamSize writeWideStr(const std::wstring &str);
 
     StreamSize seek(StreamSize moveTo, ESeekMethod moveMethod);
 

@@ -4,6 +4,7 @@
 #include "Package.h"
 #include "Fetch.h"
 #include "Variables.h"
+#include "Utils.h"
 #include <stdio.h>
 #include <algorithm>
 
@@ -13,7 +14,8 @@ namespace package_manager
 PackageManager* PackageManager::m_instance = nullptr;
 
 PackageManager::PackageManager()
-    : m_show_help (false)
+    : m_cmd (nullptr)
+    , m_show_help (false)
     , m_params_ok (true)
     , m_install (false)
     , m_clean (false)
@@ -39,70 +41,23 @@ PackageManager::~PackageManager()
 
 void PackageManager::init(int argc, char *argv[], char **envp)
 {
+    m_cmd = new CmdlineParser(argc, argv);
+    m_cmd->set_name(L"pkg_mngr");
+    m_cmd->add_bool_param(L"help", L"h", &m_show_help, false, L"show this help and exit");
+    m_cmd->add_bool_param(L"install", L"i", &m_install, false, L"install selected packages");
+    m_cmd->add_bool_param(L"clean", L"c", &m_clean, false, L"uninstall selected packages");
+    m_cmd->add_bool_param(L"empty", L"e", &m_empty, false, L"install all dependies, ignore installed status");
+    m_cmd->add_bool_param(L"binary", L"b", &m_binary, false, L"create binary packages");
+    m_cmd->add_bool_param(L"from-pkg", L"p", &m_from_pkg, false, L"usage binary packages");
+    m_cmd->add_bool_param(L"ask", L"a", &m_ask, false, L"ask before apply actions");
+    m_cmd->add_bool_param(L"verbose", L"v", &m_verbose, false, L"print detailed information about actions");
+    m_cmd->parse();
+
     if (argc == 1)
         m_show_help = true;
     else for (int i=1 ; i<argc ; i++)
-    {
-        std::string arg = argv[i];
-        size_t len = arg.length();
-
-        if ((len > 2) && (arg[0] == '-') && (arg[1] == '-'))
-        {
-            //check long commands
-            if (arg.compare("--help") == 0)
-                m_show_help = true;
-            else if (arg.compare("--install") == 0)
-                m_install = true;
-            else if (arg.compare("--clean") == 0)
-                m_clean = true;
-            else if (arg.compare("--empty") == 0)
-                m_empty = true;
-            else if (arg.compare("--binary") == 0)
-                m_binary = true;
-            else if (arg.compare("--from-pkg") == 0)
-                m_from_pkg = true;
-            else if (arg.compare("--ask") == 0)
-                m_ask = true;
-            else if (arg.compare("--verbose") == 0)
-                m_verbose = true;
-        }
-        else if ((len > 1) && (arg[0] == '-'))
-        {
-            //check short commands
-            for (size_t j=1 ; j<len ; j++)
-            switch (arg[j])
-            {
-            case 'i':
-                m_install = true;
-                break;
-            case 'c':
-                m_clean = true;
-                break;
-            case 'e':
-                m_empty = true;
-                break;
-            case 'b':
-                m_binary = true;
-                break;
-            case 'k':
-                m_from_pkg = true;
-                break;
-            case 'a':
-                m_ask = true;
-                break;
-            case 'v':
-                m_verbose = true;
-                break;
-            default:
-                m_params_ok = false;
-                break;
-            }
-        }
-        else
-        {
-            m_package_names.push_back(arg);
-        }
-    }
+        if (argv[i][0] != '-')
+            m_package_names.push_back(argv[i]);
 
     m_vars->init_env(envp);
 }
@@ -111,18 +66,7 @@ bool PackageManager::prepare()
 {
     if (m_show_help || (!m_params_ok))
     {
-        printf("Usage: pkg_mngr [options] [packages]\n");
-        printf("Options:\n");
-        printf("\t--help\t\t- show this help and exit\n");
-        printf("\t--install (-i)\t- install selected packages\n");
-        printf("\t--clean (-c)\t- uninstall selected packages\n");
-        printf("\t--empty (-e)\t- install all dependies, ignore installed status\n");
-        printf("\t--binary (-b)\t- create binary packages\n");
-        printf("\t--from-pkg (k)\t- usage binary packages\n");
-        printf("\t--ask (-a)\t- ask before apply actions\n");
-        printf("\t--verbose (-v)\t- rint detailed information about actions\n");
-        //printf("\t\n");
-        //printf("\t\n");
+        m_cmd->show_desc();
         printf("Package name template: [=][category name]/pkg_name[:version]\n");
         return false;
     }

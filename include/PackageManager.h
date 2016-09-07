@@ -1,8 +1,9 @@
 #ifndef PACKAGEMANAGER_H
 #define PACKAGEMANAGER_H
 
-#include "PackageDB.h"
 #include <deque>
+#include "PackageDB.h"
+#include "CmdlineParser.h"
 
 namespace package_manager
 {
@@ -47,6 +48,7 @@ namespace package_manager
             Fetch       *m_fetch;
             Variables   *m_vars;
             static PackageManager*  m_instance;
+            CmdlineParser           *m_cmd;
             std::deque<std::string> m_package_names;
             std::deque<Package*>        m_packages_to_action_list;
             std::deque<Package*>        m_packages_list;

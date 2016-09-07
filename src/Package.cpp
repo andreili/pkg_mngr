@@ -5,6 +5,7 @@
 #include "Variables.h"
 #include "FileSystem.h"
 #include "stream.h"
+#include "Utils.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -394,7 +395,7 @@ bool Package::stage_merge()
     return run_cmd("", Variables::get_instance()->parse_vars(this, "tar xf ${PKG_DIR}/${PN}-${PV}.tar.xz -C /"));
 }
 
-bool Package::run_cmd(const std::string &dir, const std::string &cmd)
+bool Package::run_cmd(const std::string dir, const std::string cmd)
 {
     //printf("%s %s\n", dir.c_str(), cmd.c_str());
     log_str(cmd + '\n');
@@ -414,6 +415,8 @@ bool Package::run_cmd(const std::string &dir, const std::string &cmd)
 
 void Package::log_start()
 {
+    FileSystem::mkpath(m_tmp_dir, 0700);
+
     m_log = new Stream(m_tmp_dir + "/pkg.log", FILE_OPEN_WRITE_ST);
     m_log_enabled = true;
 }
@@ -427,12 +430,14 @@ void Package::log_stop()
     }
 }
 
-void Package::log_str(std::string &line)
+void Package::log_str(const std::string line)
 {
     if (m_log_enabled)
     {
         m_log->writeStr(line);
         m_log->write("\n", 1);
+        if (PackageManager::is_verbose())
+            printf("%s\n", line.c_str());
     }
 }
 
@@ -440,8 +445,9 @@ void Package::log_data(uint8_t *buf, int buf_size)
 {
     if (m_log_enabled)
     {
-        m_log->write(buf, buf_size);
-        m_log->write("\n", 1);
+        m_log->writeStr((char*)buf);
+        if (PackageManager::is_verbose())
+            printf("%s", (char*)buf);
     }
 }
 
