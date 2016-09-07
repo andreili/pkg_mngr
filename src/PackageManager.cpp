@@ -79,6 +79,9 @@ bool PackageManager::prepare()
             return false;
         }
 
+        m_packages_to_action_list.clear();
+        m_packages_to_action_force.clear();
+
         for (std::string &name : m_package_names)
         {
             Package* pkg = Package::get_pkg_by_name(name);
@@ -88,6 +91,7 @@ bool PackageManager::prepare()
                 return false;
             }
             m_packages_to_action_list.push_back(pkg);
+            m_packages_to_action_force.push_back(pkg->get_id());
         }
 
         if (m_install)
@@ -113,9 +117,14 @@ bool PackageManager::prepare()
                 size_t idx = 0;
                 while (idx < m_packages_to_action_list.size())
                 {
-                    /**printf("%s %i %i\n", (*pkg_it)->get_meta()->get_name().c_str(),
-                           (*pkg_it)->check_installed(),
-                           (*pkg_it)->not_changed());*/
+                    if (std::find(m_packages_to_action_force.begin(), m_packages_to_action_force.end(),
+                                  (*pkg_it)->get_id()) != m_packages_to_action_force.end())
+                    {
+                        idx++;
+                        pkg_it++;
+                        continue;
+                    }
+
                     if (((*pkg_it)->check_installed()) && ((*pkg_it)->not_changed()))
                         m_packages_to_action_list.erase(pkg_it);
                     else

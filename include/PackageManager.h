@@ -53,6 +53,7 @@ namespace package_manager
             CmdlineParser           *m_cmd;
             std::deque<std::string> m_package_names;
             std::deque<Package*>        m_packages_to_action_list;
+            std::deque<int>             m_packages_to_action_force;
             std::deque<Package*>        m_packages_list;
             std::deque<PackageMeta*>    m_package_metas;
             std::deque<Category*>       m_category_list;
