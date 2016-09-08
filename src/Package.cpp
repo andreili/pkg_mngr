@@ -214,6 +214,11 @@ Package* Package::get_pkg_by_name(std::string &pkg_name)
         category_name = pkg_name.substr(offset, pkg_start - offset);
         ver_start -= pkg_start + 1;
     }
+    else if (pkg_name[0] == '=')
+    {
+        pkg_start = 0;
+        --ver_start;
+    }
 
     package_name = pkg_name.substr((pkg_start == std::string::npos ? 0 : pkg_start + 1), ver_start);
 
