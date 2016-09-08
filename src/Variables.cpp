@@ -13,6 +13,9 @@ Variables* Variables::m_instance = nullptr;
 std::string variable_names[] = {"PKG_SOURCES", "PKG_DB", "PKG_TMP", "PKG_DIR", "MAKEOPTS",
                                 "CFLAGS", "CPPFLAGS", "LDFLAGS"};
 
+std::string variable_defs[] = {"/usr/packages/srcs/", "/var/lib/pkg/", "/var/tmp/packages/", "/usr/packages/pkgs/", "-j1",
+                                "-O2 -pipe -march=native", "-O2 -pipe -march=native", "-s"};
+
 Variables::Variables()
 {
     m_instance = this;
@@ -81,6 +84,11 @@ std::string Variables::parse_vars(Package *pkg, const std::string str_raw)
 
 void Variables::set_defaults()
 {
+	for (int i=0 ; i<7 ; ++i)
+	{
+		m_vars[variable_names[i]] = variable_defs[i];
+	}
+	
     Stream *str = new Stream("/etc/packages/packages.conf", FILE_OPEN_READ_ST);
     if (str->opened())
         while (!str->atEnd())
