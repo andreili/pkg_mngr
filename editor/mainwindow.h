@@ -29,6 +29,8 @@ private slots:
 
     void on_twVersions_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
 
+    void on_pkgs_add();
+    void on_pkgs_del();
     void on_version_add();
     void on_version_del();
     void on_source_add();
@@ -76,10 +78,15 @@ private slots:
 
     void on_twDeps_itemChanged(QTableWidgetItem *item);
 
+    void on_twPckgs_customContextMenuRequested(const QPoint &pos);
+
+    void on_twPckgs_itemChanged(QTreeWidgetItem *item, int column);
+
 private:
     Ui::MainWindow *ui;
 
     QSqlDatabase    m_db;
+    QMenu           *m_pkgs_menu;
     QMenu           *m_version_menu;
     QMenu           *m_source_menu;
     QMenu           *m_prep_menu;

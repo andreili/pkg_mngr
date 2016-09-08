@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    add_menu(pkgs, ui->twPckgs);
     add_menu(version, ui->twVersions);
     add_menu(source, ui->twSources);
     add_menu(prep, ui->twPrep);
@@ -37,7 +38,7 @@ void MainWindow::on_aOpenDB_triggered()
     if (dialog.exec())
     {
         QString fn = dialog.selectedFiles()[0].toUpper();*/
-        QString fn = "d:/Dev/Projects/pkg_mngr/packages.sql3";
+        QString fn = "d:/Projects/pkg_mngr/build-pkg_mngr-Desktop-Debug/packages.sql3";
         m_db = QSqlDatabase::addDatabase("QSQLITE");
         m_db.setDatabaseName(fn);
         if (!m_db.open())
@@ -327,6 +328,60 @@ void MainWindow::on_twVersions_currentItemChanged(QTableWidgetItem *current, QTa
 
                 ++idx;
             }
+    }
+}
+
+void MainWindow::on_pkgs_add()
+{
+    QTreeWidgetItem *meta_item = ui->twPckgs->currentItem();
+    if (meta_item == nullptr)
+        return;
+
+    int cat_id = -1;
+    if (meta_item->parent() != nullptr)
+        cat_id = meta_item->parent()->data(0, Qt::UserRole).toInt();
+    else
+        cat_id = meta_item->data(0, Qt::UserRole).toInt();
+
+    QSqlQuery q;
+    q.prepare("INSERT INTO package_meta (cat_id, name) VALUES (:cat, '-');");
+    q.bindValue(":cat", cat_id);
+    q.exec();
+
+    int id = q.lastInsertId().toInt();
+
+    QTreeWidgetItem* meta = new QTreeWidgetItem();
+    meta->setText(0, "-");
+    meta->setData(0, Qt::UserRole, id);
+
+    if (meta_item->parent() != nullptr)
+        meta_item->parent()->addChild(meta);
+    else
+        meta_item->addChild(meta);
+}
+
+void MainWindow::on_pkgs_del()
+{
+    QTreeWidgetItem *meta_item = ui->twPckgs->currentItem();
+    if (meta_item->parent() == nullptr)
+        return;
+
+    if (QMessageBox::question(this, tr("Удаление"), tr("Вы уверены?")) != QMessageBox::Yes)
+        return;
+
+    QSqlQuery query;
+    query.prepare("DELETE FROM package_meta WHERE id = :id ;");
+    query.bindValue(":id", meta_item->data(0, Qt::UserRole).toInt());
+    if (query.exec())
+    {
+        ui->twVersions->setRowCount(0);
+        ui->twSources->setRowCount(0);
+        ui->twPrep->setRowCount(0);
+        ui->twConfig->setRowCount(0);
+        ui->twBuild->setRowCount(0);
+        ui->twInstall->setRowCount(0);
+        ui->twPostInst->setRowCount(0);
+        ui->twDeps->setRowCount(0);
     }
 }
 
@@ -874,4 +929,22 @@ void MainWindow::on_twDeps_itemChanged(QTableWidgetItem *item)
         q.exec();
         break;
     }*/
+}
+
+void MainWindow::on_twPckgs_customContextMenuRequested(const QPoint &pos)
+{
+    m_pkgs_menu->actions().at(1)->setEnabled(ui->twPckgs->selectedItems().size() != 0);
+    m_pkgs_menu->popup(ui->twPckgs->viewport()->mapToGlobal(pos));
+}
+
+void MainWindow::on_twPckgs_itemChanged(QTreeWidgetItem *item, int column)
+{
+    if (item->parent() != nullptr)
+    {
+        QSqlQuery q;
+        q.prepare("UPDATE package_meta SET name=:name WHERE id=:id;");
+        q.bindValue(":name", item->text(0));
+        q.bindValue(":id", item->data(0, Qt::UserRole).toInt());
+        q.exec();
+    }
 }
