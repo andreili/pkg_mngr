@@ -311,17 +311,17 @@ void MainWindow::on_twVersions_currentItemChanged(QTableWidgetItem *current, QTa
         ui->twDeps->setRowCount(0);
         idx = 0;
         q.prepare("SELECT dep.id, dep.dep_by_opt, meta.name FROM pkg_deps AS dep INNER JOIN package_meta AS meta ON meta.id=dep.dep_py_pkg_id WHERE dep.pkg_id=:pkg;");
-        q.bindValue(":pkg", pkg);
+        q.bindValue(":pkg", ui->twPckgs->selectedItems()[0]->data(0, Qt::UserRole).toInt());
         if (q.exec())
             while (q.next())
             {
                 ui->twDeps->setRowCount(idx + 1);
 
-                QTableWidgetItem *item = new QTableWidgetItem("-"); //q.value("dep_by_opt_id").toString());
+                QTableWidgetItem *item = new QTableWidgetItem(q.value("name").toString());
                 item->setData(Qt::UserRole, q.value("id"));
                 ui->twDeps->setItem(idx, 0, item);
 
-                item = new QTableWidgetItem(q.value("name").toString());
+                item = new QTableWidgetItem("-"); //q.value("dep_by_opt_id").toString());
                 item->setData(Qt::UserRole, q.value("id"));
                 ui->twDeps->setItem(idx, 1, item);
 
