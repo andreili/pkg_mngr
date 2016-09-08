@@ -467,6 +467,7 @@ void Package::print_opts()
 
 void Package::store_installed_files(std::string &root, std::string &dir)
 {
+    //PackageManager::get_db_obj()->transaction_start();
     FileSystem::list_files(root + dir, [this, &root, &dir](const std::string &name, bool is_dir)
                            {
                                std::string fn = dir + '/' + name;
@@ -475,6 +476,7 @@ void Package::store_installed_files(std::string &root, std::string &dir)
                                else
                                    PackageManager::get_db_obj()->add_installed_file(this, fn);
                            });
+    //PackageManager::get_db_obj()->transaction_commit();
 }
 
 }

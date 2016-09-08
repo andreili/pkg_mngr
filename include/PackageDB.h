@@ -20,6 +20,10 @@ namespace package_manager
             PackageDB();
             virtual ~PackageDB();
 
+            void transaction_start();
+            void transaction_commit();
+            void transaction_rollback();
+
             Category* get_categoty(std::string &name);
             Category* get_categoty_by_pkg(std::string &name);
             Category* get_categoty_by_meta(PackageMeta *meta);

@@ -19,6 +19,30 @@ PackageDB::~PackageDB()
     delete m_db;
 }
 
+void PackageDB::transaction_start()
+{
+    m_db->exec("BEGIN");
+}
+
+void PackageDB::transaction_commit()
+{
+    try
+    {
+        m_db->exec("COMMIT");
+    }
+    catch (SQLite::Exception& e)
+    {
+        // Never throw an exception in a destructor
+        (void)e; // warning proof
+        SQLITECPP_ASSERT(false, e.what());  // See SQLITECPP_ENABLE_ASSERT_HANDLER
+    }
+}
+
+void PackageDB::transaction_rollback()
+{
+    m_db->exec("ROLLBACK");
+}
+
 Category* PackageDB::get_categoty(std::string &name)
 {
     SQLite::Statement query(*m_db, "SELECT * FROM category WHERE (name=:name);");
