@@ -4,13 +4,16 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = pkg_mnge
 TEMPLATE = app
 
+QTPLUGIN.platforms = qwindows
+QTPLUGIN.sqldrivers = qsqlite
+QTPLUGIN.imageformats = -
 
 SOURCES += editor/main.cpp\
         editor/mainwindow.cpp
