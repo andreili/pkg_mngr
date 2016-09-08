@@ -233,14 +233,13 @@ void PackageManager::add_pkg(Package* pkg)
     m_instance->m_packages_list.push_back(pkg);
 }
 
-Package* PackageManager::get_pkg(int meta_id)
+Package* PackageManager::get_pkg(int pkg_id)
 {
     //get last package for meta-package
     int last_id = 0;
     Package *res = nullptr;
     for (Package *pkg : m_instance->m_packages_list)
-        if ((pkg->get_meta()->get_id() == meta_id) &&
-            (pkg->get_id() > last_id))
+        if ((pkg->get_id() == pkg_id))
         {
             last_id = pkg->get_id();
             res = pkg;
