@@ -125,7 +125,7 @@ bool Package::install()
     }
 
     if (!m_fetched
-        //|| !stage_clean()
+        || !stage_clean()
         || !stage_unpack()
         || !stage_prepare()
         || !stage_configure()
@@ -266,11 +266,11 @@ bool Package::stage_unpack()
     return true;
 }
 
-void Package::stage_clean()
+bool Package::stage_clean()
 {
     printf("\tClean\n");
     std::string cmd = "rm -rf " + m_tmp_dir;
-    run_cmd("", cmd);
+    return run_cmd("", cmd);
 }
 
 bool Package::stage_prepare()

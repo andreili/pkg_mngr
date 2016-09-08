@@ -84,7 +84,7 @@ namespace package_manager
             std::deque<config_opt_rec_t>    m_options;
 
             bool stage_unpack();
-            void stage_clean();
+            bool stage_clean();
             bool stage_prepare();
             bool stage_configure();
             bool stage_compile();
