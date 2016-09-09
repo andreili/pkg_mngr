@@ -56,6 +56,7 @@ void MainWindow::on_aOpenDB_triggered()
 
 void MainWindow::on_twPckgs_itemExpanded(QTreeWidgetItem *item)
 {
+    item->takeChildren();
     int cat = item->data(0, Qt::UserRole).toInt();
     int idx = 0;
     QSqlQuery q;
