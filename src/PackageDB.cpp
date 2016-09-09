@@ -45,7 +45,7 @@ void PackageDB::transaction_rollback()
 
 Category* PackageDB::get_categoty(std::string &name)
 {
-    SQLite::Statement query(*m_db, "SELECT * FROM category WHERE (name=:name);");
+    SQLite::Statement query(*m_db, "SELECT * FROM category WHERE (name=:name COLLATE NOCASE);");
     query.bind(":name", name);
     if (query.executeStep())
         return new Category(query);
@@ -55,7 +55,7 @@ Category* PackageDB::get_categoty(std::string &name)
 
 Category* PackageDB::get_categoty_by_pkg(std::string &name)
 {
-    SQLite::Statement query(*m_db, "SELECT cat_id FROM package_meta WHERE (name=:name);");
+    SQLite::Statement query(*m_db, "SELECT cat_id FROM package_meta WHERE (name=:name COLLATE NOCASE);");
     query.bind(":name", name);
     if (query.executeStep())
         return get_categoty(query.getColumn("cat_id").getInt());
@@ -93,7 +93,7 @@ PackageMeta* PackageDB::get_package_meta(Category *cat, std::string &name)
     if (meta != nullptr)
         return meta;
 
-    SQLite::Statement query(*m_db, "SELECT * FROM package_meta WHERE (name=:name AND cat_id=:cat);");
+    SQLite::Statement query(*m_db, "SELECT * FROM package_meta WHERE (name=:name COLLATE NOCASE AND cat_id=:cat);");
     query.bind(":name", name);
     query.bind(":cat", cat->get_id());
     if (query.executeStep())
