@@ -1,5 +1,5 @@
 --
--- Файл сгенерирован с помощью SQLiteStudio v3.0.7 в Пт сен 9 14:09:35 2016
+-- Файл сгенерирован с помощью SQLiteStudio v3.0.7 в Пт сен 9 16:04:31 2016
 --
 -- Использованная кодировка текста: UTF-8
 --
@@ -51,6 +51,22 @@ INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (41, 42, 'mak
 INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (42, 43, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
 INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (43, 44, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
 INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (44, 45, 'FORCE_UNSAFE_CONFIGURE=1 make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (45, 46, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (46, 47, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (47, 48, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (48, 49, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (49, 50, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (50, 51, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (51, 52, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (52, 53, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (53, 54, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (54, 55, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (55, 56, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (56, 57, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (57, 58, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (58, 59, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (59, 60, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (60, 61, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
 
 -- Таблица: installed_pkg_opts
 CREATE TABLE installed_pkg_opts (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id), opt_id INTEGER REFERENCES config_opts (id) ON DELETE CASCADE, selected BOOLEAN);
@@ -190,6 +206,12 @@ INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (93, 4
 INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (94, 45, 'mv ${BIN_DIR}/usr/share/man/man1/chroot.1 ${BIN_DIR}/usr/share/man/man8/chroot.8', '${BIN_DIR}', NULL);
 INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (95, 45, 'sed -i s/\"1\"/\"8\"/1 ${BIN_DIR}/usr/share/man/man8/chroot.8', '${BIN_DIR}', NULL);
 INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (96, 45, 'mv  ${BIN_DIR}/usr/bin/{head,sleep,nice,test,[} ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (97, 48, 'mkdir -p ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (98, 48, 'mv -v ${BIN_DIR}/usr/bin/find ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (99, 48, 'sed -i ''s|find:=${BINDIR}|find:=/bin|'' ${BIN_DIR}/usr/bin/updatedb', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (100, 51, 'mkdir -p ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (101, 51, 'mv ${BIN_DIR}/usr/bin/gzip ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (102, 59, 'sed -i "s:man root:root root:g" ${BIN_DIR}/usr/lib/tmpfiles.d/man-db.conf', '${BIN_DIR}', NULL);
 
 -- Таблица: pkg_deps
 CREATE TABLE pkg_deps (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package_meta (id) ON DELETE CASCADE, dep_py_pkg_id INTEGER REFERENCES package_meta (id), dep_by_opt INTEGER);
@@ -414,6 +436,22 @@ INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (42, 23, '231
 INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (43, 44, '3.3.12', 'procps-ng');
 INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (44, 45, '1.43.1', 'e2fsprogs');
 INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (45, 46, '8.25', 'coreutils');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (46, 47, '3.5', 'diffutils');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (47, 48, '4.1.3', 'gawk');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (48, 49, '4.6.0', 'findutils');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (49, 50, '1.22.3', 'groff');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (50, 51, '481', 'less');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (51, 54, '1.8', 'gzip');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (52, 52, '4.7.0', 'iproute2');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (53, 53, '2.0.3', 'kbd');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (54, 55, '1.4.1', 'libpipeline');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (55, 56, '4.2.1', 'make');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (56, 57, '2.7.5', 'patch');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (57, 58, '1.10.10', 'dbus');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (58, 59, '2.28.1', 'util-linux');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (59, 60, '2.7.5', 'man-db');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (60, 61, '1.29', 'tar');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (61, 62, '6.1', 'texinfo');
 
 -- Таблица: install_cmds
 CREATE TABLE install_cmds (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id), cmd STRING, dir STRING, dep_by_opt_id INTEGER REFERENCES config_opts (id));
@@ -474,6 +512,22 @@ INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (71, 42, '
 INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (72, 43, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
 INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (73, 44, 'make DESTDIR=${BIN_DIR} install install-libs', '${BUILD_DIR}', NULL);
 INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (74, 45, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (75, 46, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (76, 47, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (77, 48, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (78, 49, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (79, 50, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (80, 51, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (81, 52, 'make DOCDIR=/usr/share/doc/${PN}-${PV} DESTDIR=${BIN_DIR} install', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (82, 53, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (83, 54, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (84, 55, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (85, 56, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (86, 57, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (87, 58, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (88, 59, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (89, 60, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (90, 61, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
 
 -- Таблица: installed_pkgs
 CREATE TABLE installed_pkgs (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id));
@@ -535,6 +589,23 @@ INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (53, 44, 'ht
 INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (54, 45, 'http://ftp.gnu.org/gnu/coreutils/coreutils-8.25.tar.xz', '070e43ba7f618d747414ef56ab248a48', 5725008);
 INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (55, 45, 'http://www.linuxfromscratch.org/patches/lfs/development/coreutils-8.25-i18n-2.patch', 'c6334ed5b03062ef7e9649e8ceb2cfc1', 148812);
 INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (56, 45, 'https://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo/src/patchsets/coreutils/8.5/003_all_coreutils-gentoo-uname.patch', 'c4fcca138b6abf6d443d48a6f0cd8833', 4577);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (57, 46, 'http://ftp.gnu.org/gnu/diffutils/diffutils-3.5.tar.xz', '569354697ff1cfc9a9de3781361015fa', 1360996);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (58, 47, 'http://ftp.gnu.org/gnu/gawk/gawk-4.1.3.tar.xz', '97f8f44149ea9b9e94be97f68988be87', 2311268);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (59, 48, 'http://ftp.gnu.org/gnu/findutils/findutils-4.6.0.tar.gz', '9936aa8009438ce185bea2694a997fc1', 3780154);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (60, 49, 'http://ftp.gnu.org/gnu/groff/groff-1.22.3.tar.gz', 'cc825fa64bc7306a885f2fb2268d3ec5', 4188772);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (61, 50, 'http://www.greenwoodsoftware.com/less/less-481.tar.gz', '50ef46065c65257141a7340123527767', 316622);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (62, 51, 'http://ftp.gnu.org/gnu/gzip/gzip-1.8.tar.xz', 'f7caabb65cddc1a4165b398009bd05b9', 728116);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (63, 52, 'https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-4.7.0.tar.xz', 'd4b205830cdc2702f8a0cbd6232129cd', 589928);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (64, 53, 'https://www.kernel.org/pub/linux/utils/kbd/kbd-2.0.3.tar.xz', '231b46e7142eb41ea3ae06d2ded3c208', 1037036);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (65, 53, 'http://www.linuxfromscratch.org/patches/lfs/development/kbd-2.0.3-backspace-1.patch', 'f75cca16a38da6caa7d52151f7136895', 12640);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (66, 54, 'http://download.savannah.gnu.org/releases/libpipeline/libpipeline-1.4.1.tar.gz', 'e54590ec68d6c1239f67b5b44e92022c', 805172);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (67, 55, 'http://ftp.gnu.org/gnu/make/make-4.2.1.tar.bz2', '15b012617e7c44c0ed482721629577ac', 1407126);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (68, 56, 'http://ftp.gnu.org/gnu/patch/patch-2.7.5.tar.xz', 'e3da7940431633fb65a01b91d3b7a27a', 727704);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (69, 57, 'http://dbus.freedesktop.org/releases/dbus/dbus-1.10.10.tar.gz', '495676d240eb982921b3ad1343526849', 1984077);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (70, 58, 'https://www.kernel.org/pub/linux/utils/util-linux/v2.28/util-linux-2.28.1.tar.xz', 'e2d863efaf4fd330a42c5efe9f1b02b4', 4157892);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (71, 59, 'http://download.savannah.gnu.org/releases/man-db/man-db-2.7.5.tar.xz', '37da0bb0400cc7b640f33c26f6052202', 1505428);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (72, 60, 'http://ftp.gnu.org/gnu/tar/tar-1.29.tar.xz', 'a1802fec550baaeecff6c381629653ef', 1996000);
+INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (73, 61, 'http://ftp.gnu.org/gnu/texinfo/texinfo-6.1.tar.xz', '1d7ec1888fae00730693597852b00cde', 4520376);
 
 -- Таблица: config_opts
 CREATE TABLE config_opts (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, descr TEXT, opt TEXT, alias_id INTEGER REFERENCES config_aliases (id));
@@ -578,6 +649,15 @@ INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (31, 42, '
 INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (33, 44, 'sed -i -e ''s:\[\.-\]::'' tests/filter.sed', '${SRC_DIR}/${PS}-${PV}', NULL);
 INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (34, 45, 'patch -Np1 -i ${PKG_SOURCES}/coreutils-8.25-i18n-2.patch', '${SRC_DIR}/${PS}-${PV}', NULL);
 INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (35, 45, 'patch -Np1 -i ${PKG_SOURCES}/003_all_coreutils-gentoo-uname.patch', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (36, 46, 'sed -i ''s:= @mkdir_p@:= /bin/mkdir -p:'' po/Makefile.in.in', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (37, 52, 'sed -i /ARPD/d Makefile', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (38, 52, 'sed -i ''s/arpd.8//'' man/man8/Makefile', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (39, 52, 'rm -v doc/arpd.sgml', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (40, 52, 'sed -i ''s/m_ipt.o//'' tc/Makefile', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (41, 53, 'patch -Np1 -i ${PKG_SOURCES}/kbd-2.0.3-backspace-1.patch', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (42, 53, 'sed -i ''s/\(RESIZECONS_PROGS=\)yes/\1no/g'' configure', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (43, 53, 'sed -i ''s/resizecons.8 //'' docs/man/man8/Makefile.in', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (44, 58, 'mkdir -p /var/lib/hwclock', '${SRC_DIR}/${PS}-${PV}', NULL);
 
 -- Таблица: config_cmds
 CREATE TABLE config_cmds (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id), cmd TEXT, dir STRING, dep_by_opt_id INTEGER REFERENCES config_opts (id));
@@ -622,6 +702,21 @@ INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (40, 42, '$
 INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (41, 43, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --exec-prefix= --libdir=/usr/lib --docdir=/usr/share/doc/procps-ng-3.3.12 --disable-static --disable-kill --with-systemd', '${BUILD_DIR}', NULL);
 INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (42, 44, 'LIBS=-L/tools/lib CFLAGS=-I/tools/include PKG_CONFIG_PATH=/tools/lib/pkgconfig ${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --bindir=/bin --with-root-prefix="" --enable-elf-shlibs --disable-libblkid --disable-libuuid --disable-uuidd --disable-fsck', '${BUILD_DIR}', NULL);
 INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (43, 45, 'FORCE_UNSAFE_CONFIGURE=1 ${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --enable-no-install-program=kill,uptime', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (44, 46, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (45, 47, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (46, 48, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --localstatedir=/var/lib/locate', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (47, 49, 'PAGE=A4 ${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (48, 50, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --sysconfdir=/etc', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (49, 51, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --bindir=/bin', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (50, 53, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-vlock', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (51, 54, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (52, 55, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (53, 56, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (54, 57, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --disable-doxygen-docs --disable-xml-docs --docdir=/usr/share/doc/${PN}-${PV} --with-console-auth-dir=/run/console', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (55, 58, '${SRC_DIR}/${PS}-${PV}/configure ADJTIME_PATH=/var/lib/hwclock/adjtime --docdir=/usr/share/doc/${PN}-${PV} --disable-chfn-chsh --disable-login --disable-nologin --disable-su --disable-setpriv --disable-runuser --disable-pylibmount --disable-static --without-python --enable-libmount-force-mountinfo', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (56, 59, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --docdir=/usr/share/doc/${PN}-${PV} --sysconfdir=/etc --disable-setuid --with-browser=/usr/bin/lynx --with-vgrind=/usr/bin/vgrind --with-grap=/usr/bin/grap', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (57, 60, 'FORCE_UNSAFE_CONFIGURE=1 ${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --bindir=/bin', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (58, 61, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static', '${BUILD_DIR}', NULL);
 
 -- Таблица: postinst_msg
 CREATE TABLE postinst_msg (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package_meta (id), msg STRING);
@@ -674,6 +769,22 @@ INSERT INTO package_meta (id, cat_id, name) VALUES (43, 136, 'gettext');
 INSERT INTO package_meta (id, cat_id, name) VALUES (44, 144, 'procps');
 INSERT INTO package_meta (id, cat_id, name) VALUES (45, 139, 'e2fsprogs');
 INSERT INTO package_meta (id, cat_id, name) VALUES (46, 131, 'coreutils');
+INSERT INTO package_meta (id, cat_id, name) VALUES (47, 131, 'diffutils');
+INSERT INTO package_meta (id, cat_id, name) VALUES (48, 131, 'gawk');
+INSERT INTO package_meta (id, cat_id, name) VALUES (49, 131, 'findutils');
+INSERT INTO package_meta (id, cat_id, name) VALUES (50, 131, 'groff');
+INSERT INTO package_meta (id, cat_id, name) VALUES (51, 131, 'less');
+INSERT INTO package_meta (id, cat_id, name) VALUES (52, 131, 'iproute2');
+INSERT INTO package_meta (id, cat_id, name) VALUES (53, 131, 'kbd');
+INSERT INTO package_meta (id, cat_id, name) VALUES (54, 4, 'gzip');
+INSERT INTO package_meta (id, cat_id, name) VALUES (55, 39, 'libpipeline');
+INSERT INTO package_meta (id, cat_id, name) VALUES (56, 136, 'make');
+INSERT INTO package_meta (id, cat_id, name) VALUES (57, 136, 'patch');
+INSERT INTO package_meta (id, cat_id, name) VALUES (58, 131, 'dbus');
+INSERT INTO package_meta (id, cat_id, name) VALUES (59, 131, 'util-linux');
+INSERT INTO package_meta (id, cat_id, name) VALUES (60, 131, 'man-db');
+INSERT INTO package_meta (id, cat_id, name) VALUES (61, 4, 'tar');
+INSERT INTO package_meta (id, cat_id, name) VALUES (62, 131, 'texinfo');
 
 -- Таблица: installed_pkg_files
 CREATE TABLE installed_pkg_files (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id) ON DELETE CASCADE, name TEXT);
