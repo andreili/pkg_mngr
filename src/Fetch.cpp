@@ -73,6 +73,7 @@ bool Fetch::load_source(std::string &url)
                                  str->write(data, size * nmemb);
                              };
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, static_cast<CURL_WRITEFUNCTION_PTR>(curl_callback));
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, str);
         result = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
