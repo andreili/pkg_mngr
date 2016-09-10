@@ -274,6 +274,18 @@ ConfigurationOption* PackageDB::get_config_opt(std::string &name)
         return nullptr;
 }
 
+void PackageDB::get_set_pkgs(std::string set_name, std::function<void(std::string pkg_name)>&& on_pkg)
+{
+    SQLite::Statement query(*m_db, "SELECT cat.name AS cat, pm.name FROM category AS cat"
+                            " INNER JOIN package_meta AS pm ON cat.id=pm.cat_id"
+                            " INNER JOIN package AS pkg ON pkg.pkg_meta_id=pm.id"
+                            " INNER JOIN set_pkgs AS ps ON ps.pkg_id=pkg.id"
+                            " INNER JOIN sets ON sets.id=ps.set_id WHERE (sets.name=:set_name);");
+    query.bind(":set_name", set_name);
+    while (query.executeStep())
+        on_pkg(std::string(query.getColumn("cat").getText()) + "/" + query.getColumn("name").getText());
+}
+
 void PackageDB::get_pkg_opts(Package *pkg, std::function<void(ConfigurationOption* opt, bool def_on)>&& on_opt)
 {
     SQLite::Statement query(*m_db, "SELECT * FROM pkg_opts WHERE (pkg_id=:id);");

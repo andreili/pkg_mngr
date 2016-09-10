@@ -57,7 +57,7 @@ void PackageManager::init(int argc, char *argv[], char **envp)
         m_show_help = true;
     else for (int i=1 ; i<argc ; i++)
         if (argv[i][0] != '-')
-            m_package_names.push_back(argv[i]);
+            m_package_names.push_front(argv[i]);
 
     m_vars->init_env(envp);
 }
@@ -84,13 +84,24 @@ bool PackageManager::prepare()
 
         for (std::string &name : m_package_names)
         {
-            Package* pkg = Package::get_pkg_by_name(name);
-            if (pkg == nullptr)
+            if (name[0] == '@')
             {
-                printf("Unable to find package \"%s\"!\n", name.c_str());
-                return false;
+                // добавляем список пакетов указанного набора
+                m_db->get_set_pkgs(&name[1], [this](std::string pkg_name)
+                {
+                    check_depedencies(Package::get_pkg_by_name(pkg_name), false);
+                });
             }
-            check_depedencies(pkg, true);
+            else
+            {
+                Package* pkg = Package::get_pkg_by_name(name);
+                if (pkg == nullptr)
+                {
+                    printf("Unable to find package \"%s\"!\n", name.c_str());
+                    return false;
+                }
+                check_depedencies(pkg, true);
+            }
         }
 
         if (m_install)
