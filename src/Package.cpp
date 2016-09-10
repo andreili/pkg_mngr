@@ -113,10 +113,17 @@ void Package::fetch()
 
 bool Package::install()
 {
-    log_start();
-
     printf("Installing package ");
     print_short_info();
+
+    if (!stage_clean())
+    {
+        printf(COLOR_RED "Error!\n" COLOR_RESET);
+        log_stop();
+        return false;
+    }
+
+    log_start();
 
     ///printf("%i %i %i\n", m_fetched, m_fetch_in_queue, m_fetch_running);
     // wait, if sources not loaded
@@ -127,7 +134,6 @@ bool Package::install()
     }
 
     if (!m_fetched
-        || !stage_clean()
         || !stage_unpack()
         || !stage_prepare()
         || !stage_configure()
