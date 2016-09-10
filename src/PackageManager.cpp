@@ -214,7 +214,7 @@ Package* PackageManager::get_pkg(int pkg_id)
     int last_id = 0;
     Package *res = nullptr;
     for (Package *pkg : m_instance->m_packages_list)
-        if ((pkg->get_id() == pkg_id))
+        if ((pkg->get_id() == pkg_id) && (pkg->get_id() > last_id))
         {
             last_id = pkg->get_id();
             res = pkg;
@@ -228,7 +228,7 @@ Package* PackageManager::get_pkg_meta(int meta_id)
     int last_id = 0;
     Package *res = nullptr;
     for (Package *pkg : m_instance->m_packages_list)
-        if ((pkg->get_meta()->get_id() == meta_id))
+        if ((pkg->get_meta()->get_id() == meta_id) && (pkg->get_id() > last_id))
         {
             last_id = pkg->get_id();
             res = pkg;

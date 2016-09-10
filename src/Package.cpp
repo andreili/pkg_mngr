@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#define MAX_LOG_STRING 1024
+
 namespace package_manager
 {
 
@@ -411,10 +413,9 @@ bool Package::run_cmd(const std::string dir, const std::string cmd)
     std::string cmd_ex = cmd + " 2>&1";
     if(!(in = popen(cmd_ex.c_str(), "r")))
         return false;
-    const int BUFSIZE = 1000;
-    uint8_t buf[BUFSIZE];
-    while(fgets((char*)buf, BUFSIZE, in))
-        log_data(buf, BUFSIZE);
+    char *buf = new char[MAX_LOG_STRING];
+    while(fgets(buf, MAX_LOG_STRING, in))
+        log_data(buf);
     int exit_code = pclose(in);
     if (exit_code)
         return false;
@@ -449,13 +450,13 @@ void Package::log_str(const std::string line)
     }
 }
 
-void Package::log_data(uint8_t *buf, int buf_size)
+void Package::log_data(char *buf)
 {
     if (m_log_enabled)
     {
-        m_log->writeStr((char*)buf);
+        m_log->writeStr(buf);
         if (PackageManager::is_verbose())
-            printf("%s", (char*)buf);
+            printf("%s", buf);
     }
 }
 

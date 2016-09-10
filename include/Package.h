@@ -99,7 +99,7 @@ namespace package_manager
             void log_start();
             void log_stop();
             void log_str(const std::string line);
-            void log_data(uint8_t *buf, int buf_size);
+            void log_data(char *buf);
             void print_opts();
             void store_installed_files(std::string &root, std::string &dir);
     };
