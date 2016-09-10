@@ -80,7 +80,7 @@ bool PackageManager::prepare()
         }
 
         m_packages_to_action_list.clear();
-        m_packages_to_action_force.clear();
+        m_packages_to_action_world.clear();
 
         for (std::string &name : m_package_names)
         {
@@ -90,7 +90,7 @@ bool PackageManager::prepare()
                 printf("Unable to find package \"%s\"!\n", name.c_str());
                 return false;
             }
-            check_depedencies(pkg);
+            check_depedencies(pkg, true);
         }
 
         if (m_install)
@@ -256,7 +256,7 @@ ConfigurationOption* PackageManager::get_opt(std::string &name)
     return nullptr;
 }
 
-void PackageManager::check_depedencies(Package* pkg)
+void PackageManager::check_depedencies(Package* pkg, bool add_to_world)
 {
     pkg->build_install_deps([this](Package *new_pkg)
         {
@@ -269,11 +269,13 @@ void PackageManager::check_depedencies(Package* pkg)
                      break;
                  }
             if (!contains)
+                // если пакета еще нет в списке - добавляем
                 this->m_packages_to_action_list.push_back(new_pkg);
         });
 
     m_packages_to_action_list.push_back(pkg);
-    m_packages_to_action_force.push_back(pkg->get_id());
+    if (add_to_world)
+        m_packages_to_action_world.push_back(pkg->get_id());
 }
 
 void PackageManager::clear_unchanged_pkgs()
@@ -285,8 +287,9 @@ void PackageManager::clear_unchanged_pkgs()
         size_t idx = 0;
         while (idx < m_packages_to_action_list.size())
         {
-            if (std::find(m_packages_to_action_force.begin(), m_packages_to_action_force.end(),
-                          (*pkg_it)->get_id()) != m_packages_to_action_force.end())
+            // если пакет указан пользователем в параметрах - пропускаем
+            if (std::find(m_packages_to_action_world.begin(), m_packages_to_action_world.end(),
+                          (*pkg_it)->get_id()) != m_packages_to_action_world.end())
             {
                 idx++;
                 pkg_it++;
