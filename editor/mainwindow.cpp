@@ -4,6 +4,8 @@
 #include <QMessageBox>
 #include <QSqlQuery>
 
+#define UNUSED(x) (void)(x)
+
 #define add_menu(name, tw) \
     m_ ## name ## _menu = new QMenu(tw); \
     m_ ## name ## _menu ->addAction(tr("Добавить"), this, SLOT(on_ ## name ## _add())); \
@@ -93,6 +95,7 @@ void MainWindow::fill_cats()
 
 void MainWindow::on_twPckgs_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
+    UNUSED(previous);
     if (current->parent() != nullptr)
     {
         int idx = 0;
@@ -147,6 +150,44 @@ void MainWindow::on_twVersions_itemChanged(QTableWidgetItem *item)
     }
 }
 
+#define fill_opts_list(tw, sql) \
+    { \
+        tw->setRowCount(0); \
+        idx = 0; \
+        q.prepare(sql); \
+        q.bindValue(":pkg", pkg); \
+        if (q.exec()) \
+            while (q.next()) \
+            { \
+                tw->setRowCount(idx + 1); \
+ \
+                QTableWidgetItem *item = new QTableWidgetItem(q.value("cmd").toString()); \
+                item->setData(Qt::UserRole, q.value("id")); \
+                tw->setItem(idx, 0, item); \
+ \
+                item = new QTableWidgetItem(q.value("dir").toString()); \
+                item->setData(Qt::UserRole, q.value("id")); \
+                tw->setItem(idx, 1, item); \
+ \
+                item = new QTableWidgetItem(""); \
+                item->setData(Qt::UserRole, q.value("id")); \
+                item->setData(Qt::UserRole + 2, pkg); \
+                if (q.value("opt_id").isNull()) \
+                { \
+                    item->setText("-"); \
+                    item->setData(Qt::UserRole + 1, -1); \
+                } \
+                else \
+                { \
+                    item->setText(q.value("opt_name").toString()); \
+                    item->setData(Qt::UserRole + 1, q.value("opt_id").toInt()); \
+                } \
+                tw->setItem(idx, 2, item); \
+ \
+                ++idx; \
+            } \
+    }
+
 void MainWindow::on_twVersions_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous)
 {
     if (current == nullptr)
@@ -190,125 +231,31 @@ void MainWindow::on_twVersions_currentItemChanged(QTableWidgetItem *current, QTa
                 ++idx;
             }
 
-        ui->twPrep->setRowCount(0);
-        idx = 0;
-        q.prepare("SELECT * FROM prepare_cmds WHERE pkg_id=:pkg;");
-        q.bindValue(":pkg", pkg);
-        if (q.exec())
-            while (q.next())
-            {
-                ui->twPrep->setRowCount(idx + 1);
-
-                QTableWidgetItem *item = new QTableWidgetItem(q.value("cmd").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twPrep->setItem(idx, 0, item);
-
-                item = new QTableWidgetItem(q.value("dir").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twPrep->setItem(idx, 1, item);
-
-                item = new QTableWidgetItem("-"); //q.value("dep_by_opt_id").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twPrep->setItem(idx, 2, item);
-
-                ++idx;
-            }
-
-        ui->twConfig->setRowCount(0);
-        idx = 0;
-        q.prepare("SELECT * FROM config_cmds WHERE pkg_id=:pkg;");
-        q.bindValue(":pkg", pkg);
-        if (q.exec())
-            while (q.next())
-            {
-                ui->twConfig->setRowCount(idx + 1);
-
-                QTableWidgetItem *item = new QTableWidgetItem(q.value("cmd").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twConfig->setItem(idx, 0, item);
-
-                item = new QTableWidgetItem(q.value("dir").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twConfig->setItem(idx, 1, item);
-
-                item = new QTableWidgetItem("-"); //q.value("dep_by_opt_id").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twConfig->setItem(idx, 2, item);
-
-                ++idx;
-            }
-
-        ui->twBuild->setRowCount(0);
-        idx = 0;
-        q.prepare("SELECT * FROM make_cmds WHERE pkg_id=:pkg;");
-        q.bindValue(":pkg", pkg);
-        if (q.exec())
-            while (q.next())
-            {
-                ui->twBuild->setRowCount(idx + 1);
-
-                QTableWidgetItem *item = new QTableWidgetItem(q.value("cmd").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twBuild->setItem(idx, 0, item);
-
-                item = new QTableWidgetItem(q.value("dir").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twBuild->setItem(idx, 1, item);
-
-                item = new QTableWidgetItem("-"); //q.value("dep_by_opt_id").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twBuild->setItem(idx, 2, item);
-
-                ++idx;
-            }
-
-        ui->twInstall->setRowCount(0);
-        idx = 0;
-        q.prepare("SELECT * FROM install_cmds WHERE pkg_id=:pkg;");
-        q.bindValue(":pkg", pkg);
-        if (q.exec())
-            while (q.next())
-            {
-                ui->twInstall->setRowCount(idx + 1);
-
-                QTableWidgetItem *item = new QTableWidgetItem(q.value("cmd").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twInstall->setItem(idx, 0, item);
-
-                item = new QTableWidgetItem(q.value("dir").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twInstall->setItem(idx, 1, item);
-
-                item = new QTableWidgetItem("-"); //q.value("dep_by_opt_id").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twInstall->setItem(idx, 2, item);
-
-                ++idx;
-            }
-
-        ui->twPostInst->setRowCount(0);
-        idx = 0;
-        q.prepare("SELECT * FROM postinstall_cmds WHERE pkg_id=:pkg;");
-        q.bindValue(":pkg", pkg);
-        if (q.exec())
-            while (q.next())
-            {
-                ui->twPostInst->setRowCount(idx + 1);
-
-                QTableWidgetItem *item = new QTableWidgetItem(q.value("cmd").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twPostInst->setItem(idx, 0, item);
-
-                item = new QTableWidgetItem(q.value("dir").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twPostInst->setItem(idx, 1, item);
-
-                item = new QTableWidgetItem("-"); //q.value("dep_by_opt_id").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twPostInst->setItem(idx, 2, item);
-
-                ++idx;
-            }
+        fill_opts_list(ui->twPrep, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, cfg.name AS opt_name"
+                                   " FROM prepare_cmds AS cmds"
+                                   " LEFT JOIN pkg_opts AS opts ON opts.pkg_id=cmds.pkg_id"
+                                   " LEFT JOIN config_opts AS cfg ON cfg.id=opts.opt_id"
+                                   " WHERE cmds.pkg_id=:pkg;");
+        fill_opts_list(ui->twConfig, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, cfg.name AS opt_name"
+                                     " FROM config_cmds AS cmds"
+                                     " LEFT JOIN pkg_opts AS opts ON opts.pkg_id=cmds.pkg_id"
+                                     " LEFT JOIN config_opts AS cfg ON cfg.id=opts.opt_id"
+                                     " WHERE cmds.pkg_id=:pkg;");
+        fill_opts_list(ui->twBuild, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, cfg.name AS opt_name"
+                                    " FROM make_cmds AS cmds"
+                                    " LEFT JOIN pkg_opts AS opts ON opts.pkg_id=cmds.pkg_id"
+                                    " LEFT JOIN config_opts AS cfg ON cfg.id=opts.opt_id"
+                                    " WHERE cmds.pkg_id=:pkg;");
+        fill_opts_list(ui->twInstall, "SELECT install_cmds.id, cmds.cmd, cmds.dir, opts.opt_id, cfg.name AS opt_name"
+                                      " FROM install_cmds AS cmds"
+                                      " LEFT JOIN pkg_opts AS opts ON opts.pkg_id=cmds.pkg_id"
+                                      " LEFT JOIN config_opts AS cfg ON cfg.id=opts.opt_id"
+                                      " WHERE cmds.pkg_id=:pkg;");
+        fill_opts_list(ui->twPostInst, "SELECT install_cmds.id, cmds.cmd, cmds.dir, opts.opt_id, cfg.name AS opt_name"
+                                       " FROM postinstall_cmds AS cmds"
+                                       " LEFT JOIN pkg_opts AS opts ON opts.pkg_id=cmds.pkg_id"
+                                       " LEFT JOIN config_opts AS cfg ON cfg.id=opts.opt_id"
+                                       " WHERE cmds.pkg_id=:pkg;");
 
         ui->twDeps->setRowCount(0);
         idx = 0;
@@ -912,6 +859,7 @@ void MainWindow::on_twPostInst_itemChanged(QTableWidgetItem *item)
 
 void MainWindow::on_twDeps_itemChanged(QTableWidgetItem *item)
 {
+    UNUSED(item);
     /*int id = item->data(Qt::UserRole).toInt();
     int col = item->column();
     QSqlQuery q;
@@ -940,6 +888,7 @@ void MainWindow::on_twPckgs_customContextMenuRequested(const QPoint &pos)
 
 void MainWindow::on_twPckgs_itemChanged(QTreeWidgetItem *item, int column)
 {
+    UNUSED(column);
     if (item->parent() != nullptr)
     {
         QSqlQuery q;
