@@ -118,7 +118,7 @@ PackageMeta* PackageDB::get_package_meta(int meta_id)
 
 Package* PackageDB::get_pkg(PackageMeta *meta, std::string &version)
 {
-    Package* pkg = PackageManager::get_pkg(meta->get_id(), version);
+    Package* pkg = PackageManager::get_pkg_meta(meta->get_id(), version);
     if (pkg != nullptr)
         return pkg;
 

@@ -37,7 +37,8 @@ namespace package_manager
 
             static void add_pkg(Package* pkg);
             static Package* get_pkg(int pkg_id);
-            static Package* get_pkg(int meta_id, std::string pkg_version);
+            static Package* get_pkg_meta(int meta_id);
+            static Package* get_pkg_meta(int meta_id, std::string pkg_version);
 
             static void add_opt(ConfigurationOption *opt);
             static ConfigurationOption* get_opt(int opt_id);

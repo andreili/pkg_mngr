@@ -27,7 +27,7 @@ PackageMeta::~PackageMeta()
 
 Package* PackageMeta::get_pkg(std::string &version)
 {
-    Package *pkg = PackageManager::get_pkg(m_id, version);
+    Package *pkg = PackageManager::get_pkg_meta(m_id, version);
     if (pkg == nullptr)
         pkg = PackageManager::get_db_obj()->get_pkg(this, version);
     if (pkg == nullptr)

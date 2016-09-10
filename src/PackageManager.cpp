@@ -211,10 +211,24 @@ Package* PackageManager::get_pkg(int pkg_id)
     return res;
 }
 
-Package* PackageManager::get_pkg(int meta_id, std::string pkg_version)
+Package* PackageManager::get_pkg_meta(int meta_id)
+{
+    //get last package for meta-package
+    int last_id = 0;
+    Package *res = nullptr;
+    for (Package *pkg : m_instance->m_packages_list)
+        if ((pkg->get_meta()->get_id() == meta_id))
+        {
+            last_id = pkg->get_id();
+            res = pkg;
+        }
+    return res;
+}
+
+Package* PackageManager::get_pkg_meta(int meta_id, std::string pkg_version)
 {
     if (pkg_version.size() == 0)
-        return get_pkg(meta_id);
+        return get_pkg_meta(meta_id);
     for (Package *pkg : m_instance->m_packages_list)
         if ((meta_id == pkg->get_meta_id()) && (pkg->get_version().compare(pkg_version) == 0))
             return pkg;
