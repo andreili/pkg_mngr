@@ -5,6 +5,7 @@
 #include <QSqlDatabase>
 #include <QTreeWidgetItem>
 #include <QTableWidgetItem>
+#include <QComboBox>
 
 namespace Ui {
 class MainWindow;
@@ -82,6 +83,10 @@ private slots:
 
     void on_twPckgs_itemChanged(QTreeWidgetItem *item, int column);
 
+    void on_twPrep_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
+
+    void on_twConfig_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
+
 private:
     Ui::MainWindow *ui;
 
@@ -95,6 +100,8 @@ private:
     QMenu           *m_inst_menu;
     QMenu           *m_postinst_menu;
     QMenu           *m_deps_menu;
+
+    QComboBox       *m_use_list;
 
     void fill_cats();
 };

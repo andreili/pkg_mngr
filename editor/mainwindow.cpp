@@ -26,6 +26,9 @@ MainWindow::MainWindow(QWidget *parent) :
     add_menu(inst, ui->twInstall);
     add_menu(postinst, ui->twPostInst);
     add_menu(deps, ui->twDeps);
+
+    m_use_list = new QComboBox(this);
+    m_use_list->setVisible(false);
 }
 
 MainWindow::~MainWindow()
@@ -897,4 +900,46 @@ void MainWindow::on_twPckgs_itemChanged(QTreeWidgetItem *item, int column)
         q.bindValue(":id", item->data(0, Qt::UserRole).toInt());
         q.exec();
     }
+}
+
+#define proc_opts_list(tw) \
+    { \
+        UNUSED(previousRow); \
+        UNUSED(previousColumn); \
+     \
+        if (currentColumn == 2) \
+        { \
+            QTableWidgetItem *item = tw->item(currentRow, currentColumn); \
+            int opt_id = item->data(Qt::UserRole + 1).toInt(); \
+     \
+            m_use_list->clear(); \
+            QSqlQuery q; \
+            q.prepare("SELECT pkg_opts.opt_id, cfg.name AS opt_name" \
+                      " FROM pkg_opts" \
+                      " INNER JOIN config_opts AS cfg ON cfg.id=pkg_opts.opt_id" \
+                      " WHERE pkg_opts.pkg_id=:pkg;"); \
+            q.bindValue(":pkg", item->data(Qt::UserRole + 2).toInt()); \
+            q.exec(); \
+            while (q.next()) \
+                m_use_list->addItem(q.value("opt_name").toString(), q.value("opt_id").toInt()); \
+     \
+            QRect qRect(tw->visualItemRect(item)); \
+            QPoint pos = tw->viewport()->mapTo(this, QPoint(qRect.left(), qRect.top())); \
+            m_use_list->setGeometry(qRect); \
+            m_use_list->move(pos); \
+            m_use_list->setCurrentIndex(m_use_list->findData(opt_id, Qt::UserRole)); \
+            m_use_list->setVisible(true); \
+        } \
+        else \
+            m_use_list->setVisible(false); \
+    }
+
+void MainWindow::on_twPrep_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
+{
+    proc_opts_list(ui->twPrep);
+}
+
+void MainWindow::on_twConfig_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
+{
+    proc_opts_list(ui->twConfig);
 }
