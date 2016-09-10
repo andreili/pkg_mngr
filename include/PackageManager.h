@@ -68,6 +68,9 @@ namespace package_manager
             bool        m_from_pkg;
             bool        m_ask;
             bool        m_verbose;
+
+            void check_depedencies(Package* pkg);
+            void clear_unchanged_pkgs();
     };
 }
 

@@ -90,48 +90,12 @@ bool PackageManager::prepare()
                 printf("Unable to find package \"%s\"!\n", name.c_str());
                 return false;
             }
-            m_packages_to_action_list.push_back(pkg);
-            m_packages_to_action_force.push_back(pkg->get_id());
+            check_depedencies(pkg);
         }
 
         if (m_install)
         {
-            for (Package *pkg : m_packages_to_action_list)
-                pkg->build_install_deps([this](Package *new_pkg)
-                    {
-                        bool contains = false;
-                        for (auto it=m_packages_to_action_list.begin() ;
-                             it != m_packages_to_action_list.end() ; it++)
-                             if (*it == new_pkg)
-                             {
-                                 contains = true;
-                                 break;
-                             }
-                        if (!contains)
-                            this->m_packages_to_action_list.push_back(new_pkg);
-                    });
-            // delete installed packages
-            if (!m_empty)
-            {
-                auto pkg_it = m_packages_to_action_list.begin();
-                size_t idx = 0;
-                while (idx < m_packages_to_action_list.size())
-                {
-                    if (std::find(m_packages_to_action_force.begin(), m_packages_to_action_force.end(),
-                                  (*pkg_it)->get_id()) != m_packages_to_action_force.end())
-                    {
-                        idx++;
-                        pkg_it++;
-                        continue;
-                    }
-
-                    if (((*pkg_it)->check_installed()) && ((*pkg_it)->not_changed()))
-                        m_packages_to_action_list.erase(pkg_it);
-                    else
-                        idx++;
-                    pkg_it++;
-                }
-            }
+            clear_unchanged_pkgs();
         }
     }
 
@@ -276,6 +240,52 @@ ConfigurationOption* PackageManager::get_opt(std::string &name)
         if (opt->get_name().compare(name) == 0)
             return opt;
     return nullptr;
+}
+
+void PackageManager::check_depedencies(Package* pkg)
+{
+    pkg->build_install_deps([this](Package *new_pkg)
+        {
+            bool contains = false;
+            for (auto it=m_packages_to_action_list.begin() ;
+                 it != m_packages_to_action_list.end() ; it++)
+                 if (*it == new_pkg)
+                 {
+                     contains = true;
+                     break;
+                 }
+            if (!contains)
+                this->m_packages_to_action_list.push_back(new_pkg);
+        });
+
+    m_packages_to_action_list.push_back(pkg);
+    m_packages_to_action_force.push_back(pkg->get_id());
+}
+
+void PackageManager::clear_unchanged_pkgs()
+{
+    // удаление из списка установленных неизмененных пакетов
+    if (!m_empty)
+    {
+        auto pkg_it = m_packages_to_action_list.begin();
+        size_t idx = 0;
+        while (idx < m_packages_to_action_list.size())
+        {
+            if (std::find(m_packages_to_action_force.begin(), m_packages_to_action_force.end(),
+                          (*pkg_it)->get_id()) != m_packages_to_action_force.end())
+            {
+                idx++;
+                pkg_it++;
+                continue;
+            }
+
+            if (((*pkg_it)->check_installed()) && ((*pkg_it)->not_changed()))
+                m_packages_to_action_list.erase(pkg_it);
+            else
+                idx++;
+            pkg_it++;
+        }
+    }
 }
 
 
