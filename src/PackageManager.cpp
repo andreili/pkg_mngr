@@ -124,7 +124,7 @@ void PackageManager::proc()
     if (m_install)
     {
         printf("Waiting to install:\n");
-        for(auto pkg=m_packages_to_action_list.rbegin() ; pkg!=m_packages_to_action_list.rend() ; pkg++)
+        for(auto pkg=m_packages_to_action_list.begin() ; pkg!=m_packages_to_action_list.end() ; pkg++)
             (*pkg)->print_short_info();
 
         if (m_ask)
@@ -149,11 +149,11 @@ void PackageManager::proc()
             } while (1);
         }
 
-        for(auto pkg=m_packages_to_action_list.rbegin() ; pkg!=m_packages_to_action_list.rend() ; pkg++)
+        for(auto pkg=m_packages_to_action_list.begin() ; pkg!=m_packages_to_action_list.end() ; pkg++)
             m_fetch->add_to_queue(*pkg);
         m_fetch->start_fetch();
 
-        for(auto pkg=m_packages_to_action_list.rbegin() ; pkg!=m_packages_to_action_list.rend() ; pkg++)
+        for(auto pkg=m_packages_to_action_list.begin() ; pkg!=m_packages_to_action_list.end() ; pkg++)
         {
             if (!(*pkg)->install())
                 break;
