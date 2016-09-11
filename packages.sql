@@ -1,5 +1,5 @@
 --
--- Файл сгенерирован с помощью SQLiteStudio v3.0.7 в Вс сен 11 19:47:29 2016
+-- Файл сгенерирован с помощью SQLiteStudio v3.0.7 в Вс сен 11 20:20:15 2016
 --
 -- Использованная кодировка текста: UTF-8
 --
@@ -835,9 +835,9 @@ INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (59, 5, 'mi
 CREATE TABLE packages_sys (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id) ON DELETE CASCADE);
 
 -- Таблица: pkg_opts
-CREATE TABLE pkg_opts (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id), opt_id INTEGER REFERENCES config_opts (id), "default" BOOLEAN DEFAULT (0));
-INSERT INTO pkg_opts (id, pkg_id, opt_id, "default") VALUES (1, 5, 1, 0);
-INSERT INTO pkg_opts (id, pkg_id, opt_id, "default") VALUES (2, 5, 3, 0);
+CREATE TABLE pkg_opts (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package_meta (id), opt_id INTEGER REFERENCES config_opts (id), "default" BOOLEAN DEFAULT (0));
+INSERT INTO pkg_opts (id, pkg_id, opt_id, "default") VALUES (1, 4, 1, 0);
+INSERT INTO pkg_opts (id, pkg_id, opt_id, "default") VALUES (2, 4, 3, 0);
 
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;

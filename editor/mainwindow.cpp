@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     add_menu(inst, ui->twInstall);
     add_menu(postinst, ui->twPostInst);
     add_menu(deps, ui->twDeps);
+    add_menu(opt, ui->lwOpts);
 
     m_use_list = new QComboBox(this);
     m_use_list->setVisible(false);
@@ -128,6 +129,22 @@ void MainWindow::on_twPckgs_currentItemChanged(QTreeWidgetItem *current, QTreeWi
                 ui->twVersions->setItem(idx, 2, item);
 
                 ++idx;
+            }
+
+        ui->lwOpts->clear();
+        q.prepare("SELECT pkg_opts.id, pkg_opts.opt_id, cfg.name AS opt_name"
+                  " FROM pkg_opts"
+                  " INNER JOIN config_opts AS cfg ON cfg.id=pkg_opts.opt_id"
+                  " WHERE pkg_opts.pkg_id=:pkg;");
+        q.bindValue(":pkg", meta);
+        if (q.exec())
+            while (q.next())
+            {
+                QListWidgetItem *item = new QListWidgetItem(q.value("opt_name").toString());
+                item->setData(Qt::UserRole, q.value("opt_id"));
+                item->setData(Qt::UserRole + 1, meta);
+                item->setData(Qt::UserRole + 2, q.value("id"));
+                ui->lwOpts->addItem(item);
             }
     }
 }
@@ -279,22 +296,6 @@ void MainWindow::on_twVersions_currentItemChanged(QTableWidgetItem *current, QTa
                 ui->twDeps->setItem(idx, 1, item);
 
                 ++idx;
-            }
-
-        ui->lwOpts->clear();
-        q.prepare("SELECT pkg_opts.id, pkg_opts.opt_id, cfg.name AS opt_name"
-                  " FROM pkg_opts"
-                  " INNER JOIN config_opts AS cfg ON cfg.id=pkg_opts.opt_id"
-                  " WHERE pkg_opts.pkg_id=:pkg;");
-        q.bindValue(":pkg", pkg);
-        if (q.exec())
-            while (q.next())
-            {
-                QListWidgetItem *item = new QListWidgetItem(q.value("opt_name").toString());
-                item->setData(Qt::UserRole, q.value("opt_id"));
-                item->setData(Qt::UserRole + 1, pkg);
-                item->setData(Qt::UserRole + 2, q.value("id"));
-                ui->lwOpts->addItem(item);
             }
     }
 }
@@ -691,6 +692,37 @@ void MainWindow::on_deps_del()
         ui->twDeps->removeRow(ui->twDeps->selectedItems()[0]->row());
 }
 
+void MainWindow::on_opt_add()
+{
+    QTreeWidgetItem *pkg_item = ui->twPckgs->currentItem();
+    if ((pkg_item != nullptr) && (pkg_item->parent() != nullptr))
+    {
+        QSqlQuery q;
+        q.prepare("INSERT INTO pkg_opts (pkg_id) VALUES (:pkg);");
+        q.bindValue(":pkg", pkg_item->data(0, Qt::UserRole));
+        q.exec();
+
+        int id = q.lastInsertId().toInt();
+        QListWidgetItem *item = new QListWidgetItem("<new>");
+        item->setData(Qt::UserRole, QVariant());
+        item->setData(Qt::UserRole + 1, pkg_item->data(0, Qt::UserRole).toInt());
+        item->setData(Qt::UserRole + 2, id);
+        ui->lwOpts->addItem(item);
+    }
+}
+
+void MainWindow::on_opt_del()
+{
+    if (QMessageBox::question(this, tr("Удаление"), tr("Вы уверены?")) != QMessageBox::Yes)
+        return;
+
+    QSqlQuery query;
+    query.prepare("DELETE FROM pkg_opts WHERE id = :id ;");
+    query.bindValue(":id", ui->lwOpts->selectedItems()[0]->data(Qt::UserRole).toInt());
+    if (query.exec())
+        ui->lwOpts->removeItemWidget(ui->lwOpts->selectedItems()[0]);
+}
+
 void MainWindow::on_twVersions_customContextMenuRequested(const QPoint &pos)
 {
     m_version_menu->actions().at(1)->setEnabled(ui->twVersions->selectedItems().size() != 0);
@@ -936,7 +968,7 @@ void MainWindow::on_twPckgs_itemChanged(QTreeWidgetItem *item, int column)
                       " FROM pkg_opts" \
                       " INNER JOIN config_opts AS cfg ON cfg.id=pkg_opts.opt_id" \
                       " WHERE pkg_opts.pkg_id=:pkg;"); \
-            q.bindValue(":pkg", item->data(Qt::UserRole + 2).toInt()); \
+            q.bindValue(":pkg", ui->twPckgs->currentItem()->data(0, Qt::UserRole).toInt()); \
             q.exec(); \
             while (q.next()) \
                 m_use_list->addItem(q.value("opt_name").toString(), q.value("opt_id").toInt()); \

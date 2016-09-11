@@ -49,6 +49,8 @@ private slots:
     void on_postinst_del();
     void on_deps_add();
     void on_deps_del();
+    void on_opt_add();
+    void on_opt_del();
 
     void on_twVersions_customContextMenuRequested(const QPoint &pos);
 
@@ -113,6 +115,7 @@ private:
     QMenu           *m_inst_menu;
     QMenu           *m_postinst_menu;
     QMenu           *m_deps_menu;
+    QMenu           *m_opt_menu;
 
     QComboBox       *m_use_list;
     QWidget         *m_cur_list;
