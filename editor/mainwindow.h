@@ -6,6 +6,7 @@
 #include <QTreeWidgetItem>
 #include <QTableWidgetItem>
 #include <QComboBox>
+#include <QListWidgetItem>
 
 namespace Ui {
 class MainWindow;
@@ -87,6 +88,18 @@ private slots:
 
     void on_twConfig_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
 
+    void on_twDeps_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
+
+    void on_twBuild_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
+
+    void on_twInstall_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
+
+    void on_twPostInst_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
+
+    void on_lwOpts_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+
+    void m_use_list_item_changed(int index);
+
 private:
     Ui::MainWindow *ui;
 
@@ -102,6 +115,7 @@ private:
     QMenu           *m_deps_menu;
 
     QComboBox       *m_use_list;
+    QWidget         *m_cur_list;
 
     void fill_cats();
 };

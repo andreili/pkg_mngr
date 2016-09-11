@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_use_list = new QComboBox(this);
     m_use_list->setVisible(false);
+    connect(m_use_list, SIGNAL(currentIndexChanged(int)), this, SLOT(m_use_list_item_changed(int)));
 }
 
 MainWindow::~MainWindow()
@@ -234,30 +235,30 @@ void MainWindow::on_twVersions_currentItemChanged(QTableWidgetItem *current, QTa
                 ++idx;
             }
 
-        fill_opts_list(ui->twPrep, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, cfg.name AS opt_name"
+        fill_opts_list(ui->twPrep, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
                                    " FROM prepare_cmds AS cmds"
-                                   " LEFT JOIN pkg_opts AS opts ON opts.pkg_id=cmds.pkg_id"
-                                   " LEFT JOIN config_opts AS cfg ON cfg.id=opts.opt_id"
+                                   " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
+                                   " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
                                    " WHERE cmds.pkg_id=:pkg;");
-        fill_opts_list(ui->twConfig, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, cfg.name AS opt_name"
+        fill_opts_list(ui->twConfig, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
                                      " FROM config_cmds AS cmds"
-                                     " LEFT JOIN pkg_opts AS opts ON opts.pkg_id=cmds.pkg_id"
-                                     " LEFT JOIN config_opts AS cfg ON cfg.id=opts.opt_id"
+                                     " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
+                                     " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
                                      " WHERE cmds.pkg_id=:pkg;");
-        fill_opts_list(ui->twBuild, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, cfg.name AS opt_name"
+        fill_opts_list(ui->twBuild, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
                                     " FROM make_cmds AS cmds"
-                                    " LEFT JOIN pkg_opts AS opts ON opts.pkg_id=cmds.pkg_id"
-                                    " LEFT JOIN config_opts AS cfg ON cfg.id=opts.opt_id"
+                                    " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
+                                    " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
                                     " WHERE cmds.pkg_id=:pkg;");
-        fill_opts_list(ui->twInstall, "SELECT install_cmds.id, cmds.cmd, cmds.dir, opts.opt_id, cfg.name AS opt_name"
+        fill_opts_list(ui->twInstall, "SELECT install_cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
                                       " FROM install_cmds AS cmds"
-                                      " LEFT JOIN pkg_opts AS opts ON opts.pkg_id=cmds.pkg_id"
-                                      " LEFT JOIN config_opts AS cfg ON cfg.id=opts.opt_id"
+                                      " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
+                                      " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
                                       " WHERE cmds.pkg_id=:pkg;");
-        fill_opts_list(ui->twPostInst, "SELECT install_cmds.id, cmds.cmd, cmds.dir, opts.opt_id, cfg.name AS opt_name"
+        fill_opts_list(ui->twPostInst, "SELECT install_cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
                                        " FROM postinstall_cmds AS cmds"
-                                       " LEFT JOIN pkg_opts AS opts ON opts.pkg_id=cmds.pkg_id"
-                                       " LEFT JOIN config_opts AS cfg ON cfg.id=opts.opt_id"
+                                       " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
+                                       " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
                                        " WHERE cmds.pkg_id=:pkg;");
 
         ui->twDeps->setRowCount(0);
@@ -278,6 +279,22 @@ void MainWindow::on_twVersions_currentItemChanged(QTableWidgetItem *current, QTa
                 ui->twDeps->setItem(idx, 1, item);
 
                 ++idx;
+            }
+
+        ui->lwOpts->clear();
+        q.prepare("SELECT pkg_opts.id, pkg_opts.opt_id, cfg.name AS opt_name"
+                  " FROM pkg_opts"
+                  " INNER JOIN config_opts AS cfg ON cfg.id=pkg_opts.opt_id"
+                  " WHERE pkg_opts.pkg_id=:pkg;");
+        q.bindValue(":pkg", pkg);
+        if (q.exec())
+            while (q.next())
+            {
+                QListWidgetItem *item = new QListWidgetItem(q.value("opt_name").toString());
+                item->setData(Qt::UserRole, q.value("opt_id"));
+                item->setData(Qt::UserRole + 1, pkg);
+                item->setData(Qt::UserRole + 2, q.value("id"));
+                ui->lwOpts->addItem(item);
             }
     }
 }
@@ -902,16 +919,17 @@ void MainWindow::on_twPckgs_itemChanged(QTreeWidgetItem *item, int column)
     }
 }
 
-#define proc_opts_list(tw) \
+#define proc_opts_list(tw, col) \
     { \
         UNUSED(previousRow); \
         UNUSED(previousColumn); \
      \
-        if (currentColumn == 2) \
+        if (currentColumn == col) \
         { \
             QTableWidgetItem *item = tw->item(currentRow, currentColumn); \
             int opt_id = item->data(Qt::UserRole + 1).toInt(); \
      \
+            m_cur_list = tw; \
             m_use_list->clear(); \
             QSqlQuery q; \
             q.prepare("SELECT pkg_opts.opt_id, cfg.name AS opt_name" \
@@ -936,10 +954,93 @@ void MainWindow::on_twPckgs_itemChanged(QTreeWidgetItem *item, int column)
 
 void MainWindow::on_twPrep_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
 {
-    proc_opts_list(ui->twPrep);
+    proc_opts_list(ui->twPrep, 2);
 }
 
 void MainWindow::on_twConfig_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
 {
-    proc_opts_list(ui->twConfig);
+    proc_opts_list(ui->twConfig, 2);
+}
+
+void MainWindow::on_twDeps_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
+{
+    proc_opts_list(ui->twDeps, 1);
+}
+
+void MainWindow::on_twBuild_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
+{
+    proc_opts_list(ui->twBuild, 2);
+}
+
+void MainWindow::on_twInstall_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
+{
+    proc_opts_list(ui->twInstall, 2);
+}
+
+void MainWindow::on_twPostInst_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
+{
+    proc_opts_list(ui->twPostInst, 2);
+}
+
+void MainWindow::on_lwOpts_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+{
+    UNUSED(previous);
+    if (current == nullptr)
+        return;
+
+    int opt_id = current->data(Qt::UserRole).toInt();
+    m_cur_list = ui->lwOpts;
+
+    m_use_list->clear();
+    QSqlQuery q("SELECT * FROM config_opts;");
+    q.exec();
+    while (q.next())
+        m_use_list->addItem(q.value("name").toString(), q.value("id").toInt());
+
+    QRect qRect(ui->lwOpts->visualItemRect(current));
+    QPoint pos = ui->lwOpts->viewport()->mapTo(this, QPoint(qRect.left(), qRect.top()));
+    m_use_list->setGeometry(qRect);
+    m_use_list->move(pos);
+    m_use_list->setCurrentIndex(m_use_list->findData(opt_id, Qt::UserRole));
+    m_use_list->setVisible(true);
+}
+
+#define update_opt(tw) \
+    { \
+        int opt = m_use_list->itemData(index, Qt::UserRole).toInt(); \
+        QSqlQuery q; \
+        q.prepare("UPDATE pkg_opts SET opt_id=:opt WHERE id=:id;"); \
+        q.bindValue(":id", tw->currentItem()->data(Qt::UserRole + 2).toInt()); \
+        q.bindValue(":opt", opt); \
+        q.exec(); \
+        ui->lwOpts->currentItem()->setText(m_use_list->currentText()); \
+    }
+
+#define update_opt_cmd(tw, sql) \
+    { \
+        int opt = m_use_list->itemData(index, Qt::UserRole).toInt(); \
+        QSqlQuery q; \
+        q.prepare(sql); \
+        q.bindValue(":id", tw->currentItem()->data(Qt::UserRole).toInt()); \
+        q.bindValue(":opt", opt); \
+        q.exec(); \
+        tw->currentItem()->setData(Qt::UserRole + 1, opt); \
+    }
+
+void MainWindow::m_use_list_item_changed(int index)
+{
+    if (m_cur_list == ui->lwOpts)
+        update_opt(ui->lwOpts)
+    else if (m_cur_list == ui->twPrep)
+        update_opt_cmd(ui->twPrep, "UPDATE prepare_cmds SET dep_by_opt_id=:opt WHERE id=:id;")
+    else if (m_cur_list == ui->twConfig)
+        update_opt_cmd(ui->twConfig, "UPDATE config_cmds SET dep_by_opt_id=:opt WHERE id=:id;")
+    else if (m_cur_list == ui->twDeps)
+        update_opt_cmd(ui->twDeps, "UPDATE pkg_deps SET dep_by_opt=:opt WHERE id=:id;")
+    else if (m_cur_list == ui->twBuild)
+        update_opt_cmd(ui->twBuild, "UPDATE make_cmds SET dep_by_opt_id=:opt WHERE id=:id;")
+    else if (m_cur_list == ui->twInstall)
+        update_opt_cmd(ui->twInstall, "UPDATE install_cmds SET dep_by_opt_id=:opt WHERE id=:id;")
+    else if (m_cur_list == ui->twPostInst)
+        update_opt_cmd(ui->twPostInst, "UPDATE postinst_cmds SET dep_by_opt_id=:opt WHERE id=:id;")
 }
