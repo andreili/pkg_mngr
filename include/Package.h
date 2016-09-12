@@ -46,6 +46,7 @@ namespace package_manager
             void build_install_deps(std::function<void(Package *new_pkg)>&& on_new_pkg);
             bool check_installed();
             void update_opts();
+            std::string parse_opts(const std::string &str_raw);
 
             int get_id() { return m_id; }
             int get_meta_id() { return m_meta->get_id(); }

@@ -6,9 +6,11 @@
 #include "FileSystem.h"
 #include "stream.h"
 #include "Utils.h"
+#include "ConfigurationAlias.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <regex>
 
 #define MAX_LOG_STRING 1024
 
@@ -71,6 +73,59 @@ void Package::update_opts()
                                        changed: (new_state != old_state),
                                        option: opt});
         });
+}
+
+std::string Package::parse_opts(const std::string &str_raw)
+{
+    std::string str = str_raw;
+
+    std::regex opt_reg("\\$\\{OPT (\\S+) (\\S+) (\\S+)\\}");
+    std::smatch sm;
+
+    while (std::regex_search(str, sm, opt_reg))
+    {
+        //std::regex_match(str, sm, opt_reg);
+
+        std::string opt_name = sm[1];
+        std::string alias_name = sm[2];
+        std::string conf_name = sm[3];
+
+        ConfigurationOption *opt_obj = PackageManager::get_db_obj()->get_config_opt(opt_name);
+        if (opt_obj == nullptr)
+        {
+            printf(COLOR_RED "Error in aliases (opt)!\n" COLOR_RESET);
+            log_stop();
+            return "";
+        }
+
+        for (config_opt_rec_t &opt : m_options)
+            if (opt.option->get_id() == opt_obj->get_id())
+            {
+                ConfigurationAlias *alias = PackageManager::get_alias(alias_name);
+                if (alias == nullptr)
+                {
+                    printf(COLOR_RED "Error in aliases (alias)!\n" COLOR_RESET);
+                    log_stop();
+                    return "";
+                }
+                else
+                {
+                    std::string val;
+                    if (check_opt(opt.option->get_id()))
+                        val = alias->get_on();
+                    else
+                        val = alias->get_off();
+
+                    val = std::regex_replace(val, std::regex("\\$\\{OPT\\}"), conf_name);
+
+                    str = std::regex_replace(str, std::regex("\\$\\{OPT " + opt_name + " " +
+                                                             alias_name + " " + conf_name + "\\}"),
+                                             val);
+                }
+            }
+    }
+
+    return str;
 }
 
 bool Package::check_opt(int opt_id)
@@ -420,6 +475,9 @@ bool Package::stage_merge()
 
 bool Package::run_cmd(const std::string dir, const std::string cmd)
 {
+    if (cmd.size() == 0)
+        return false;
+
     //printf("%s %s\n", dir.c_str(), cmd.c_str());
     log_str(cmd + '\n');
 

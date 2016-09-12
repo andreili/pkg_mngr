@@ -60,6 +60,7 @@ void PackageManager::init(int argc, char *argv[], char **envp)
             m_package_names.push_front(argv[i]);
 
     m_vars->init_env(envp);
+    m_db->fill_aliases();
 }
 
 bool PackageManager::prepare()
@@ -264,6 +265,27 @@ ConfigurationOption* PackageManager::get_opt(std::string &name)
     for (ConfigurationOption *opt : m_instance->m_options_list)
         if (opt->get_name().compare(name) == 0)
             return opt;
+    return nullptr;
+}
+
+void PackageManager::add_alias(ConfigurationAlias *alias)
+{
+    m_instance->m_alias_list.push_back(alias);
+}
+
+ConfigurationAlias* PackageManager::get_alias(int alias_id)
+{
+    for (ConfigurationAlias *alias : m_instance->m_alias_list)
+        if (alias->get_id() == alias_id)
+            return alias;
+    return nullptr;
+}
+
+ConfigurationAlias* PackageManager::get_alias(std::string &name)
+{
+    for (ConfigurationAlias *alias : m_instance->m_alias_list)
+        if (alias->get_alias().compare(name) == 0)
+            return alias;
     return nullptr;
 }
 

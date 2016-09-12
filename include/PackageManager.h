@@ -4,6 +4,7 @@
 #include <deque>
 #include "PackageDB.h"
 #include "CmdlineParser.h"
+#include "ConfigurationAlias.h"
 
 namespace package_manager
 {
@@ -44,6 +45,10 @@ namespace package_manager
             static ConfigurationOption* get_opt(int opt_id);
             static ConfigurationOption* get_opt(std::string &name);
 
+            static void add_alias(ConfigurationAlias *alias);
+            static ConfigurationAlias* get_alias(int alias_id);
+            static ConfigurationAlias* get_alias(std::string &name);
+
             static bool is_verbose() { return m_instance->m_verbose; }
         protected:
         private:
@@ -59,6 +64,7 @@ namespace package_manager
             std::deque<PackageMeta*>    m_package_metas;
             std::deque<Category*>       m_category_list;
             std::deque<ConfigurationOption*>    m_options_list;
+            std::deque<ConfigurationAlias*>     m_alias_list;
 
             bool        m_show_help;
             bool        m_params_ok;

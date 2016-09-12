@@ -20,6 +20,13 @@ PackageDB::~PackageDB()
     delete m_db;
 }
 
+void PackageDB::fill_aliases()
+{
+    SQLite::Statement query(*m_db, "SELECT * FROM config_aliases;");
+    while (query.executeStep())
+        PackageManager::add_alias(new ConfigurationAlias(query));
+}
+
 void PackageDB::transaction_start()
 {
     m_db->exec("BEGIN");
@@ -267,7 +274,7 @@ ConfigurationOption* PackageDB::get_config_opt(std::string &name)
     if (opt != nullptr)
         return opt;
 
-    SQLite::Statement query(*m_db, "SELECT * FROM config_opts WHERE (id=:name);");
+    SQLite::Statement query(*m_db, "SELECT * FROM config_opts WHERE (name=:name);");
     query.bind(":name", name);
     if (query.executeStep())
         return new ConfigurationOption(query);

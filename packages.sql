@@ -1,93 +1,231 @@
 --
--- Файл сгенерирован с помощью SQLiteStudio v3.0.7 в Вс сен 11 20:20:15 2016
+-- Файл сгенерирован с помощью SQLiteStudio v3.0.7 в Пн сен 12 16:02:47 2016
 --
 -- Использованная кодировка текста: UTF-8
 --
 PRAGMA foreign_keys = off;
 BEGIN TRANSACTION;
 
+-- Таблица: install_cmds
+CREATE TABLE install_cmds (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id), cmd STRING, dir STRING, dep_by_opt_id INTEGER REFERENCES config_opts (id));
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (1, 1, 'make INSTALL_HDR_PATH=${BIN_DIR}/usr headers_install', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (3, 2, 'make DESTDIR=${BIN_DIR} install', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (4, 3, 'mkdir lib', '${BIN_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (5, 3, 'mkdir -p usr/lib', '${BIN_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (6, 3, 'ln -s lib lib64', '${BIN_DIR}/usr', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (7, 3, 'ln -s lib lib64', '${BIN_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (11, 3, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (15, 4, 'make DESTDIR=${BIN_DIR} install', '${SRC_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (18, 5, 'make DESTDIR=${BIN_DIR} install', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (20, 6, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (22, 7, 'make DESTDIR=${BIN_DIR} tooldir=/usr install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (23, 8, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (24, 9, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (25, 10, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (26, 11, 'mkdir -p ${BIN_DIR}/{lib,usr}', '${BIN_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (27, 11, 'ln -sf lib lib64', '${BIN_DIR}/usr', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (28, 11, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (29, 12, 'make PREFIX=${BIN_DIR}/usr install', '${SRC_DIR}/${PS}-${PV}', 2);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (36, 13, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (37, 14, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (38, 15, 'mkdir -p ${BIN_DIR}/{lib,usr/lib/pkgconfig}', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (39, 15, 'make DESTDIR=${BIN_DIR} install install-dev install-lib', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (40, 16, 'mkdir -p ${BIN_DIR}/{lib,usr/lib/pkgconfig}', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (41, 16, 'make DESTDIR=${BIN_DIR} install install-dev install-lib', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (42, 17, 'mkdir -p ${BIN_DIR}/{lib,usr/lib}', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (43, 17, 'ln -sf lib ${BIN_DIR}/usr/lib64', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (44, 17, 'make RAISE_SETFCAP=no prefix=/usr DESTDIR=${BIN_DIR} install', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (45, 18, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (46, 19, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (47, 20, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (48, 21, 'make DESTDIR=${BIN_DIR} install', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (49, 22, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (50, 23, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (51, 24, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (52, 25, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (53, 26, 'mkdir -p ${BIN_DIR}/lib', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (54, 26, 'make SHLIB_LIBS=-lncurses DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (55, 27, 'mkdir -p ${BIN_DIR}\bin', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (56, 27, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (57, 28, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (58, 29, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (59, 30, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (60, 31, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (61, 32, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (62, 33, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (63, 34, 'BUILD_ZLIB=False BUILD_BZIP2=0 make DESTDIR=${BIN_DIR} install', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (64, 35, 'make DESTDIR=${BIN_DIR} install', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (65, 36, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (66, 37, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (67, 38, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (68, 39, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (69, 40, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (70, 41, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (71, 42, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (72, 43, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (73, 44, 'make DESTDIR=${BIN_DIR} install install-libs', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (74, 45, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (75, 46, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (76, 47, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (77, 48, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (78, 49, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (79, 50, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (80, 51, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (81, 52, 'make DOCDIR=/usr/share/doc/${PN}-${PV} DESTDIR=${BIN_DIR} install', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (82, 53, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (83, 54, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (84, 55, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (85, 56, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (86, 57, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (87, 58, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (88, 59, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (89, 60, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (90, 61, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
+
+-- Таблица: packages_sys
+CREATE TABLE packages_sys (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id) ON DELETE CASCADE);
+
 -- Таблица: installed_pkg_opts
 CREATE TABLE installed_pkg_opts (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id), opt_id INTEGER REFERENCES config_opts (id) ON DELETE CASCADE, selected BOOLEAN);
 
--- Таблица: pkg_deps
-CREATE TABLE pkg_deps (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package_meta (id) ON DELETE CASCADE, dep_py_pkg_id INTEGER REFERENCES package_meta (id), dep_by_opt INTEGER);
-INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (1, 3, 11, NULL);
-INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (2, 3, 1, NULL);
-INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (3, 10, 7, NULL);
-INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (4, 10, 8, NULL);
-INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (5, 10, 9, NULL);
-INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (7, 8, 7, NULL);
-INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (8, 9, 7, NULL);
-INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (9, 9, 8, NULL);
+-- Таблица: postinstall_cmds
+CREATE TABLE postinstall_cmds (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id), cmd STRING, dir STRING, dep_by_opt_id INTEGER REFERENCES config_opts (id));
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (1, 1, 'find ${BIN_DIR}/usr/include \( -name .install -o -name ..install.cmd \) -delete', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (2, 3, 'cp ${SRC_DIR}/${PS}-${PV}/nscd/nscd.conf ${BIN_DIR}/etc/nscd.conf', '${BIN_DIR}/etc', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (3, 3, 'mkdir -p ${BIN_DIR}/var/cache/nscd', NULL, NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (4, 3, 'install -Dm644 ${SRC_DIR}/${PS}-${PV}/nscd/nscd.tmpfiles ${BIN_DIR}/usr/lib/tmpfiles.d/nscd.conf', NULL, NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (5, 3, 'install -Dm644 ${SRC_DIR}/${PS}-${PV}/nscd/nscd.service ${BIN_DIR}/lib/systemd/system/nscd.service', NULL, NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (6, 3, 'cat > ${BIN_DIR}/etc/nsswitch.conf << "EOF"
+# Begin /etc/nsswitch.conf
 
--- Таблица: sets
-CREATE TABLE sets (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT);
-INSERT INTO sets (id, name) VALUES (1, 'system');
-INSERT INTO sets (id, name) VALUES (2, 'world');
+passwd: files
+group: files
+shadow: files
 
--- Таблица: package
-CREATE TABLE package (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_meta_id INTEGER REFERENCES package_meta (id) ON DELETE CASCADE, version TEXT, source_name STRING);
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (1, 1, '4.7.2', 'linux');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (2, 2, '4.07', 'man-pages');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (3, 3, '2.24', 'glibc');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (4, 11, '2016c', 'tzdata');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (5, 4, '1.2.8', 'zlib');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (6, 5, '5.28', 'file');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (7, 6, '2.27', 'binutils');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (8, 7, '6.1.1', 'gmp');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (9, 8, '3.1.4', 'mpfr');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (10, 9, '1.0.3', 'mpc');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (11, 10, '6.2.0', 'gcc');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (12, 13, '1.0.6', 'bzip2');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (13, 14, '0.29.1', 'pkg-config');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (14, 15, '6.0', 'ncurses');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (15, 16, '2.4.47', 'attr');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (16, 17, '2.2.52', 'acl');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (17, 18, '2.25', 'libcap');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (18, 19, '4.2.2', 'sed');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (19, 20, '4.2.1', 'shadow');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (20, 24, '22.21', 'psmisc');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (21, 25, '2.30', 'iana-etc');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (22, 26, '1.4.17', 'm4');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (23, 27, '3.0.4', 'bison');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (24, 28, '2.6.1', 'flex');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (25, 21, '2.25', 'grep');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (26, 29, '6.3', 'readline');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (27, 30, '4.3.30', 'bash');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (28, 31, '1.06.95', 'bc');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (29, 32, '2.4.6', 'libtool');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (30, 33, '1.12', 'gdbm');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (31, 34, '3.0.4', 'gperf');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (32, 35, '2.2.0', 'expat');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (33, 36, '1.9.4', 'inetutils');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (34, 37, '5.24.0', 'perl');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (35, 38, '2.44', 'XML-Parser');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (36, 39, '0.51.0', 'intltool');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (37, 40, '2.69', 'autoconf');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (38, 41, '1.15', 'automake');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (39, 42, '5.2.2', 'xz');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (40, 22, '23', 'kmod');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (41, 43, '0.19.8.1', 'gettext');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (42, 23, '231', 'systemd');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (43, 44, '3.3.12', 'procps-ng');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (44, 45, '1.43.1', 'e2fsprogs');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (45, 46, '8.25', 'coreutils');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (46, 47, '3.5', 'diffutils');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (47, 48, '4.1.3', 'gawk');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (48, 49, '4.6.0', 'findutils');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (49, 50, '1.22.3', 'groff');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (50, 51, '481', 'less');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (51, 54, '1.8', 'gzip');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (52, 52, '4.7.0', 'iproute2');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (53, 53, '2.0.3', 'kbd');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (54, 55, '1.4.1', 'libpipeline');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (55, 56, '4.2.1', 'make');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (56, 57, '2.7.5', 'patch');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (57, 58, '1.10.10', 'dbus');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (58, 59, '2.28.1', 'util-linux');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (59, 60, '2.7.5', 'man-db');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (60, 61, '1.29', 'tar');
-INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (61, 62, '6.1', 'texinfo');
+hosts: files dns myhostname
+networks: files
+
+protocols: files
+services: files
+ethers: files
+rpc: files
+
+# End /etc/nsswitch.conf
+EOF
+', NULL, NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (7, 3, 'mkdir -p ${BIN_DIR}/usr/lib/locale', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (11, 3, 'install -m  774 ${PKG_SOURCES}/locale-gen ${BIN_DIR}/usr/sbin/', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (12, 3, 'install -m  644 ${PKG_SOURCES}/locale.conf ${BIN_DIR}/etc/', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (14, 5, 'mkdir -p ${BIN_DIR}/lib/', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (15, 5, 'mv ${BIN_DIR}/usr/lib/libz.so.* ${BIN_DIR}/lib/', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (18, 5, 'ln -sfv ../../lib/$(readlink ${BIN_DIR}/usr/lib/libz.so) ${BIN_DIR}/usr/lib/libz.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (20, 11, 'ln -s ../usr/bin/cpp ${BIN_DIR}/lib/', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (21, 11, 'ln -s gcc ${BIN_DIR}/usr/bin/cc', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (22, 11, 'install -dm755 ${BIN_DIR}/usr/lib/bfd-plugins', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (23, 11, 'ln -sf ../../libexec/gcc/$(gcc -dumpmachine)/${PV}/liblto_plugin.so ${BIN_DIR}/usr/lib/bfd-plugins/', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (24, 11, 'mkdir -p ${BIN_DIR}/usr/share/gdb/auto-load/usr/lib', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (25, 11, 'mv ${BIN_DIR}/usr/lib/*gdb.py ${BIN_DIR}/usr/share/gdb/auto-load/usr/lib', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (26, 12, 'mkdir -p ${BIN_DIR}/{bin,lib,usr/lib}', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (27, 12, 'cp bzip2-shared ${BIN_DIR}/bin/bzip2', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (28, 12, 'cp -a libbz2.so* ${BIN_DIR}/lib/', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (29, 12, 'ln -s ../../lib/libbz2.so.1.0 ${BIN_DIR}/usr/lib/libbz2.so', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (30, 12, 'rm ${BIN_DIR}/usr/bin/{bunzip2,bzcat,bzip2}', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (31, 12, 'ln -sf bzip2 ${BIN_DIR}/bin/bunzip2', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (33, 12, 'ln -sf bzip2 ${BIN_DIR}/bin/bzcat', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (34, 14, 'mkdir -p ${BIN_DIR}/{lib,usr/lib/pkgconfig}', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (35, 14, 'mv -v ${BIN_DIR}/usr/lib/libncursesw.so.6* ${BIN_DIR}/lib/', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (36, 14, 'ln -sfv ../../lib/$(readlink ${BIN_DIR}/usr/lib/libncursesw.so) ${BIN_DIR}/usr/lib/libncursesw.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (37, 14, 'for lib in ncurses form panel menu ; do
+    rm -f                    ${BIN_DIR}/usr/lib/lib${lib}.so
+    echo "INPUT(-l${lib}w)" > ${BIN_DIR}/usr/lib/lib${lib}.so
+    ln -sf ${lib}w.pc        ${BIN_DIR}/usr/lib/pkgconfig/${lib}.pc
+done', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (38, 14, 'rm vf  ${BIN_DIR}/usr/lib/libcursesw.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (39, 14, 'echo "INPUT(-lncursesw)" > ${BIN_DIR}/usr/lib/libcursesw.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (40, 14, 'ln -sf libncurses.so ${BIN_DIR}/usr/lib/libcurses.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (43, 15, 'chmod 0755 ${BIN_DIR}/usr/lib/libattr.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (44, 15, 'mv ${BIN_DIR}/usr/lib/libattr.so.* ${BIN_DIR}/lib/', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (45, 15, 'ln -sfv ../../lib/$(readlink ${BIN_DIR}/usr/lib/libattr.so) ${BIN_DIR}/usr/lib/libattr.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (46, 16, 'chmod 755 ${BIN_DIR}/usr/lib/libacl.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (47, 16, 'mv ${BIN_DIR}/usr/lib/libacl.so.* ${BIN_DIR}/lib', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (48, 16, 'ln -sf ../../lib/$(readlink ${BIN_DIR}/usr/lib/libacl.so) ${BIN_DIR}/usr/lib/libacl.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (49, 17, 'chmod -v 755 ${BIN_DIR}/usr/lib/libcap.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (50, 17, 'mv -v ${BIN_DIR}/usr/lib/libcap.so.* ${BIN_DIR}/lib', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (51, 17, 'ln -sfv ../../lib/$(readlink ${BIN_DIR}/usr/lib/libcap.so) ${BIN_DIR}/usr/lib/libcap.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (52, 19, 'mv -v ${BIN_DIR}/usr/bin/passwd ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (53, 20, 'mkdir -p ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (54, 20, 'mv ${BIN_DIR}/usr/bin/fuser ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (55, 20, 'mv ${BIN_DIR}/usr/bin/killall ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (56, 24, 'ln -s flex ${BIN_DIR}/usr/bin/lex', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (57, 26, 'mv ${BIN_DIR}/usr/lib/lib{readline,history}.so.* ${BIN_DIR}/lib', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (58, 26, 'ln -sf ../../lib/$(readlink ${BIN_DIR}/usr/lib/libreadline.so) ${BIN_DIR}/usr/lib/libreadline.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (59, 26, 'ln -sf ../../lib/$(readlink ${BIN_DIR}/usr/lib/libhistory.so ) ${BIN_DIR}/usr/lib/libhistory.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (60, 27, 'mv -f ${BIN_DIR}/usr/bin/bash ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (61, 27, 'ln -s bash ${BIN_DIR}/bin/sh', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (62, 33, 'mkdir -p ${BIN_DIR}/{bin,sbin}', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (63, 33, 'mv ${BIN_DIR}/usr/bin/{hostname,ping,ping6,traceroute} ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (64, 33, 'mv ${BIN_DIR}/usr/bin/ifconfig ${BIN_DIR}/sbin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (65, 39, 'mkdir -p ${BIN_DIR}/{bin,lib}', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (66, 39, 'mv ${BIN_DIR}/usr/bin/{lzma,unlzma,lzcat,xz,unxz,xzcat} ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (67, 39, 'mv ${BIN_DIR}/usr/lib/liblzma.so.* ${BIN_DIR}/lib', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (68, 39, 'ln -sf ../../lib/$(readlink ${BIN_DIR}/usr/lib/liblzma.so) ${BIN_DIR}/usr/lib/liblzma.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (69, 40, 'mkdir -p ${BIN_DIR}/sbin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (70, 40, 'for target in depmod insmod lsmod modinfo modprobe rmmod; do
+  ln -sf ../bin/kmod ${BIN_DIR}/sbin/$target
+done', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (71, 40, 'ln -sf kmod ${BIN_DIR}/bin/lsmod', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (72, 41, 'chmod 0755 ${BIN_DIR}/usr/lib/preloadable_libintl.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (73, 42, 'mkdir -p ${BIN_DIR}/sbin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (74, 42, 'rm -rf ${BIN_DIR}/usr/lib/rpm', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (75, 42, 'ln -sf /usr/lib/systemd/resolv.conf ${BIN_DIR}/etc/resolv.conf', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (76, 42, 'for tool in runlevel reboot shutdown poweroff halt telinit; do
+    ln -sf /usr/bin/systemctl ${BIN_DIR}/sbin/${tool}
+done', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (77, 42, 'ln -sf /usr/lib/systemd/systemd ${BIN_DIR}/sbin/init', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (78, 42, 'mkdir -p ${BIN_DIR}/etc/pam.d/', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (79, 42, 'cat >> ${BIN_DIR}/etc/pam.d/system-session << "EOF" &&
+# Begin Systemd addition
+
+session   required    pam_loginuid.so
+session   optional    pam_systemd.so
+
+# End Systemd addition
+EOF
+', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (80, 42, 'cat > ${BIN_DIR}/etc/pam.d/systemd-user << "EOF"
+# Begin /etc/pam.d/systemd-user
+
+account  required pam_access.so
+account  include  system-account
+
+session  required pam_env.so
+session  required pam_limits.so
+session  include  system-session
+
+auth     required pam_deny.so
+password required pam_deny.so
+
+# End /etc/pam.d/systemd-user
+EOF
+', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (85, 43, 'mkdir ${BIN_DIR}/lib', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (86, 43, 'mv ${BIN_DIR}/usr/lib/libprocps.so.* ${BIN_DIR}/lib', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (87, 43, 'ln -sf ../../lib/$(readlink ${BIN_DIR}/usr/lib/libprocps.so) ${BIN_DIR}/usr/lib/libprocps.so', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (88, 44, 'chmod -v u+w ${BIN_DIR}/usr/lib/{libcom_err,libe2p,libext2fs,libss}.a', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (89, 45, 'mkdir -p ${BIN_DIR}/{bin,usr/bin,usr/sbin,usr/share/man/man8}', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (90, 45, 'mv ${BIN_DIR}/usr/bin/{cat,chgrp,chmod,chown,cp,date,dd,df,echo} ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (91, 45, 'mv ${BIN_DIR}/usr/bin/{false,ln,ls,mkdir,mknod,mv,pwd,rm} ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (92, 45, 'mv ${BIN_DIR}/usr/bin/{rmdir,stty,sync,true,uname} ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (93, 45, 'mv ${BIN_DIR}/usr/bin/chroot ${BIN_DIR}/usr/sbin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (94, 45, 'mv ${BIN_DIR}/usr/share/man/man1/chroot.1 ${BIN_DIR}/usr/share/man/man8/chroot.8', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (95, 45, 'sed -i s/\"1\"/\"8\"/1 ${BIN_DIR}/usr/share/man/man8/chroot.8', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (96, 45, 'mv  ${BIN_DIR}/usr/bin/{head,sleep,nice,test,[} ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (97, 48, 'mkdir -p ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (98, 48, 'mv -v ${BIN_DIR}/usr/bin/find ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (99, 48, 'sed -i ''s|find:=${BINDIR}|find:=/bin|'' ${BIN_DIR}/usr/bin/updatedb', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (100, 51, 'mkdir -p ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (101, 51, 'mv ${BIN_DIR}/usr/bin/gzip ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
+INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (102, 59, 'sed -i "s:man root:root root:g" ${BIN_DIR}/usr/lib/tmpfiles.d/man-db.conf', '${BIN_DIR}', NULL);
 
 -- Таблица: installed_pkgs
 CREATE TABLE installed_pkgs (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id));
@@ -167,11 +305,321 @@ INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (71, 59, 'ht
 INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (72, 60, 'http://ftp.gnu.org/gnu/tar/tar-1.29.tar.xz', 'a1802fec550baaeecff6c381629653ef', 1996000);
 INSERT INTO package_sources (id, pkg_id, src_url, md5, size) VALUES (73, 61, 'http://ftp.gnu.org/gnu/texinfo/texinfo-6.1.tar.xz', '1d7ec1888fae00730693597852b00cde', 4520376);
 
+-- Таблица: set_pkgs
+CREATE TABLE set_pkgs (id INTEGER PRIMARY KEY AUTOINCREMENT, set_id INTEGER REFERENCES sets (id), pkg_id INTEGER REFERENCES package (id));
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (1, 1, 12);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (2, 1, 51);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (3, 1, 39);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (4, 1, 60);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (5, 1, 27);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (6, 1, NULL);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (7, 1, 37);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (8, 1, 38);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (9, 1, 29);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (10, 1, 45);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (11, 1, 46);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (12, 1, 6);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (13, 1, 48);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (14, 1, 47);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (15, 1, 25);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (16, 1, 50);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (17, 1, NULL);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (18, 1, 18);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (19, 1, 7);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (20, 1, 23);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (21, 1, 24);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (22, 1, 11);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (23, 1, 41);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (24, 1, NULL);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (25, 1, 55);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (26, 1, 56);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (27, 1, NULL);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (28, 1, 3);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (29, 1, 1);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (30, 1, NULL);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (31, 1, 13);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (32, 1, 19);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (33, 1, NULL);
+INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (34, 1, 40);
+
+-- Таблица: pkg_opts
+CREATE TABLE pkg_opts (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package_meta (id), opt_id INTEGER REFERENCES config_opts (id), "default" BOOLEAN DEFAULT (0), opt_alias_id INTEGER REFERENCES config_aliases (id));
+INSERT INTO pkg_opts (id, pkg_id, opt_id, "default", opt_alias_id) VALUES (1, 4, 1, 0, NULL);
+INSERT INTO pkg_opts (id, pkg_id, opt_id, "default", opt_alias_id) VALUES (3, 13, 2, 0, NULL);
+INSERT INTO pkg_opts (id, pkg_id, opt_id, "default", opt_alias_id) VALUES (4, 42, 5, 0, 1);
+INSERT INTO pkg_opts (id, pkg_id, opt_id, "default", opt_alias_id) VALUES (5, 42, 2, 0, 1);
+INSERT INTO pkg_opts (id, pkg_id, opt_id, "default", opt_alias_id) VALUES (6, 42, 6, 1, 1);
+
 -- Таблица: config_opts
-CREATE TABLE config_opts (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, descr TEXT, opt TEXT, alias_id INTEGER REFERENCES config_aliases (id), "default" INTEGER DEFAULT (0));
-INSERT INTO config_opts (id, name, descr, opt, alias_id, "default") VALUES (1, 'minizip', NULL, 'minizip', NULL, 0);
-INSERT INTO config_opts (id, name, descr, opt, alias_id, "default") VALUES (2, 'static-libs', NULL, 'static-libs', NULL, 0);
-INSERT INTO config_opts (id, name, descr, opt, alias_id, "default") VALUES (3, 'shared-libs', NULL, 'shared-libs', NULL, 1);
+CREATE TABLE config_opts (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, descr TEXT, opt TEXT, "default" INTEGER DEFAULT (0));
+INSERT INTO config_opts (id, name, descr, opt, "default") VALUES (1, 'minizip', NULL, 'minizip', 0);
+INSERT INTO config_opts (id, name, descr, opt, "default") VALUES (2, 'static-libs', NULL, 'static-libs', 0);
+INSERT INTO config_opts (id, name, descr, opt, "default") VALUES (4, 'pic', NULL, 'pic', 0);
+INSERT INTO config_opts (id, name, descr, opt, "default") VALUES (5, 'nls', NULL, 'nls', 0);
+INSERT INTO config_opts (id, name, descr, opt, "default") VALUES (6, 'threads', NULL, 'threads', 0);
+
+-- Таблица: make_cmds
+CREATE TABLE make_cmds (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id), cmd TEXT, dir STRING, dep_by_opt_id INTEGER REFERENCES config_opts (id));
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (1, 3, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (2, 4, 'make ${MAKEOPTS}', '${SRC_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (3, 5, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (5, 6, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (6, 7, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (7, 8, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (8, 9, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (9, 10, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (10, 11, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (11, 12, 'make -f Makefile-libbz2_so', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (12, 13, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (13, 14, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (14, 15, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (15, 16, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (16, 17, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (17, 18, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (18, 19, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (19, 20, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (20, 21, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (21, 22, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (22, 23, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (23, 24, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (24, 25, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (25, 26, 'make SHLIB_LIBS=-lncurses ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (26, 27, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (27, 28, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (28, 29, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (29, 30, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (30, 31, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (31, 32, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (32, 33, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (33, 34, 'BUILD_ZLIB=False BUILD_BZIP2=0 make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (34, 35, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (35, 36, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (36, 37, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (37, 38, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (38, 39, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (39, 40, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (40, 41, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (41, 42, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (42, 43, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (43, 44, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (44, 45, 'FORCE_UNSAFE_CONFIGURE=1 make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (45, 46, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (46, 47, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (47, 48, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (48, 49, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (49, 50, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (50, 51, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (51, 52, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (52, 53, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (53, 54, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (54, 55, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (55, 56, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (56, 57, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (57, 58, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (58, 59, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (59, 60, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (60, 61, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (61, 12, 'make clean', '${SRC_DIR}/${PS}-${PV}', 2);
+INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (62, 12, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', 2);
+
+-- Таблица: postinst_msg
+CREATE TABLE postinst_msg (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package_meta (id), msg STRING);
+INSERT INTO postinst_msg (id, pkg_id, msg) VALUES (1, 11, 'Please, update you "/etc/localtime"!');
+
+-- Таблица: config_aliases
+CREATE TABLE config_aliases (id INTEGER PRIMARY KEY AUTOINCREMENT, alias TEXT, on_value TEXT, off_value TEXT);
+INSERT INTO config_aliases (id, alias, on_value, off_value) VALUES (1, 'ENDIS', '--enable-${OPT}', '--disable-${OPT}');
+
+-- Таблица: package
+CREATE TABLE package (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_meta_id INTEGER REFERENCES package_meta (id) ON DELETE CASCADE, version TEXT, source_name STRING);
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (1, 1, '4.7.2', 'linux');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (2, 2, '4.07', 'man-pages');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (3, 3, '2.24', 'glibc');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (4, 11, '2016c', 'tzdata');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (5, 4, '1.2.8', 'zlib');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (6, 5, '5.28', 'file');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (7, 6, '2.27', 'binutils');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (8, 7, '6.1.1', 'gmp');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (9, 8, '3.1.4', 'mpfr');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (10, 9, '1.0.3', 'mpc');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (11, 10, '6.2.0', 'gcc');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (12, 13, '1.0.6', 'bzip2');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (13, 14, '0.29.1', 'pkg-config');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (14, 15, '6.0', 'ncurses');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (15, 16, '2.4.47', 'attr');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (16, 17, '2.2.52', 'acl');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (17, 18, '2.25', 'libcap');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (18, 19, '4.2.2', 'sed');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (19, 20, '4.2.1', 'shadow');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (20, 24, '22.21', 'psmisc');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (21, 25, '2.30', 'iana-etc');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (22, 26, '1.4.17', 'm4');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (23, 27, '3.0.4', 'bison');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (24, 28, '2.6.1', 'flex');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (25, 21, '2.25', 'grep');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (26, 29, '6.3', 'readline');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (27, 30, '4.3.30', 'bash');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (28, 31, '1.06.95', 'bc');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (29, 32, '2.4.6', 'libtool');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (30, 33, '1.12', 'gdbm');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (31, 34, '3.0.4', 'gperf');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (32, 35, '2.2.0', 'expat');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (33, 36, '1.9.4', 'inetutils');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (34, 37, '5.24.0', 'perl');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (35, 38, '2.44', 'XML-Parser');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (36, 39, '0.51.0', 'intltool');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (37, 40, '2.69', 'autoconf');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (38, 41, '1.15', 'automake');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (39, 42, '5.2.2', 'xz');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (40, 22, '23', 'kmod');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (41, 43, '0.19.8.1', 'gettext');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (42, 23, '231', 'systemd');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (43, 44, '3.3.12', 'procps-ng');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (44, 45, '1.43.1', 'e2fsprogs');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (45, 46, '8.25', 'coreutils');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (46, 47, '3.5', 'diffutils');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (47, 48, '4.1.3', 'gawk');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (48, 49, '4.6.0', 'findutils');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (49, 50, '1.22.3', 'groff');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (50, 51, '481', 'less');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (51, 54, '1.8', 'gzip');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (52, 52, '4.7.0', 'iproute2');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (53, 53, '2.0.3', 'kbd');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (54, 55, '1.4.1', 'libpipeline');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (55, 56, '4.2.1', 'make');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (56, 57, '2.7.5', 'patch');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (57, 58, '1.10.10', 'dbus');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (58, 59, '2.28.1', 'util-linux');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (59, 60, '2.7.5', 'man-db');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (60, 61, '1.29', 'tar');
+INSERT INTO package (id, pkg_meta_id, version, source_name) VALUES (61, 62, '6.1', 'texinfo');
+
+-- Таблица: sets
+CREATE TABLE sets (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT);
+INSERT INTO sets (id, name) VALUES (1, 'system');
+INSERT INTO sets (id, name) VALUES (2, 'world');
+
+-- Таблица: package_meta
+CREATE TABLE package_meta (id INTEGER PRIMARY KEY AUTOINCREMENT, cat_id INTEGER REFERENCES category (id) ON DELETE CASCADE, name TEXT);
+INSERT INTO package_meta (id, cat_id, name) VALUES (1, 141, 'linux-headers');
+INSERT INTO package_meta (id, cat_id, name) VALUES (2, 131, 'man-pages');
+INSERT INTO package_meta (id, cat_id, name) VALUES (3, 142, 'glibc');
+INSERT INTO package_meta (id, cat_id, name) VALUES (4, 142, 'zlib');
+INSERT INTO package_meta (id, cat_id, name) VALUES (5, 131, 'file');
+INSERT INTO package_meta (id, cat_id, name) VALUES (6, 136, 'binutils');
+INSERT INTO package_meta (id, cat_id, name) VALUES (7, 39, 'gmp');
+INSERT INTO package_meta (id, cat_id, name) VALUES (8, 39, 'mpfr');
+INSERT INTO package_meta (id, cat_id, name) VALUES (9, 39, 'mpc');
+INSERT INTO package_meta (id, cat_id, name) VALUES (10, 136, 'gcc');
+INSERT INTO package_meta (id, cat_id, name) VALUES (11, 142, 'timezone-data');
+INSERT INTO package_meta (id, cat_id, name) VALUES (13, 4, 'bzip2');
+INSERT INTO package_meta (id, cat_id, name) VALUES (14, 48, 'pkg-config');
+INSERT INTO package_meta (id, cat_id, name) VALUES (15, 142, 'ncurses');
+INSERT INTO package_meta (id, cat_id, name) VALUES (16, 131, 'attr');
+INSERT INTO package_meta (id, cat_id, name) VALUES (17, 131, 'acl');
+INSERT INTO package_meta (id, cat_id, name) VALUES (18, 142, 'libcap');
+INSERT INTO package_meta (id, cat_id, name) VALUES (19, 131, 'sed');
+INSERT INTO package_meta (id, cat_id, name) VALUES (20, 131, 'shadow');
+INSERT INTO package_meta (id, cat_id, name) VALUES (21, 131, 'grep');
+INSERT INTO package_meta (id, cat_id, name) VALUES (22, 131, 'kmod');
+INSERT INTO package_meta (id, cat_id, name) VALUES (23, 131, 'systemd');
+INSERT INTO package_meta (id, cat_id, name) VALUES (24, 144, 'psmisc');
+INSERT INTO package_meta (id, cat_id, name) VALUES (25, 142, 'iana-etc');
+INSERT INTO package_meta (id, cat_id, name) VALUES (26, 136, 'm4');
+INSERT INTO package_meta (id, cat_id, name) VALUES (27, 136, 'bison');
+INSERT INTO package_meta (id, cat_id, name) VALUES (28, 136, 'flex');
+INSERT INTO package_meta (id, cat_id, name) VALUES (29, 142, 'readline');
+INSERT INTO package_meta (id, cat_id, name) VALUES (30, 25, 'bash');
+INSERT INTO package_meta (id, cat_id, name) VALUES (31, 136, 'bc');
+INSERT INTO package_meta (id, cat_id, name) VALUES (32, 136, 'libtool');
+INSERT INTO package_meta (id, cat_id, name) VALUES (33, 142, 'gdbm');
+INSERT INTO package_meta (id, cat_id, name) VALUES (34, 53, 'gperf');
+INSERT INTO package_meta (id, cat_id, name) VALUES (35, 39, 'expat');
+INSERT INTO package_meta (id, cat_id, name) VALUES (36, 108, 'inetutils');
+INSERT INTO package_meta (id, cat_id, name) VALUES (37, 38, 'perl');
+INSERT INTO package_meta (id, cat_id, name) VALUES (38, 43, 'XML-Parser');
+INSERT INTO package_meta (id, cat_id, name) VALUES (39, 53, 'intltool');
+INSERT INTO package_meta (id, cat_id, name) VALUES (40, 136, 'autoconf');
+INSERT INTO package_meta (id, cat_id, name) VALUES (41, 136, 'automake');
+INSERT INTO package_meta (id, cat_id, name) VALUES (42, 4, 'xz');
+INSERT INTO package_meta (id, cat_id, name) VALUES (43, 136, 'gettext');
+INSERT INTO package_meta (id, cat_id, name) VALUES (44, 144, 'procps');
+INSERT INTO package_meta (id, cat_id, name) VALUES (45, 139, 'e2fsprogs');
+INSERT INTO package_meta (id, cat_id, name) VALUES (46, 131, 'coreutils');
+INSERT INTO package_meta (id, cat_id, name) VALUES (47, 131, 'diffutils');
+INSERT INTO package_meta (id, cat_id, name) VALUES (48, 131, 'gawk');
+INSERT INTO package_meta (id, cat_id, name) VALUES (49, 131, 'findutils');
+INSERT INTO package_meta (id, cat_id, name) VALUES (50, 131, 'groff');
+INSERT INTO package_meta (id, cat_id, name) VALUES (51, 131, 'less');
+INSERT INTO package_meta (id, cat_id, name) VALUES (52, 131, 'iproute2');
+INSERT INTO package_meta (id, cat_id, name) VALUES (53, 131, 'kbd');
+INSERT INTO package_meta (id, cat_id, name) VALUES (54, 4, 'gzip');
+INSERT INTO package_meta (id, cat_id, name) VALUES (55, 39, 'libpipeline');
+INSERT INTO package_meta (id, cat_id, name) VALUES (56, 136, 'make');
+INSERT INTO package_meta (id, cat_id, name) VALUES (57, 136, 'patch');
+INSERT INTO package_meta (id, cat_id, name) VALUES (58, 131, 'dbus');
+INSERT INTO package_meta (id, cat_id, name) VALUES (59, 131, 'util-linux');
+INSERT INTO package_meta (id, cat_id, name) VALUES (60, 131, 'man-db');
+INSERT INTO package_meta (id, cat_id, name) VALUES (61, 4, 'tar');
+INSERT INTO package_meta (id, cat_id, name) VALUES (62, 131, 'texinfo');
+
+-- Таблица: config_cmds
+CREATE TABLE config_cmds (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id), cmd TEXT, dir STRING, dep_by_opt_id INTEGER REFERENCES config_opts (id));
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (1, 3, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --enable-kernel=2.6.32 --enable-obsolete-rpc', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (2, 5, '${SRC_DIR}/${PS}-${PV}/configure --shared --prefix=/usr', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (4, 6, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (6, 7, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --enable-shared --disable-werror', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (7, 8, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --enable-cxx --disable-static --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (8, 9, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static --enable-thread-safe --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (9, 10, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (10, 11, '${SRC_DIR}/${PS}-${PV}/configure --host=$(gcc -dumpmachine) --build=$(gcc -dumpmachine) --target=$(gcc -dumpmachine) --prefix=/usr --enable-languages=c,c++ --disable-multilib --disable-bootstrap --with-system-zlib', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (13, 13, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --with-internal-glib --disable-host-tool --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (14, 14, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --mandir=/usr/share/man --with-shared --without-normal --enable-pc-files --enable-widec', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (15, 15, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (16, 16, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static --libexecdir=/usr/lib', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (17, 18, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --bindir=/bin --htmldir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (18, 19, '${SRC_DIR}/${PS}-${PV}/configure --sysconfdir=/etc --with-group-name-max-length=32', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (19, 20, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (20, 22, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (21, 23, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (22, 24, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (23, 25, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --bindir=/bin', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (24, 26, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (25, 27, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --docdir=/usr/share/doc/${PN}-${PV} --without-bash-malloc --with-installed-readline', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (26, 28, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --with-readline --mandir=/usr/share/man --infodir=/usr/share/info', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (27, 29, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (28, 30, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static --enable-libgdbm-compat', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (29, 31, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (30, 32, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (31, 33, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --localstatedir=/var --disable-logger --disable-whois --disable-rcp --disable-rexec --disable-rlogin --disable-rsh --disable-servers', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (32, 34, 'BUILD_ZLIB=False BUILD_BZIP2=0 sh Configure -des -Dprefix=/usr -Dvendorprefix=/usr -Dman1dir=/usr/share/man/man1 -Dman3dir=/usr/share/man/man3 Dpager="/usr/bin/less -isR" -Duseshrplib', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (33, 35, 'perl Makefile.PL', '${SRC_DIR}/${PS}-${PV}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (34, 36, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (35, 37, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (36, 38, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (37, 39, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static --docdir=/usr/share/doc/${PN}-${PV} ${OPT nls ENDIS nls} ${OPT static-libs ENDIS static} ${OPT threads ENDIS threads}', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (38, 40, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --bindir=/bin --sysconfdir=/etc --with-rootlibdir=/lib --with-xz --with-zlib', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (39, 41, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static --docdir=/usr/share/doc/{$PN}-${PV}', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (40, 42, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --config-cache --with-rootprefix=/usr --with-rootlibdir=/usr/lib --with-sysvinit-path= --with-sysvrcnd-path= --enable-efi --enable-ema --enable-split-usr --disable-sysusers --without-python --disable-tests --disable-manpages  --with-dbuspolicydir=/etc/dbus-1/system.d --with-dbussessionservicedir=/usr/share/dbus-1/services --with-dbussystemservicedir=/usr/share/dbus-1/system-service --with-pamlibdir=/lib/security  --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (41, 43, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --exec-prefix= --libdir=/usr/lib --docdir=/usr/share/doc/procps-ng-3.3.12 --disable-static --disable-kill --with-systemd', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (42, 44, 'LIBS=-L/tools/lib CFLAGS=-I/tools/include PKG_CONFIG_PATH=/tools/lib/pkgconfig ${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --bindir=/bin --with-root-prefix="" --enable-elf-shlibs --disable-libblkid --disable-libuuid --disable-uuidd --disable-fsck', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (43, 45, 'FORCE_UNSAFE_CONFIGURE=1 ${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --enable-no-install-program=kill,uptime', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (44, 46, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (45, 47, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (46, 48, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --localstatedir=/var/lib/locate', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (47, 49, 'PAGE=A4 ${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (48, 50, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --sysconfdir=/etc', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (49, 51, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --bindir=/bin', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (50, 53, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-vlock', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (51, 54, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (52, 55, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (53, 56, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (54, 57, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --disable-doxygen-docs --disable-xml-docs --docdir=/usr/share/doc/${PN}-${PV} --with-console-auth-dir=/run/console', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (55, 58, '${SRC_DIR}/${PS}-${PV}/configure ADJTIME_PATH=/var/lib/hwclock/adjtime --docdir=/usr/share/doc/${PN}-${PV} --disable-chfn-chsh --disable-login --disable-nologin --disable-su --disable-setpriv --disable-runuser --disable-pylibmount --disable-static --without-python --enable-libmount-force-mountinfo', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (56, 59, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --docdir=/usr/share/doc/${PN}-${PV} --sysconfdir=/etc --disable-setuid --with-browser=/usr/bin/lynx --with-vgrind=/usr/bin/vgrind --with-grap=/usr/bin/grap', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (57, 60, 'FORCE_UNSAFE_CONFIGURE=1 ${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --bindir=/bin', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (58, 61, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static', '${BUILD_DIR}', NULL);
+INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (59, 5, 'minizip_opt', 'test_dir', 1);
 
 -- Таблица: category
 CREATE TABLE category (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT);
@@ -341,82 +789,6 @@ INSERT INTO category (id, name) VALUES (162, 'xfce-extra');
 -- Таблица: installed_pkg_files
 CREATE TABLE installed_pkg_files (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id) ON DELETE CASCADE, name TEXT);
 
--- Таблица: install_cmds
-CREATE TABLE install_cmds (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id), cmd STRING, dir STRING, dep_by_opt_id INTEGER REFERENCES config_opts (id));
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (1, 1, 'make INSTALL_HDR_PATH=${BIN_DIR}/usr headers_install', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (3, 2, 'make DESTDIR=${BIN_DIR} install', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (4, 3, 'mkdir lib', '${BIN_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (5, 3, 'mkdir -p usr/lib', '${BIN_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (6, 3, 'ln -s lib lib64', '${BIN_DIR}/usr', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (7, 3, 'ln -s lib lib64', '${BIN_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (11, 3, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (15, 4, 'make DESTDIR=${BIN_DIR} install', '${SRC_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (18, 5, 'make DESTDIR=${BIN_DIR} install', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (20, 6, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (22, 7, 'make DESTDIR=${BIN_DIR} tooldir=/usr install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (23, 8, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (24, 9, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (25, 10, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (26, 11, 'mkdir -p ${BIN_DIR}/{lib,usr}', '${BIN_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (27, 11, 'ln -sf lib lib64', '${BIN_DIR}/usr', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (28, 11, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (29, 12, 'make PREFIX=${BIN_DIR}/usr install', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (36, 13, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (37, 14, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (38, 15, 'mkdir -p ${BIN_DIR}/{lib,usr/lib/pkgconfig}', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (39, 15, 'make DESTDIR=${BIN_DIR} install install-dev install-lib', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (40, 16, 'mkdir -p ${BIN_DIR}/{lib,usr/lib/pkgconfig}', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (41, 16, 'make DESTDIR=${BIN_DIR} install install-dev install-lib', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (42, 17, 'mkdir -p ${BIN_DIR}/{lib,usr/lib}', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (43, 17, 'ln -sf lib ${BIN_DIR}/usr/lib64', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (44, 17, 'make RAISE_SETFCAP=no prefix=/usr DESTDIR=${BIN_DIR} install', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (45, 18, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (46, 19, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (47, 20, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (48, 21, 'make DESTDIR=${BIN_DIR} install', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (49, 22, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (50, 23, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (51, 24, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (52, 25, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (53, 26, 'mkdir -p ${BIN_DIR}/lib', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (54, 26, 'make SHLIB_LIBS=-lncurses DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (55, 27, 'mkdir -p ${BIN_DIR}\bin', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (56, 27, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (57, 28, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (58, 29, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (59, 30, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (60, 31, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (61, 32, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (62, 33, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (63, 34, 'BUILD_ZLIB=False BUILD_BZIP2=0 make DESTDIR=${BIN_DIR} install', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (64, 35, 'make DESTDIR=${BIN_DIR} install', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (65, 36, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (66, 37, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (67, 38, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (68, 39, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (69, 40, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (70, 41, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (71, 42, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (72, 43, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (73, 44, 'make DESTDIR=${BIN_DIR} install install-libs', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (74, 45, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (75, 46, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (76, 47, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (77, 48, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (78, 49, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (79, 50, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (80, 51, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (81, 52, 'make DOCDIR=/usr/share/doc/${PN}-${PV} DESTDIR=${BIN_DIR} install', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (82, 53, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (83, 54, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (84, 55, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (85, 56, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (86, 57, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (87, 58, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (88, 59, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (89, 60, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-INSERT INTO install_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (90, 61, 'make DESTDIR=${BIN_DIR} install', '${BUILD_DIR}', NULL);
-
 -- Таблица: prepare_cmds
 CREATE TABLE prepare_cmds (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id), cmd STRING, dir STRING, dep_by_opt_id INTEGER REFERENCES config_opts (id));
 INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (1, 1, 'make mrproper', '${SRC_DIR}/${PS}-${PV}', NULL);
@@ -462,382 +834,16 @@ INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (42, 53, '
 INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (43, 53, 'sed -i ''s/resizecons.8 //'' docs/man/man8/Makefile.in', '${SRC_DIR}/${PS}-${PV}', NULL);
 INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (44, 58, 'mkdir -p /var/lib/hwclock', '${SRC_DIR}/${PS}-${PV}', NULL);
 
--- Таблица: postinst_msg
-CREATE TABLE postinst_msg (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package_meta (id), msg STRING);
-INSERT INTO postinst_msg (id, pkg_id, msg) VALUES (1, 11, 'Please, update you "/etc/localtime"!');
-
--- Таблица: package_meta
-CREATE TABLE package_meta (id INTEGER PRIMARY KEY AUTOINCREMENT, cat_id INTEGER REFERENCES category (id) ON DELETE CASCADE, name TEXT);
-INSERT INTO package_meta (id, cat_id, name) VALUES (1, 141, 'linux-headers');
-INSERT INTO package_meta (id, cat_id, name) VALUES (2, 131, 'man-pages');
-INSERT INTO package_meta (id, cat_id, name) VALUES (3, 142, 'glibc');
-INSERT INTO package_meta (id, cat_id, name) VALUES (4, 142, 'zlib');
-INSERT INTO package_meta (id, cat_id, name) VALUES (5, 131, 'file');
-INSERT INTO package_meta (id, cat_id, name) VALUES (6, 136, 'binutils');
-INSERT INTO package_meta (id, cat_id, name) VALUES (7, 39, 'gmp');
-INSERT INTO package_meta (id, cat_id, name) VALUES (8, 39, 'mpfr');
-INSERT INTO package_meta (id, cat_id, name) VALUES (9, 39, 'mpc');
-INSERT INTO package_meta (id, cat_id, name) VALUES (10, 136, 'gcc');
-INSERT INTO package_meta (id, cat_id, name) VALUES (11, 142, 'timezone-data');
-INSERT INTO package_meta (id, cat_id, name) VALUES (13, 4, 'bzip2');
-INSERT INTO package_meta (id, cat_id, name) VALUES (14, 48, 'pkg-config');
-INSERT INTO package_meta (id, cat_id, name) VALUES (15, 142, 'ncurses');
-INSERT INTO package_meta (id, cat_id, name) VALUES (16, 131, 'attr');
-INSERT INTO package_meta (id, cat_id, name) VALUES (17, 131, 'acl');
-INSERT INTO package_meta (id, cat_id, name) VALUES (18, 142, 'libcap');
-INSERT INTO package_meta (id, cat_id, name) VALUES (19, 131, 'sed');
-INSERT INTO package_meta (id, cat_id, name) VALUES (20, 131, 'shadow');
-INSERT INTO package_meta (id, cat_id, name) VALUES (21, 131, 'grep');
-INSERT INTO package_meta (id, cat_id, name) VALUES (22, 131, 'kmod');
-INSERT INTO package_meta (id, cat_id, name) VALUES (23, 131, 'systemd');
-INSERT INTO package_meta (id, cat_id, name) VALUES (24, 144, 'psmisc');
-INSERT INTO package_meta (id, cat_id, name) VALUES (25, 142, 'iana-etc');
-INSERT INTO package_meta (id, cat_id, name) VALUES (26, 136, 'm4');
-INSERT INTO package_meta (id, cat_id, name) VALUES (27, 136, 'bison');
-INSERT INTO package_meta (id, cat_id, name) VALUES (28, 136, 'flex');
-INSERT INTO package_meta (id, cat_id, name) VALUES (29, 142, 'readline');
-INSERT INTO package_meta (id, cat_id, name) VALUES (30, 25, 'bash');
-INSERT INTO package_meta (id, cat_id, name) VALUES (31, 136, 'bc');
-INSERT INTO package_meta (id, cat_id, name) VALUES (32, 136, 'libtool');
-INSERT INTO package_meta (id, cat_id, name) VALUES (33, 142, 'gdbm');
-INSERT INTO package_meta (id, cat_id, name) VALUES (34, 53, 'gperf');
-INSERT INTO package_meta (id, cat_id, name) VALUES (35, 39, 'expat');
-INSERT INTO package_meta (id, cat_id, name) VALUES (36, 108, 'inetutils');
-INSERT INTO package_meta (id, cat_id, name) VALUES (37, 38, 'perl');
-INSERT INTO package_meta (id, cat_id, name) VALUES (38, 43, 'XML-Parser');
-INSERT INTO package_meta (id, cat_id, name) VALUES (39, 53, 'intltool');
-INSERT INTO package_meta (id, cat_id, name) VALUES (40, 136, 'autoconf');
-INSERT INTO package_meta (id, cat_id, name) VALUES (41, 136, 'automake');
-INSERT INTO package_meta (id, cat_id, name) VALUES (42, 4, 'xz');
-INSERT INTO package_meta (id, cat_id, name) VALUES (43, 136, 'gettext');
-INSERT INTO package_meta (id, cat_id, name) VALUES (44, 144, 'procps');
-INSERT INTO package_meta (id, cat_id, name) VALUES (45, 139, 'e2fsprogs');
-INSERT INTO package_meta (id, cat_id, name) VALUES (46, 131, 'coreutils');
-INSERT INTO package_meta (id, cat_id, name) VALUES (47, 131, 'diffutils');
-INSERT INTO package_meta (id, cat_id, name) VALUES (48, 131, 'gawk');
-INSERT INTO package_meta (id, cat_id, name) VALUES (49, 131, 'findutils');
-INSERT INTO package_meta (id, cat_id, name) VALUES (50, 131, 'groff');
-INSERT INTO package_meta (id, cat_id, name) VALUES (51, 131, 'less');
-INSERT INTO package_meta (id, cat_id, name) VALUES (52, 131, 'iproute2');
-INSERT INTO package_meta (id, cat_id, name) VALUES (53, 131, 'kbd');
-INSERT INTO package_meta (id, cat_id, name) VALUES (54, 4, 'gzip');
-INSERT INTO package_meta (id, cat_id, name) VALUES (55, 39, 'libpipeline');
-INSERT INTO package_meta (id, cat_id, name) VALUES (56, 136, 'make');
-INSERT INTO package_meta (id, cat_id, name) VALUES (57, 136, 'patch');
-INSERT INTO package_meta (id, cat_id, name) VALUES (58, 131, 'dbus');
-INSERT INTO package_meta (id, cat_id, name) VALUES (59, 131, 'util-linux');
-INSERT INTO package_meta (id, cat_id, name) VALUES (60, 131, 'man-db');
-INSERT INTO package_meta (id, cat_id, name) VALUES (61, 4, 'tar');
-INSERT INTO package_meta (id, cat_id, name) VALUES (62, 131, 'texinfo');
-
--- Таблица: config_aliases
-CREATE TABLE config_aliases (id INTEGER PRIMARY KEY AUTOINCREMENT, alias TEXT, on_value TEXT, off_value TEXT);
-
--- Таблица: postinstall_cmds
-CREATE TABLE postinstall_cmds (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id), cmd STRING, dir STRING, dep_by_opt_id INTEGER REFERENCES config_opts (id));
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (1, 1, 'find ${BIN_DIR}/usr/include \( -name .install -o -name ..install.cmd \) -delete', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (2, 3, 'cp ${SRC_DIR}/${PS}-${PV}/nscd/nscd.conf ${BIN_DIR}/etc/nscd.conf', '${BIN_DIR}/etc', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (3, 3, 'mkdir -p ${BIN_DIR}/var/cache/nscd', NULL, NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (4, 3, 'install -Dm644 ${SRC_DIR}/${PS}-${PV}/nscd/nscd.tmpfiles ${BIN_DIR}/usr/lib/tmpfiles.d/nscd.conf', NULL, NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (5, 3, 'install -Dm644 ${SRC_DIR}/${PS}-${PV}/nscd/nscd.service ${BIN_DIR}/lib/systemd/system/nscd.service', NULL, NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (6, 3, 'cat > ${BIN_DIR}/etc/nsswitch.conf << "EOF"
-# Begin /etc/nsswitch.conf
-
-passwd: files
-group: files
-shadow: files
-
-hosts: files dns myhostname
-networks: files
-
-protocols: files
-services: files
-ethers: files
-rpc: files
-
-# End /etc/nsswitch.conf
-EOF
-', NULL, NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (7, 3, 'mkdir -p ${BIN_DIR}/usr/lib/locale', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (11, 3, 'install -m  774 ${PKG_SOURCES}/locale-gen ${BIN_DIR}/usr/sbin/', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (12, 3, 'install -m  644 ${PKG_SOURCES}/locale.conf ${BIN_DIR}/etc/', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (14, 5, 'mkdir -p ${BIN_DIR}/lib/', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (15, 5, 'mv ${BIN_DIR}/usr/lib/libz.so.* ${BIN_DIR}/lib/', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (18, 5, 'ln -sfv ../../lib/$(readlink ${BIN_DIR}/usr/lib/libz.so) ${BIN_DIR}/usr/lib/libz.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (20, 11, 'ln -s ../usr/bin/cpp ${BIN_DIR}/lib/', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (21, 11, 'ln -s gcc ${BIN_DIR}/usr/bin/cc', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (22, 11, 'install -dm755 ${BIN_DIR}/usr/lib/bfd-plugins', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (23, 11, 'ln -sf ../../libexec/gcc/$(gcc -dumpmachine)/${PV}/liblto_plugin.so ${BIN_DIR}/usr/lib/bfd-plugins/', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (24, 11, 'mkdir -p ${BIN_DIR}/usr/share/gdb/auto-load/usr/lib', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (25, 11, 'mv ${BIN_DIR}/usr/lib/*gdb.py ${BIN_DIR}/usr/share/gdb/auto-load/usr/lib', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (26, 12, 'mkdir -p ${BIN_DIR}/{bin,lib,usr}', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (27, 12, 'cp bzip2-shared ${BIN_DIR}/bin/bzip2', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (28, 12, 'cp -a libbz2.so* ${BIN_DIR}/lib/', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (29, 12, 'ln -s ../../lib/libbz2.so.1.0 ${BIN_DIR}/usr/lib/libbz2.so', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (30, 12, 'rm ${BIN_DIR}/usr/lib/{bunzip2,bzcat,bzip2}', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (31, 12, 'ln -sf bzip2 ${BIN_DIR}/bin/bunzip2', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (33, 12, 'ln -sf bzip2 ${BIN_DIR}/bin/bzcat', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (34, 14, 'mkdir -p ${BIN_DIR}/{lib,usr/lib/pkgconfig}', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (35, 14, 'mv -v ${BIN_DIR}/usr/lib/libncursesw.so.6* ${BIN_DIR}/lib/', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (36, 14, 'ln -sfv ../../lib/$(readlink ${BIN_DIR}/usr/lib/libncursesw.so) ${BIN_DIR}/usr/lib/libncursesw.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (37, 14, 'for lib in ncurses form panel menu ; do
-    rm -f                    ${BIN_DIR}/usr/lib/lib${lib}.so
-    echo "INPUT(-l${lib}w)" > ${BIN_DIR}/usr/lib/lib${lib}.so
-    ln -sf ${lib}w.pc        ${BIN_DIR}/usr/lib/pkgconfig/${lib}.pc
-done', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (38, 14, 'rm vf  ${BIN_DIR}/usr/lib/libcursesw.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (39, 14, 'echo "INPUT(-lncursesw)" > ${BIN_DIR}/usr/lib/libcursesw.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (40, 14, 'ln -sf libncurses.so ${BIN_DIR}/usr/lib/libcurses.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (43, 15, 'chmod 0755 ${BIN_DIR}/usr/lib/libattr.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (44, 15, 'mv ${BIN_DIR}/usr/lib/libattr.so.* ${BIN_DIR}/lib/', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (45, 15, 'ln -sfv ../../lib/$(readlink ${BIN_DIR}/usr/lib/libattr.so) ${BIN_DIR}/usr/lib/libattr.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (46, 16, 'chmod 755 ${BIN_DIR}/usr/lib/libacl.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (47, 16, 'mv ${BIN_DIR}/usr/lib/libacl.so.* ${BIN_DIR}/lib', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (48, 16, 'ln -sf ../../lib/$(readlink ${BIN_DIR}/usr/lib/libacl.so) ${BIN_DIR}/usr/lib/libacl.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (49, 17, 'chmod -v 755 ${BIN_DIR}/usr/lib/libcap.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (50, 17, 'mv -v ${BIN_DIR}/usr/lib/libcap.so.* ${BIN_DIR}/lib', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (51, 17, 'ln -sfv ../../lib/$(readlink ${BIN_DIR}/usr/lib/libcap.so) ${BIN_DIR}/usr/lib/libcap.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (52, 19, 'mv -v ${BIN_DIR}/usr/bin/passwd ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (53, 20, 'mkdir -p ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (54, 20, 'mv ${BIN_DIR}/usr/bin/fuser ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (55, 20, 'mv ${BIN_DIR}/usr/bin/killall ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (56, 24, 'ln -s flex ${BIN_DIR}/usr/bin/lex', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (57, 26, 'mv ${BIN_DIR}/usr/lib/lib{readline,history}.so.* ${BIN_DIR}/lib', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (58, 26, 'ln -sf ../../lib/$(readlink ${BIN_DIR}/usr/lib/libreadline.so) ${BIN_DIR}/usr/lib/libreadline.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (59, 26, 'ln -sf ../../lib/$(readlink ${BIN_DIR}/usr/lib/libhistory.so ) ${BIN_DIR}/usr/lib/libhistory.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (60, 27, 'mv -f ${BIN_DIR}/usr/bin/bash ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (61, 27, 'ln -s bash ${BIN_DIR}/bin/sh', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (62, 33, 'mkdir -p ${BIN_DIR}/{bin,sbin}', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (63, 33, 'mv ${BIN_DIR}/usr/bin/{hostname,ping,ping6,traceroute} ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (64, 33, 'mv ${BIN_DIR}/usr/bin/ifconfig ${BIN_DIR}/sbin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (65, 39, 'mkdir -p ${BIN_DIR}/{bin,lib}', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (66, 39, 'mv ${BIN_DIR}/usr/bin/{lzma,unlzma,lzcat,xz,unxz,xzcat} ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (67, 39, 'mv ${BIN_DIR}/usr/lib/liblzma.so.* ${BIN_DIR}/lib', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (68, 39, 'ln -sf ../../lib/$(readlink ${BIN_DIR}/usr/lib/liblzma.so) ${BIN_DIR}/usr/lib/liblzma.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (69, 40, 'mkdir -p ${BIN_DIR}/sbin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (70, 40, 'for target in depmod insmod lsmod modinfo modprobe rmmod; do
-  ln -sf ../bin/kmod ${BIN_DIR}/sbin/$target
-done', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (71, 40, 'ln -sf kmod ${BIN_DIR}/bin/lsmod', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (72, 41, 'chmod 0755 ${BIN_DIR}/usr/lib/preloadable_libintl.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (73, 42, 'mkdir -p ${BIN_DIR}/sbin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (74, 42, 'rm -rf ${BIN_DIR}/usr/lib/rpm', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (75, 42, 'ln -sf /usr/lib/systemd/resolv.conf ${BIN_DIR}/etc/resolv.conf', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (76, 42, 'for tool in runlevel reboot shutdown poweroff halt telinit; do
-    ln -sf /usr/bin/systemctl ${BIN_DIR}/sbin/${tool}
-done', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (77, 42, 'ln -sf /usr/lib/systemd/systemd ${BIN_DIR}/sbin/init', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (78, 42, 'mkdir -p ${BIN_DIR}/etc/pam.d/', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (79, 42, 'cat >> ${BIN_DIR}/etc/pam.d/system-session << "EOF" &&
-# Begin Systemd addition
-
-session   required    pam_loginuid.so
-session   optional    pam_systemd.so
-
-# End Systemd addition
-EOF
-', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (80, 42, 'cat > ${BIN_DIR}/etc/pam.d/systemd-user << "EOF"
-# Begin /etc/pam.d/systemd-user
-
-account  required pam_access.so
-account  include  system-account
-
-session  required pam_env.so
-session  required pam_limits.so
-session  include  system-session
-
-auth     required pam_deny.so
-password required pam_deny.so
-
-# End /etc/pam.d/systemd-user
-EOF
-', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (85, 43, 'mkdir ${BIN_DIR}/lib', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (86, 43, 'mv ${BIN_DIR}/usr/lib/libprocps.so.* ${BIN_DIR}/lib', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (87, 43, 'ln -sf ../../lib/$(readlink ${BIN_DIR}/usr/lib/libprocps.so) ${BIN_DIR}/usr/lib/libprocps.so', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (88, 44, 'chmod -v u+w ${BIN_DIR}/usr/lib/{libcom_err,libe2p,libext2fs,libss}.a', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (89, 45, 'mkdir -p ${BIN_DIR}/{bin,usr/bin,usr/sbin,usr/share/man/man8}', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (90, 45, 'mv ${BIN_DIR}/usr/bin/{cat,chgrp,chmod,chown,cp,date,dd,df,echo} ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (91, 45, 'mv ${BIN_DIR}/usr/bin/{false,ln,ls,mkdir,mknod,mv,pwd,rm} ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (92, 45, 'mv ${BIN_DIR}/usr/bin/{rmdir,stty,sync,true,uname} ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (93, 45, 'mv ${BIN_DIR}/usr/bin/chroot ${BIN_DIR}/usr/sbin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (94, 45, 'mv ${BIN_DIR}/usr/share/man/man1/chroot.1 ${BIN_DIR}/usr/share/man/man8/chroot.8', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (95, 45, 'sed -i s/\"1\"/\"8\"/1 ${BIN_DIR}/usr/share/man/man8/chroot.8', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (96, 45, 'mv  ${BIN_DIR}/usr/bin/{head,sleep,nice,test,[} ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (97, 48, 'mkdir -p ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (98, 48, 'mv -v ${BIN_DIR}/usr/bin/find ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (99, 48, 'sed -i ''s|find:=${BINDIR}|find:=/bin|'' ${BIN_DIR}/usr/bin/updatedb', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (100, 51, 'mkdir -p ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (101, 51, 'mv ${BIN_DIR}/usr/bin/gzip ${BIN_DIR}/bin', '${BIN_DIR}', NULL);
-INSERT INTO postinstall_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (102, 59, 'sed -i "s:man root:root root:g" ${BIN_DIR}/usr/lib/tmpfiles.d/man-db.conf', '${BIN_DIR}', NULL);
-
--- Таблица: set_pkgs
-CREATE TABLE set_pkgs (id INTEGER PRIMARY KEY AUTOINCREMENT, set_id INTEGER REFERENCES sets (id), pkg_id INTEGER REFERENCES package (id));
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (1, 1, 12);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (2, 1, 51);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (3, 1, 39);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (4, 1, 60);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (5, 1, 27);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (6, 1, NULL);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (7, 1, 37);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (8, 1, 38);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (9, 1, 29);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (10, 1, 45);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (11, 1, 46);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (12, 1, 6);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (13, 1, 48);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (14, 1, 47);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (15, 1, 25);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (16, 1, 50);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (17, 1, NULL);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (18, 1, 18);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (19, 1, 7);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (20, 1, 23);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (21, 1, 24);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (22, 1, 11);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (23, 1, 41);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (24, 1, NULL);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (25, 1, 55);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (26, 1, 56);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (27, 1, NULL);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (28, 1, 3);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (29, 1, 1);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (30, 1, NULL);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (31, 1, 13);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (32, 1, 19);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (33, 1, NULL);
-INSERT INTO set_pkgs (id, set_id, pkg_id) VALUES (34, 1, 40);
-
--- Таблица: make_cmds
-CREATE TABLE make_cmds (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id), cmd TEXT, dir STRING, dep_by_opt_id INTEGER REFERENCES config_opts (id));
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (1, 3, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (2, 4, 'make ${MAKEOPTS}', '${SRC_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (3, 5, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (5, 6, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (6, 7, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (7, 8, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (8, 9, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (9, 10, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (10, 11, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (11, 12, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (12, 13, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (13, 14, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (14, 15, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (15, 16, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (16, 17, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (17, 18, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (18, 19, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (19, 20, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (20, 21, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (21, 22, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (22, 23, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (23, 24, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (24, 25, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (25, 26, 'make SHLIB_LIBS=-lncurses ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (26, 27, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (27, 28, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (28, 29, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (29, 30, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (30, 31, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (31, 32, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (32, 33, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (33, 34, 'BUILD_ZLIB=False BUILD_BZIP2=0 make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (34, 35, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (35, 36, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (36, 37, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (37, 38, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (38, 39, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (39, 40, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (40, 41, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (41, 42, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (42, 43, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (43, 44, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (44, 45, 'FORCE_UNSAFE_CONFIGURE=1 make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (45, 46, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (46, 47, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (47, 48, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (48, 49, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (49, 50, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (50, 51, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (51, 52, 'make ${MAKEOPTS}', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (52, 53, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (53, 54, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (54, 55, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (55, 56, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (56, 57, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (57, 58, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (58, 59, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (59, 60, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-INSERT INTO make_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (60, 61, 'make ${MAKEOPTS}', '${BUILD_DIR}', NULL);
-
--- Таблица: config_cmds
-CREATE TABLE config_cmds (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id), cmd TEXT, dir STRING, dep_by_opt_id INTEGER REFERENCES config_opts (id));
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (1, 3, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --enable-kernel=2.6.32 --enable-obsolete-rpc', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (2, 5, '${SRC_DIR}/${PS}-${PV}/configure --shared --prefix=/usr', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (4, 6, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (6, 7, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --enable-shared --disable-werror', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (7, 8, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --enable-cxx --disable-static --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (8, 9, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static --enable-thread-safe --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (9, 10, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (10, 11, '${SRC_DIR}/${PS}-${PV}/configure --host=$(gcc -dumpmachine) --build=$(gcc -dumpmachine) --target=$(gcc -dumpmachine) --prefix=/usr --enable-languages=c,c++ --disable-multilib --disable-bootstrap --with-system-zlib', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (11, 12, 'make -f Makefile-libbz2_so', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (12, 12, 'make clean', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (13, 13, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --with-internal-glib --disable-host-tool --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (14, 14, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --mandir=/usr/share/man --with-shared --without-normal --enable-pc-files --enable-widec', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (15, 15, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (16, 16, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static --libexecdir=/usr/lib', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (17, 18, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --bindir=/bin --htmldir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (18, 19, '${SRC_DIR}/${PS}-${PV}/configure --sysconfdir=/etc --with-group-name-max-length=32', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (19, 20, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (20, 22, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (21, 23, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (22, 24, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (23, 25, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --bindir=/bin', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (24, 26, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (25, 27, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --docdir=/usr/share/doc/${PN}-${PV} --without-bash-malloc --with-installed-readline', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (26, 28, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --with-readline --mandir=/usr/share/man --infodir=/usr/share/info', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (27, 29, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (28, 30, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static --enable-libgdbm-compat', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (29, 31, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (30, 32, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (31, 33, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --localstatedir=/var --disable-logger --disable-whois --disable-rcp --disable-rexec --disable-rlogin --disable-rsh --disable-servers', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (32, 34, 'BUILD_ZLIB=False BUILD_BZIP2=0 sh Configure -des -Dprefix=/usr -Dvendorprefix=/usr -Dman1dir=/usr/share/man/man1 -Dman3dir=/usr/share/man/man3 Dpager="/usr/bin/less -isR" -Duseshrplib', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (33, 35, 'perl Makefile.PL', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (34, 36, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (35, 37, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (36, 38, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (37, 39, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (38, 40, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --bindir=/bin --sysconfdir=/etc --with-rootlibdir=/lib --with-xz --with-zlib', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (39, 41, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static --docdir=/usr/share/doc/{$PN}-${PV}', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (40, 42, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --config-cache --with-rootprefix=/usr --with-rootlibdir=/usr/lib --with-sysvinit-path= --with-sysvrcnd-path= --enable-efi --enable-ema --enable-split-usr --disable-sysusers --without-python --disable-tests --disable-manpages  --with-dbuspolicydir=/etc/dbus-1/system.d --with-dbussessionservicedir=/usr/share/dbus-1/services --with-dbussystemservicedir=/usr/share/dbus-1/system-service --with-pamlibdir=/lib/security  --docdir=/usr/share/doc/${PN}-${PV}', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (41, 43, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --exec-prefix= --libdir=/usr/lib --docdir=/usr/share/doc/procps-ng-3.3.12 --disable-static --disable-kill --with-systemd', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (42, 44, 'LIBS=-L/tools/lib CFLAGS=-I/tools/include PKG_CONFIG_PATH=/tools/lib/pkgconfig ${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --bindir=/bin --with-root-prefix="" --enable-elf-shlibs --disable-libblkid --disable-libuuid --disable-uuidd --disable-fsck', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (43, 45, 'FORCE_UNSAFE_CONFIGURE=1 ${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --enable-no-install-program=kill,uptime', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (44, 46, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (45, 47, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (46, 48, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --localstatedir=/var/lib/locate', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (47, 49, 'PAGE=A4 ${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (48, 50, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --sysconfdir=/etc', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (49, 51, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --bindir=/bin', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (50, 53, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-vlock', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (51, 54, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (52, 55, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (53, 56, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (54, 57, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --disable-doxygen-docs --disable-xml-docs --docdir=/usr/share/doc/${PN}-${PV} --with-console-auth-dir=/run/console', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (55, 58, '${SRC_DIR}/${PS}-${PV}/configure ADJTIME_PATH=/var/lib/hwclock/adjtime --docdir=/usr/share/doc/${PN}-${PV} --disable-chfn-chsh --disable-login --disable-nologin --disable-su --disable-setpriv --disable-runuser --disable-pylibmount --disable-static --without-python --enable-libmount-force-mountinfo', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (56, 59, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --docdir=/usr/share/doc/${PN}-${PV} --sysconfdir=/etc --disable-setuid --with-browser=/usr/bin/lynx --with-vgrind=/usr/bin/vgrind --with-grap=/usr/bin/grap', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (57, 60, 'FORCE_UNSAFE_CONFIGURE=1 ${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --bindir=/bin', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (58, 61, '${SRC_DIR}/${PS}-${PV}/configure --prefix=/usr --disable-static', '${BUILD_DIR}', NULL);
-INSERT INTO config_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (59, 5, 'minizip_opt', 'test_dir', 1);
-
--- Таблица: packages_sys
-CREATE TABLE packages_sys (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package (id) ON DELETE CASCADE);
-
--- Таблица: pkg_opts
-CREATE TABLE pkg_opts (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package_meta (id), opt_id INTEGER REFERENCES config_opts (id), "default" BOOLEAN DEFAULT (0));
-INSERT INTO pkg_opts (id, pkg_id, opt_id, "default") VALUES (1, 4, 1, 0);
-INSERT INTO pkg_opts (id, pkg_id, opt_id, "default") VALUES (2, 4, 3, 0);
+-- Таблица: pkg_deps
+CREATE TABLE pkg_deps (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package_meta (id) ON DELETE CASCADE, dep_py_pkg_id INTEGER REFERENCES package_meta (id), dep_by_opt INTEGER);
+INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (1, 3, 11, NULL);
+INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (2, 3, 1, NULL);
+INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (3, 10, 7, NULL);
+INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (4, 10, 8, NULL);
+INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (5, 10, 9, NULL);
+INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (7, 8, 7, NULL);
+INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (8, 9, 7, NULL);
+INSERT INTO pkg_deps (id, pkg_id, dep_py_pkg_id, dep_by_opt) VALUES (9, 9, 8, NULL);
 
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;

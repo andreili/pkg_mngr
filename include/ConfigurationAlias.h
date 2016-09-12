@@ -20,6 +20,11 @@ namespace package_manager
         public:
             ConfigurationAlias(SQLite::Statement &data);
             virtual ~ConfigurationAlias();
+
+            int get_id() { return m_id; }
+            std::string get_alias() { return m_alias; }
+            std::string get_on() { return m_on; }
+            std::string get_off() { return m_off; }
         protected:
         private:
             int         m_id;

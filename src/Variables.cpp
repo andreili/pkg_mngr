@@ -79,7 +79,7 @@ std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
 
     str = std::regex_replace(str, std::regex("\\$\\{(MAKEOPTS)\\}"), get_var("MAKEOPTS"));
 
-    return str;
+    return pkg->parse_opts(str);
 }
 
 void Variables::set_defaults()

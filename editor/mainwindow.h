@@ -102,6 +102,8 @@ private slots:
 
     void m_use_list_item_changed(int index);
 
+    void on_lwOpts_customContextMenuRequested(const QPoint &pos);
+
 private:
     Ui::MainWindow *ui;
 

@@ -45,7 +45,8 @@ void MainWindow::on_aOpenDB_triggered()
     if (dialog.exec())
     {
         QString fn = dialog.selectedFiles()[0].toUpper();*/
-        QString fn = "d:/Projects/pkg_mngr/build-pkg_mngr-Desktop-Debug/packages.sql3";
+        //QString fn = "d:/Projects/pkg_mngr/build-pkg_mngr-Desktop-Debug/packages.sql3";
+        QString fn = "d:/Dev/Projects/pkg_mngr/packages.sql3";
         m_db = QSqlDatabase::addDatabase("QSQLITE");
         m_db.setDatabaseName(fn);
         if (!m_db.open())
@@ -267,12 +268,12 @@ void MainWindow::on_twVersions_currentItemChanged(QTableWidgetItem *current, QTa
                                     " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
                                     " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
                                     " WHERE cmds.pkg_id=:pkg;");
-        fill_opts_list(ui->twInstall, "SELECT install_cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
+        fill_opts_list(ui->twInstall, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
                                       " FROM install_cmds AS cmds"
                                       " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
                                       " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
                                       " WHERE cmds.pkg_id=:pkg;");
-        fill_opts_list(ui->twPostInst, "SELECT install_cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
+        fill_opts_list(ui->twPostInst, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
                                        " FROM postinstall_cmds AS cmds"
                                        " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
                                        " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
@@ -963,6 +964,7 @@ void MainWindow::on_twPckgs_itemChanged(QTreeWidgetItem *item, int column)
      \
             m_cur_list = tw; \
             m_use_list->clear(); \
+            m_use_list->addItem("<none>", QVariant()); \
             QSqlQuery q; \
             q.prepare("SELECT pkg_opts.opt_id, cfg.name AS opt_name" \
                       " FROM pkg_opts" \
@@ -1024,6 +1026,7 @@ void MainWindow::on_lwOpts_currentItemChanged(QListWidgetItem *current, QListWid
     m_cur_list = ui->lwOpts;
 
     m_use_list->clear();
+    m_use_list->addItem("<none>", QVariant());
     QSqlQuery q("SELECT * FROM config_opts;");
     q.exec();
     while (q.next())
@@ -1075,4 +1078,10 @@ void MainWindow::m_use_list_item_changed(int index)
         update_opt_cmd(ui->twInstall, "UPDATE install_cmds SET dep_by_opt_id=:opt WHERE id=:id;")
     else if (m_cur_list == ui->twPostInst)
         update_opt_cmd(ui->twPostInst, "UPDATE postinst_cmds SET dep_by_opt_id=:opt WHERE id=:id;")
+}
+
+void MainWindow::on_lwOpts_customContextMenuRequested(const QPoint &pos)
+{
+    m_opt_menu->actions().at(1)->setEnabled(ui->lwOpts->selectedItems().size() != 0);
+    m_opt_menu->popup(ui->lwOpts->viewport()->mapToGlobal(pos));
 }

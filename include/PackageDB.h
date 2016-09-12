@@ -20,6 +20,8 @@ namespace package_manager
             PackageDB();
             virtual ~PackageDB();
 
+            void fill_aliases();
+
             void transaction_start();
             void transaction_commit();
             void transaction_rollback();
