@@ -149,10 +149,15 @@ void Variables::read_opts()
                                                opt_str = opt_str.erase(0, 1);
                                            }
                                            else
+                                           {
+                                               pkg_opts.erase(0, (pos==std::string::npos) ? pos : (pos + 1));
                                                continue;
+                                           }
 
-                                           ConfigurationOption *opt = PackageManager::get_db_obj()->get_config_opt(opt_str);
                                            pkg_opts.erase(0, (pos==std::string::npos) ? pos : (pos + 1));
+                                           ConfigurationOption *opt = PackageManager::get_db_obj()->get_config_opt(opt_str);
+                                           if (opt == nullptr)
+                                               continue;
 
                                            m_opts.push_back({pkg: pkg,
                                                              opt: opt,
