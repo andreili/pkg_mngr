@@ -29,18 +29,9 @@ Package::Package(PackageMeta *meta, SQLite::Statement &data)
     m_id = data.getColumn("id");
     m_version = data.getColumn("version").getText();
     m_source = data.getColumn("source_name").getText();
-
-    PackageManager::get_db_obj()->get_pkg_opts(this, [this](ConfigurationOption *opt, bool def_on)
-        {
-            EOptState old_state = PackageManager::get_db_obj()->get_opt_state(this, opt);
-            EOptState new_state = Variables::get_instance()->get_pkg_opt(this, opt);
-            this->m_options.push_back({default_on: def_on,
-                                       state: EOptState::OPT_SET,
-                                       changed: (new_state != old_state),
-                                       option: opt});
-        });
-
     m_tmp_dir = Variables::get_instance()->get_var(PKG_VAR_PATH_TMP) + m_meta->get_name() + '-' + m_version + '/';
+    update_opts();
+
     PackageManager::add_pkg(this);
 }
 
@@ -68,12 +59,30 @@ bool Package::check_installed()
    return PackageManager::get_db_obj()->get_installed(this);
 }
 
+void Package::update_opts()
+{
+    m_options.clear();
+    PackageManager::get_db_obj()->get_pkg_opts(this, [this](ConfigurationOption *opt, bool def_on)
+        {
+            EOptState old_state = PackageManager::get_db_obj()->get_opt_state(this, opt);
+            EOptState new_state = Variables::get_instance()->get_pkg_opt(this, opt);
+            this->m_options.push_back({default_on: def_on,
+                                       state: new_state,
+                                       changed: (new_state != old_state),
+                                       option: opt});
+        });
+}
+
 bool Package::check_opt(int opt_id)
 {
     for (config_opt_rec_t &opt : m_options)
-        if ((opt.option->get_id() == opt_id) &&
-            (opt.state == EOptState::OPT_SET))
-            return true;
+        if (opt.option->get_id() == opt_id)
+        {
+            if (opt.state == EOptState::OPT_SET)
+                return true;
+            if ((opt.state == EOptState::OPT_UNDEF) && (opt.default_on))
+                return true;
+        }
     return false;
 }
 
@@ -470,10 +479,11 @@ void Package::print_opts()
 {
     for (config_opt_rec_t &opt : m_options)
     {
-        std::string color = (opt.default_on ? "\x1B[33m" :
-                             (opt.changed ? COLOR_GREEN :
-                              ((opt.state == EOptState::OPT_SET) ? "\x1B[32m" : COLOR_RED)));
-        printf("%s%s%s\x1B[0m ", color.c_str(), (opt.state == EOptState::OPT_SET) ? "+" : "-", opt.option->get_name().c_str());
+        std::string color = std::string(opt.changed ? BOLD_ON : "") + (opt.state == EOptState::OPT_UNDEF ?
+                                                                           (opt.default_on ? COLOR_YELLOW : COLOR_RED) :
+                                                                           (opt.state == EOptState::OPT_SET) ? COLOR_GREEN : COLOR_RED) +
+                (opt.changed ? BOLD_OFF : "");
+        printf("%s%s%s\x1B[0m ", color.c_str(), (check_opt(opt.option->get_id())) ? "+" : "-", opt.option->get_name().c_str());
     }
 }
 

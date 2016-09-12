@@ -59,10 +59,10 @@ EOptState Variables::get_pkg_opt(Package *pkg, ConfigurationOption *opt)
         if ((opt_sets.pkg->get_id() == pkg->get_id()) &&
             (opt_sets.opt->get_id() == opt->get_id()))
             return opt_sets.opt_state;
-    return EOptState::OPT_SET;
+    return EOptState::OPT_UNDEF;
 }
 
-std::string Variables::parse_vars(Package *pkg, const std::string str_raw)
+std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
 {
     std::string str = str_raw;
 
@@ -141,10 +141,15 @@ void Variables::read_opts()
                                            if (opt_str[0] == '-')
                                            {
                                                state = EOptState::OPT_CLEAR;
-                                               opt_str.erase(0, 1);
+                                               opt_str = opt_str.erase(0, 1);
+                                           }
+                                           else if (opt_str[0] == '+')
+                                           {
+                                               state = EOptState::OPT_SET;
+                                               opt_str = opt_str.erase(0, 1);
                                            }
                                            else
-                                               state = EOptState::OPT_SET;
+                                               continue;
 
                                            ConfigurationOption *opt = PackageManager::get_db_obj()->get_config_opt(opt_str);
                                            pkg_opts.erase(0, (pos==std::string::npos) ? pos : (pos + 1));
@@ -153,6 +158,8 @@ void Variables::read_opts()
                                                              opt: opt,
                                                              opt_state: state});
                                        }
+
+                                       pkg->update_opts();
                                    }
                                    delete str;
                                }

@@ -39,7 +39,7 @@ namespace package_manager
         std::string get_var(const std::string &name);
         std::string get_var(EPKGVariable var);
 
-        std::string parse_vars(Package *pkg, const std::string str_raw);
+        std::string parse_vars(Package *pkg, const std::string &str_raw);
 
         void init_env(char **envp);
 

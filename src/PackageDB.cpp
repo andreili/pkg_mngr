@@ -191,7 +191,7 @@ void PackageDB::set_installed(Package *pkg)
 void PackageDB::set_installed_opt(Package *pkg, ConfigurationOption *opt, EOptState state)
 {
     SQLite::Statement query(*m_db, "SELECT * FROM installed_pkg_opts WHERE (pkg_id=:pkg AND opt_id=:opt);");
-    query.bind(":pkg", pkg->get_id());
+    query.bind(":pkg", pkg->get_meta()->get_id());
     query.bind(":opt", opt->get_id());
     if (query.executeStep())
     {
@@ -199,7 +199,7 @@ void PackageDB::set_installed_opt(Package *pkg, ConfigurationOption *opt, EOptSt
         {
             //update exist record
             SQLite::Statement query_upd(*m_db, "UPDATE installed_pkg_opts SET selected=:sel WHERE (pkg_id=:pkg AND opt_id=:opt);");
-            query_upd.bind(":pkg", pkg->get_id());
+            query_upd.bind(":pkg", pkg->get_meta()->get_id());
             query_upd.bind(":opt", opt->get_id());
             query_upd.bind(":set", (state == EOptState::OPT_SET));
             query_upd.exec();
@@ -208,7 +208,7 @@ void PackageDB::set_installed_opt(Package *pkg, ConfigurationOption *opt, EOptSt
         {
             //delete outdated state
             SQLite::Statement query_del(*m_db, "DELETE FROM installed_pkg_opts WHERE (pkg_id=:pkg AND opt_id=:opt);");
-            query_del.bind(":pkg", pkg->get_id());
+            query_del.bind(":pkg", pkg->get_meta()->get_id());
             query_del.bind(":opt", opt->get_id());
             while (query_del.executeStep());
         }
@@ -290,7 +290,7 @@ void PackageDB::get_set_pkgs(std::string set_name, std::function<void(std::strin
 void PackageDB::get_pkg_opts(Package *pkg, std::function<void(ConfigurationOption* opt, bool def_on)>&& on_opt)
 {
     SQLite::Statement query(*m_db, "SELECT * FROM pkg_opts WHERE (pkg_id=:id);");
-    query.bind(":id", pkg->get_id());
+    query.bind(":id", pkg->get_meta()->get_id());
     while (query.executeStep())
         on_opt(get_config_opt(query.getColumn("opt_id")), query.getColumn("default").getInt());
 }
@@ -298,7 +298,7 @@ void PackageDB::get_pkg_opts(Package *pkg, std::function<void(ConfigurationOptio
 EOptState PackageDB::get_opt_state(Package *pkg, ConfigurationOption* opt)
 {
     SQLite::Statement query(*m_db, "SELECT selected FROM installed_pkg_opts WHERE (pkg_id=:pkg AND opt_id=:opt);");
-    query.bind(":pkg", pkg->get_id());
+    query.bind(":pkg", pkg->get_meta()->get_id());
     query.bind(":opt", opt->get_id());
     if (query.executeStep())
         return (EOptState)query.getColumn("selected").getInt();
