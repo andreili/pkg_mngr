@@ -92,7 +92,7 @@ bool PackageManager::prepare()
                 // добавляем список пакетов указанного набора
                 m_db->get_set_pkgs(&name[1], [this](std::string pkg_name)
                 {
-                    check_depedencies(Package::get_pkg_by_name(pkg_name), false);
+                    check_depedencies(Package::get_pkg_by_name(pkg_name));
                 });
             }
             else
@@ -105,7 +105,10 @@ bool PackageManager::prepare()
                 }
 
                 if (!m_without_deps)
-                    check_depedencies(pkg, true);
+                    check_depedencies(pkg);
+
+                m_packages_to_action_list.push_back(pkg);
+                m_packages_to_action_world.push_back(pkg->get_id());
             }
         }
 
@@ -293,7 +296,7 @@ ConfigurationAlias* PackageManager::get_alias(std::string &name)
     return nullptr;
 }
 
-void PackageManager::check_depedencies(Package* pkg, bool add_to_world)
+void PackageManager::check_depedencies(Package* pkg)
 {
     pkg->build_install_deps([this](Package *new_pkg)
         {
@@ -309,10 +312,6 @@ void PackageManager::check_depedencies(Package* pkg, bool add_to_world)
                 // если пакета еще нет в списке - добавляем
                 this->m_packages_to_action_list.push_back(new_pkg);
         });
-
-    m_packages_to_action_list.push_back(pkg);
-    if (add_to_world)
-        m_packages_to_action_world.push_back(pkg->get_id());
 }
 
 void PackageManager::clear_unchanged_pkgs()
