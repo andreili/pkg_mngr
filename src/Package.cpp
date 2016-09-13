@@ -111,10 +111,21 @@ std::string Package::parse_opts(const std::string &str_raw)
                 else
                 {
                     std::string val;
-                    if (check_opt(opt.option->get_id()))
+                    switch (check_opt(opt.option->get_id()))
+                    {
+                    case EOptState::OPT_SET:
                         val = alias->get_on();
-                    else
+                        break;
+                    case EOptState::OPT_CLEAR:
                         val = alias->get_off();
+                        break;
+                    case EOptState::OPT_UNDEF:
+                        str = std::regex_replace(str, std::regex("\\$\\{OPT " + opt_name + " " +
+                                                                 alias_name + " " + conf_name + "\\}"),
+                                                 "");
+                        continue;
+                        break;
+                    }
 
                     val = std::regex_replace(val, std::regex("\\$\\{OPT\\}"), conf_name);
 
@@ -128,17 +139,19 @@ std::string Package::parse_opts(const std::string &str_raw)
     return str;
 }
 
-bool Package::check_opt(int opt_id)
+EOptState Package::check_opt(int opt_id)
 {
     for (config_opt_rec_t &opt : m_options)
         if (opt.option->get_id() == opt_id)
         {
             if (opt.state == EOptState::OPT_SET)
-                return true;
+                return EOptState::OPT_SET;
             if ((opt.state == EOptState::OPT_UNDEF) && (opt.default_on))
-                return true;
+                return EOptState::OPT_SET;
+            if ((opt.state == EOptState::OPT_UNDEF) && (!opt.default_on))
+                return EOptState::OPT_UNDEF;
         }
-    return false;
+    return EOptState::OPT_CLEAR;
 }
 
 bool Package::not_changed()
@@ -541,7 +554,21 @@ void Package::print_opts()
                                                                            (opt.default_on ? COLOR_YELLOW : COLOR_RED) :
                                                                            (opt.state == EOptState::OPT_SET) ? COLOR_GREEN : COLOR_RED) +
                 (opt.changed ? BOLD_OFF : "");
-        printf("%s%s%s\x1B[0m ", color.c_str(), (check_opt(opt.option->get_id())) ? "+" : "-", opt.option->get_name().c_str());
+        std::string def;
+        switch (check_opt(opt.option->get_id()))
+        {
+        case EOptState::OPT_SET:
+            def = "+";
+            break;
+        case EOptState::OPT_CLEAR:
+            def = "-";
+            break;
+        case EOptState::OPT_UNDEF:
+            def = "%";
+            break;
+        }
+
+        printf("%s%s%s\x1B[0m ", color.c_str(), def.c_str(), opt.option->get_name().c_str());
     }
 }
 

@@ -346,7 +346,7 @@ void PackageDB::get_pkg_prepare(Package *pkg, std::function<void(std::string dir
     while (query.executeStep())
     {
         int opt_id = query.getColumn("dep_by_opt_id").getInt();
-        if ((opt_id == 0) || (pkg->check_opt(opt_id)))
+        if ((opt_id == 0) || (pkg->check_opt(opt_id) == EOptState::OPT_SET))
             on_cmd(query.getColumn("dir").getText(), query.getColumn("cmd").getText());
     }
 }
@@ -358,7 +358,7 @@ void PackageDB::get_pkg_configure(Package *pkg, std::function<void(std::string d
     while (query.executeStep())
     {
         int opt_id = query.getColumn("dep_by_opt_id").getInt();
-        if ((opt_id == 0) || (pkg->check_opt(opt_id)))
+        if ((opt_id == 0) || (pkg->check_opt(opt_id) == EOptState::OPT_SET))
             on_cmd(query.getColumn("dir").getText(), query.getColumn("cmd").getText());
     }
 }
@@ -370,7 +370,7 @@ void PackageDB::get_pkg_compile(Package *pkg, std::function<void(std::string dir
     while (query.executeStep())
     {
         int opt_id = query.getColumn("dep_by_opt_id").getInt();
-        if ((opt_id == 0) || (pkg->check_opt(opt_id)))
+        if ((opt_id == 0) || (pkg->check_opt(opt_id) == EOptState::OPT_SET))
             on_cmd(query.getColumn("dir").getText(), query.getColumn("cmd").getText());
     }
 }
@@ -382,7 +382,7 @@ void PackageDB::get_pkg_install(Package *pkg, std::function<void(std::string dir
     while (query.executeStep())
     {
         int opt_id = query.getColumn("dep_by_opt_id").getInt();
-        if ((opt_id == 0) || (pkg->check_opt(opt_id)))
+        if ((opt_id == 0) || (pkg->check_opt(opt_id) == EOptState::OPT_SET))
             on_cmd(query.getColumn("dir").getText(), query.getColumn("cmd").getText());
     }
 }
@@ -394,7 +394,7 @@ void PackageDB::get_pkg_postinstall(Package *pkg, std::function<void(std::string
     while (query.executeStep())
     {
         int opt_id = query.getColumn("dep_by_opt_id").getInt();
-        if ((opt_id == 0) || (pkg->check_opt(opt_id)))
+        if ((opt_id == 0) || (pkg->check_opt(opt_id) == EOptState::OPT_SET))
             on_cmd(query.getColumn("dir").getText(), query.getColumn("cmd").getText());
     }
 }

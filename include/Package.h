@@ -53,7 +53,7 @@ namespace package_manager
             PackageMeta* get_meta() { return m_meta; }
             std::string get_version() { return m_version; }
 
-            bool check_opt(int opt_id);
+            EOptState check_opt(int opt_id);
             bool not_changed();
 
             void fetch();
