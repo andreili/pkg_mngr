@@ -52,7 +52,7 @@ void Package::build_install_deps(std::function<void(Package *new_pkg)>&& on_new_
 {
     PackageManager::get_db_obj()->get_package_deps(m_meta->get_id(), [this, on_new_pkg](int depend_by, int dep_by_opt)
         {
-            if (this->check_opt(dep_by_opt) == EOptState::OPT_SET)
+            if ((this->check_opt(dep_by_opt) == EOptState::OPT_SET) || (dep_by_opt == 0))
                 on_new_pkg(PackageManager::get_db_obj()->get_last_pkg(depend_by));
         });
 }
