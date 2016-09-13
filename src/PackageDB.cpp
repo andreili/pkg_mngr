@@ -11,7 +11,7 @@ namespace package_manager
 PackageDB::PackageDB()
 {
     std::string path = Variables::get_instance()->get_var("PKG_DB") + "packages.sql3";
-    //std::string path = "d:/Projects/pkg_mngr/build-pkg_mngr-Desktop-Debug/packages.sql3";
+    //std::string path = "d:/Dev/Projects/pkg_mngr/packages.sql3";
     m_db = new SQLite::Database(path, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
 }
 
@@ -312,12 +312,12 @@ EOptState PackageDB::get_opt_state(Package *pkg, ConfigurationOption* opt)
     return EOptState::OPT_UNDEF;
 }
 
-void PackageDB::get_package_deps(int pkg_id, std::function<void(int depend_by)>&& on_new_dep)
+void PackageDB::get_package_deps(int pkg_id, std::function<void(int depend_by, int dep_by_opt)> &&on_new_dep)
 {
     SQLite::Statement query(*m_db, "SELECT * FROM pkg_deps WHERE (pkg_id=:id);");
     query.bind(":id", pkg_id);
     while (query.executeStep())
-        on_new_dep(query.getColumn("dep_py_pkg_id").getInt());
+        on_new_dep(query.getColumn("dep_by_pkg_id").getInt(), query.getColumn("dep_by_opt").getInt());
 }
 
 void PackageDB::get_pkg_urls(Package *pkg, std::function<void(std::string url)>&& on_url)
