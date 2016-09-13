@@ -24,6 +24,7 @@ PackageManager::PackageManager()
     , m_from_pkg (false)
     , m_ask (false)
     , m_verbose (false)
+    , m_without_deps (false)
 {
     m_instance = this;
     m_vars = new Variables();
@@ -51,6 +52,7 @@ void PackageManager::init(int argc, char *argv[], char **envp)
     m_cmd->add_bool_param(L"from-pkg", L"p", &m_from_pkg, false, L"usage binary packages");
     m_cmd->add_bool_param(L"ask", L"a", &m_ask, false, L"ask before apply actions");
     m_cmd->add_bool_param(L"verbose", L"v", &m_verbose, false, L"print detailed information about actions");
+    m_cmd->add_bool_param(L"without-deps", L"O", &m_without_deps, false, L"proceed packages wothout depedencies");
     m_cmd->parse();
 
     if (argc == 1)
@@ -101,7 +103,9 @@ bool PackageManager::prepare()
                     printf("Unable to find package \"%s\"!\n", name.c_str());
                     return false;
                 }
-                check_depedencies(pkg, true);
+
+                if (!m_without_deps)
+                    check_depedencies(pkg, true);
             }
         }
 

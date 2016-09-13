@@ -75,6 +75,7 @@ namespace package_manager
             bool        m_from_pkg;
             bool        m_ask;
             bool        m_verbose;
+            bool        m_without_deps;
 
             void check_depedencies(Package* pkg, bool add_to_world);
             void clear_unchanged_pkgs();
