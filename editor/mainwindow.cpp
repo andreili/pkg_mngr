@@ -31,6 +31,10 @@ MainWindow::MainWindow(QWidget *parent) :
     m_use_list = new QComboBox(this);
     m_use_list->setVisible(false);
     connect(m_use_list, SIGNAL(currentIndexChanged(int)), this, SLOT(m_use_list_item_changed(int)));
+
+    m_pkg_list = new QComboBox(this);
+    m_pkg_list->setVisible(false);
+    connect(m_pkg_list, SIGNAL(currentIndexChanged(int)), this, SLOT(m_pkg_list_item_changed(int)));
 }
 
 MainWindow::~MainWindow()
@@ -146,6 +150,32 @@ void MainWindow::on_twPckgs_currentItemChanged(QTreeWidgetItem *current, QTreeWi
                 item->setData(Qt::UserRole + 1, meta);
                 item->setData(Qt::UserRole + 2, q.value("id"));
                 ui->lwOpts->addItem(item);
+            }
+
+        ui->twDeps->setRowCount(0);
+        idx = 0;
+        q.prepare("SELECT dep.id, meta.id AS meta_id, dep.dep_by_opt, meta.name, opt.name AS opt_name"
+                  " FROM pkg_deps AS dep"
+                  " INNER JOIN package_meta AS meta ON meta.id=dep.dep_by_pkg_id"
+                  "  LEFT JOIN config_opts AS opt ON opt.id=dep.dep_by_opt"
+                  " WHERE dep.pkg_id=:pkg;");
+        q.bindValue(":pkg", current->data(0, Qt::UserRole).toInt());
+        if (q.exec())
+            while (q.next())
+            {
+                ui->twDeps->setRowCount(idx + 1);
+
+                QTableWidgetItem *item = new QTableWidgetItem(q.value("name").toString());
+                item->setData(Qt::UserRole, q.value("id"));
+                item->setData(Qt::UserRole + 1, q.value("meta_id"));
+                ui->twDeps->setItem(idx, 0, item);
+
+                item = new QTableWidgetItem(q.value("opt_name").toString());
+                item->setData(Qt::UserRole, q.value("id"));
+                item->setData(Qt::UserRole + 1, q.value("dep_by_opt"));
+                ui->twDeps->setItem(idx, 1, item);
+
+                ++idx;
             }
     }
 }
@@ -278,26 +308,6 @@ void MainWindow::on_twVersions_currentItemChanged(QTableWidgetItem *current, QTa
                                        " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
                                        " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
                                        " WHERE cmds.pkg_id=:pkg;");
-
-        ui->twDeps->setRowCount(0);
-        idx = 0;
-        q.prepare("SELECT dep.id, dep.dep_by_opt, meta.name FROM pkg_deps AS dep INNER JOIN package_meta AS meta ON meta.id=dep.dep_py_pkg_id WHERE dep.pkg_id=:pkg;");
-        q.bindValue(":pkg", ui->twPckgs->selectedItems()[0]->data(0, Qt::UserRole).toInt());
-        if (q.exec())
-            while (q.next())
-            {
-                ui->twDeps->setRowCount(idx + 1);
-
-                QTableWidgetItem *item = new QTableWidgetItem(q.value("name").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twDeps->setItem(idx, 0, item);
-
-                item = new QTableWidgetItem("-"); //q.value("dep_by_opt_id").toString());
-                item->setData(Qt::UserRole, q.value("id"));
-                ui->twDeps->setItem(idx, 1, item);
-
-                ++idx;
-            }
     }
 }
 
@@ -654,12 +664,12 @@ void MainWindow::on_postinst_del()
 
 void MainWindow::on_deps_add()
 {
-    QTableWidgetItem *ver_item = ui->twVersions->currentItem();
-    if (ver_item != nullptr)
+    QTreeWidgetItem *pkg_item = ui->twPckgs->currentItem();
+    if ((pkg_item != nullptr) && (pkg_item->parent() != nullptr))
     {
         QSqlQuery q;
-        q.prepare("INSERT INTO pkg_deps (pkg_id, cmd, dir, dep_by_opt_id) VALUES (:pkg, '', '', NULL);");
-        q.bindValue(":pkg", ver_item->data(Qt::UserRole));
+        q.prepare("INSERT INTO pkg_deps (pkg_id) VALUES (:pkg);");
+        q.bindValue(":pkg", pkg_item->data(0, Qt::UserRole));
         q.exec();
 
         int id = q.lastInsertId().toInt();
@@ -999,6 +1009,29 @@ void MainWindow::on_twConfig_currentCellChanged(int currentRow, int currentColum
 void MainWindow::on_twDeps_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
 {
     proc_opts_list(ui->twDeps, 1);
+
+    if (currentColumn == 0)
+    {
+        QTableWidgetItem *item = ui->twDeps->item(currentRow, currentColumn);
+        int opt_id = item->data(Qt::UserRole + 1).toInt();
+
+        m_pkg_list->clear();
+        m_pkg_list->addItem("<none>", QVariant());
+        QSqlQuery q;
+        q.prepare("SELECT * FROM package_meta;");
+        q.exec();
+        while (q.next())
+            m_pkg_list->addItem(q.value("name").toString(), q.value("id").toInt());
+
+        QRect qRect(ui->twDeps->visualItemRect(item));
+        QPoint pos = ui->twDeps->viewport()->mapTo(this, QPoint(qRect.left(), qRect.top()));
+        m_pkg_list->setGeometry(qRect);
+        m_pkg_list->move(pos);
+        m_pkg_list->setCurrentIndex(m_pkg_list->findData(opt_id, Qt::UserRole + 1));
+        m_pkg_list->setVisible(true);
+    }
+    else
+        m_pkg_list->setVisible(false);
 }
 
 void MainWindow::on_twBuild_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
@@ -1084,4 +1117,15 @@ void MainWindow::on_lwOpts_customContextMenuRequested(const QPoint &pos)
 {
     m_opt_menu->actions().at(1)->setEnabled(ui->lwOpts->selectedItems().size() != 0);
     m_opt_menu->popup(ui->lwOpts->viewport()->mapToGlobal(pos));
+}
+
+void MainWindow::m_pkg_list_item_changed(int index)
+{
+    int pkg = m_pkg_list->itemData(index, Qt::UserRole).toInt();
+    QSqlQuery q;
+    q.prepare("UPDATE pkg_deps SET dep_by_pkg_id=:pkg WHERE id=:id;");
+    q.bindValue(":id", ui->twDeps->currentItem()->data(Qt::UserRole).toInt());
+    q.bindValue(":pkg", pkg);
+    q.exec();
+    ui->twDeps->currentItem()->setText(m_pkg_list->currentText());
 }

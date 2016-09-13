@@ -104,6 +104,8 @@ private slots:
 
     void on_lwOpts_customContextMenuRequested(const QPoint &pos);
 
+    void m_pkg_list_item_changed(int index);
+
 private:
     Ui::MainWindow *ui;
 
@@ -120,6 +122,7 @@ private:
     QMenu           *m_opt_menu;
 
     QComboBox       *m_use_list;
+    QComboBox       *m_pkg_list;
     QWidget         *m_cur_list;
 
     void fill_cats();
