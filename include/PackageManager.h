@@ -78,6 +78,7 @@ namespace package_manager
             bool        m_without_deps;
 
             void check_depedencies(Package* pkg);
+            void add_to_actions(Package *pkg);
             void clear_unchanged_pkgs();
     };
 }

@@ -92,7 +92,12 @@ bool PackageManager::prepare()
                 // добавляем список пакетов указанного набора
                 m_db->get_set_pkgs(&name[1], [this](std::string pkg_name)
                 {
-                    check_depedencies(Package::get_pkg_by_name(pkg_name));
+                    Package *pkg = Package::get_pkg_by_name(pkg_name);
+                    if (pkg != nullptr)
+                    {
+                        check_depedencies(pkg);
+                        add_to_actions(pkg);
+                    }
                 });
             }
             else
@@ -107,7 +112,7 @@ bool PackageManager::prepare()
                 if (!m_without_deps)
                     check_depedencies(pkg);
 
-                m_packages_to_action_list.push_back(pkg);
+                add_to_actions(pkg);
                 m_packages_to_action_world.push_back(pkg->get_id());
             }
         }
@@ -300,18 +305,34 @@ void PackageManager::check_depedencies(Package* pkg)
 {
     pkg->build_install_deps([this](Package *new_pkg)
         {
-            bool contains = false;
-            for (auto it=m_packages_to_action_list.begin() ;
-                 it != m_packages_to_action_list.end() ; it++)
-                 if (*it == new_pkg)
-                 {
-                     contains = true;
-                     break;
-                 }
-            if (!contains)
-                // если пакета еще нет в списке - добавляем
-                this->m_packages_to_action_list.push_back(new_pkg);
+            if (new_pkg != nullptr)
+            {
+                bool contains = false;
+                for (auto it=m_packages_to_action_list.begin() ;
+                     it != m_packages_to_action_list.end() ; it++)
+                     if (*it == new_pkg)
+                     {
+                         contains = true;
+                         break;
+                     }
+                if (!contains)
+                {
+                    // если пакета еще нет в списке - добавляем
+                    this->m_packages_to_action_list.push_back(new_pkg);
+                    // и проверим зависимости и для него
+                    check_depedencies(new_pkg);
+                }
+            }
         });
+}
+
+void PackageManager::add_to_actions(Package *pkg)
+{
+    // если пакет уже есть в списке - пропускаем
+    if (std::find(m_packages_to_action_list.begin(), m_packages_to_action_list.end(),
+                  pkg) != m_packages_to_action_list.end())
+        return;
+    m_packages_to_action_list.push_back(pkg);
 }
 
 void PackageManager::clear_unchanged_pkgs()
