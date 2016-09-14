@@ -145,7 +145,7 @@ void PackageManager::proc()
             char reply[100];
             do
             {
-                printf(COLOR_GREEN BOLD_ON "Start apply changes? [" "Y" COLOR_RED "/n] " COLOR_RESET);
+                printf(COLOR_GREEN BOLD_ON "Start apply changes (%li packages)? [" "Y" COLOR_RED "/n] " COLOR_RESET, m_packages_to_action_list.size());
 
                 fgets(reply, 100, stdin);
 
