@@ -132,6 +132,8 @@ void Variables::read_opts()
                                        std::string pkg_opts = line.substr(pos + 1);
 
                                        Package *pkg = Package::get_pkg_by_name(pkg_name);
+                                       if (pkg == nullptr)
+                                           continue;
 
                                        while (pkg_opts.size())
                                        {
