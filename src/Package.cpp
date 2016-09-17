@@ -85,8 +85,6 @@ std::string Package::parse_opts(const std::string &str_raw)
 
     while (std::regex_search(str, sm, opt_reg))
     {
-        //std::regex_match(str, sm, opt_reg);
-
         std::string opt_name = sm[1];
         std::string alias_name = sm[2];
         std::string conf_name = sm[3];
@@ -94,7 +92,7 @@ std::string Package::parse_opts(const std::string &str_raw)
         ConfigurationOption *opt_obj = PackageManager::get_db_obj()->get_config_opt(opt_name);
         if (opt_obj == nullptr)
         {
-            printf(COLOR_RED "Error in aliases (opt)!\n" COLOR_RESET);
+            printf(COLOR_RED "Error in aliases (opt [%s])!\n" COLOR_RESET, opt_name.c_str());
             log_stop();
             return "";
         }
@@ -105,13 +103,15 @@ std::string Package::parse_opts(const std::string &str_raw)
                 ConfigurationAlias *alias = PackageManager::get_alias(alias_name);
                 if (alias == nullptr)
                 {
-                    printf(COLOR_RED "Error in aliases (alias)!\n" COLOR_RESET);
+                    printf(COLOR_RED "Error in aliases (alias [%s])!\n" COLOR_RESET, alias_name.c_str());
                     log_stop();
                     return "";
                 }
                 else
                 {
                     std::string val;
+                    std::string ex = std::regex_replace("${OPT " + opt_name + " " +
+                                                        alias_name + " " + conf_name + "}", std::regex("[+?.\\${}]"), "\\$&");
                     switch (check_opt(opt.option->get_id()))
                     {
                     case EOptState::OPT_SET:
@@ -121,18 +121,15 @@ std::string Package::parse_opts(const std::string &str_raw)
                         val = alias->get_off();
                         break;
                     case EOptState::OPT_UNDEF:
-                        str = std::regex_replace(str, std::regex("\\$\\{OPT " + opt_name + " " +
-                                                                 alias_name + " " + conf_name + "\\}"),
-                                                 "");
+                        str = std::regex_replace(str, std::regex(ex),
+                                                 val);
                         continue;
                         break;
                     }
 
                     val = std::regex_replace(val, std::regex("\\$\\{OPT\\}"), conf_name);
-
-                    str = std::regex_replace(str, std::regex("\\$\\{OPT " + opt_name + " " +
-                                                             alias_name + " " + conf_name + "\\}"),
-                                             val);
+                    str = std::regex_replace(str, std::regex(ex), val);
+                    break;
                 }
             }
     }
