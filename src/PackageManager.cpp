@@ -54,6 +54,7 @@ void PackageManager::init(int argc, char *argv[], char **envp)
     m_cmd->add_bool_param(L"verbose", L"v", &m_verbose, false, L"print detailed information about actions");
     m_cmd->add_bool_param(L"without-deps", L"O", &m_without_deps, false, L"proceed packages wothout depedencies");
     m_cmd->add_bool_param(L"pretend", L"p", &m_pretend, false, L"just to show what should be done");
+    m_cmd->add_bool_param(L"fetch", L"f", &m_to_fetch, false, L"only files fetch");
     m_cmd->parse();
 
     if (argc == 1)
@@ -135,10 +136,10 @@ void PackageManager::proc()
         return;
     }
 
-    if (m_install)
-    {
+    if (m_to_fetch)
+        printf("Waiting to fetch:\n");
+    else if (m_install)
         printf("Waiting to install:\n");
-    }
 
     for(auto pkg=m_packages_to_action_list.begin() ; pkg!=m_packages_to_action_list.end() ; pkg++)
         (*pkg)->print_short_info();
@@ -152,17 +153,27 @@ void PackageManager::proc()
             return;
     }
 
-    if (m_install)
+    if (m_to_fetch || m_install)
     {
         for(auto pkg=m_packages_to_action_list.begin() ; pkg!=m_packages_to_action_list.end() ; pkg++)
             m_fetch->add_to_queue(*pkg);
         m_fetch->start_fetch();
+    }
 
+    if (m_to_fetch) {}
+    else if (m_install)
+    {
         for(auto pkg=m_packages_to_action_list.begin() ; pkg!=m_packages_to_action_list.end() ; pkg++)
         {
             if (!(*pkg)->install())
                 break;
         }
+    }
+
+    if (m_to_fetch)
+    {
+        while (m_fetch->is_active())
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 

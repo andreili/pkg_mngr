@@ -123,7 +123,10 @@ void Fetch::fetch_proc()
                 all_loaded = false;
         // clear fetch queue, if all packages loaded
         if (all_loaded)
+        {
+            m_fetch_active = false;
             m_list.clear();
+        }
         m_lock.unlock();
     }
 
@@ -137,11 +140,12 @@ bool Fetch::check_source(std::string &url)
     MD5_CTX md5_ctx;
     int original_size;
     std::string original_md5;
-    std::string file_name = Variables::get_instance()->get_var(PKG_VAR_PATH_SOURCES) + '/' +
+    std::string file_name = Variables::get_instance()->parse_vars(nullptr, PKG_VAR_PATH_SOURCES) + '/' +
                             url.substr(url.find_last_of('/') + 1);
 
     PackageManager::get_db_obj()->get_url_details(url, &original_md5, &original_size);
 
+    //printf("Check package to %s\n", file_name.c_str());
     Stream *str = new Stream(file_name, FILE_OPEN_READ_ST);
     if (!str->opened())
     {

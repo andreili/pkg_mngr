@@ -18,6 +18,8 @@ namespace package_manager
 
         static Fetch* get_instance() { return m_instance; }
 
+        bool is_active() { return m_fetch_active; }
+
         void add_to_queue(Package *pkg);
         void start_fetch();
 

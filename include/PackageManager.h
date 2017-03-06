@@ -77,6 +77,7 @@ namespace package_manager
             bool        m_verbose;
             bool        m_without_deps;
             bool        m_pretend;
+            bool        m_to_fetch;
 
             void check_depedencies(Package* pkg);
             void add_to_actions(Package *pkg);
