@@ -64,6 +64,9 @@ void PackageManager::init(int argc, char *argv[], char **envp)
             m_package_names.push_front(argv[i]);
 
     m_vars->init_env(envp);
+    //принудительное обновление состояния флагов для пакетов, прописанных в packages.use
+    for (auto package :m_packages_list)
+        package->update_opts();
     m_db->fill_aliases();
 }
 
