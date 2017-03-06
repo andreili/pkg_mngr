@@ -101,8 +101,11 @@ std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
 {
     std::string str = str_raw;
 
-    while (str.find_first_of('$') != std::string::npos)
+    size_t str_len;
+    do
     {
+        printf("%s\n", str.c_str());
+        str_len = str.length();
         std::smatch sm;
         std::string name = "";
         size_t name_pos = std::string::npos;
@@ -132,11 +135,9 @@ std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
         str = std::regex_replace(str, std::regex("\\$\\{(LDFLAGS)\\}"), get_var(variable_names[(int)PKG_VAR_LDFLAGS]));
         str = std::regex_replace(str, std::regex("\\$\\{(OPTS_LOC)\\}"), get_var(variable_names[(int)PKG_VAR_OPTS_LOC]));
 
-        //str = std::regex_replace(str, std::regex("\\$\\{(MAKEOPTS)\\}"), get_var("MAKEOPTS"));
-
         if ((name_pos != std::string::npos) && (str[name_pos] == '$'))
             str = std::regex_replace(str, std::regex("\\$\\{(" + name + ")\\}"), getenv(name.c_str()));
-    }
+    } while (str_len != str.length());
 
     if (pkg != nullptr)
         return pkg->parse_opts(str);
