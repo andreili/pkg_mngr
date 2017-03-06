@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1240</width>
-    <height>550</height>
+    <width>1294</width>
+    <height>623</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,307 +16,334 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout_7">
     <item>
-     <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>1</number>
       </property>
-      <widget class="QTreeWidget" name="twPckgs">
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="contextMenuPolicy">
-        <enum>Qt::CustomContextMenu</enum>
-       </property>
-       <attribute name="headerVisible">
-        <bool>false</bool>
+      <widget class="QWidget" name="tab_pkg">
+       <attribute name="title">
+        <string>Пакеты</string>
        </attribute>
-       <column>
-        <property name="text">
-         <string notr="true">1</string>
-        </property>
-       </column>
-      </widget>
-      <widget class="QWidget" name="widget" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>300</width>
-         <height>0</height>
-        </size>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout_10">
         <item>
-         <widget class="QTableWidget" name="twVersions">
-          <property name="contextMenuPolicy">
-           <enum>Qt::CustomContextMenu</enum>
+         <widget class="QSplitter" name="splitter">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
-          <column>
-           <property name="text">
-            <string>Имя</string>
+          <widget class="QTreeWidget" name="twPckgs">
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
            </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Версия</string>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
            </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Имя исх. пакета</string>
+           <attribute name="headerVisible">
+            <bool>false</bool>
+           </attribute>
+           <column>
+            <property name="text">
+             <string notr="true">1</string>
+            </property>
+           </column>
+          </widget>
+          <widget class="QWidget" name="widget" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>300</width>
+             <height>0</height>
+            </size>
            </property>
-          </column>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox">
-          <property name="title">
-           <string>Файлы пакета</string>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QTableWidget" name="twSources">
-             <property name="contextMenuPolicy">
-              <enum>Qt::CustomContextMenu</enum>
-             </property>
-             <column>
-              <property name="text">
-               <string>URL</string>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QTableWidget" name="twVersions">
+              <property name="contextMenuPolicy">
+               <enum>Qt::CustomContextMenu</enum>
               </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>MD5</string>
+              <column>
+               <property name="text">
+                <string>Имя</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Версия</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Имя исх. пакета</string>
+               </property>
+              </column>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox">
+              <property name="title">
+               <string>Файлы пакета</string>
               </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Размер</string>
-              </property>
-             </column>
-            </widget>
-           </item>
-          </layout>
+              <layout class="QHBoxLayout" name="horizontalLayout">
+               <item>
+                <widget class="QTableWidget" name="twSources">
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::CustomContextMenu</enum>
+                 </property>
+                 <column>
+                  <property name="text">
+                   <string>URL</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>MD5</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>Размер</string>
+                  </property>
+                 </column>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QTabWidget" name="tabWidget_2">
+           <property name="currentIndex">
+            <number>1</number>
+           </property>
+           <widget class="QWidget" name="tab_3">
+            <attribute name="title">
+             <string>Tab 1</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="0" column="0" rowspan="2" colspan="2">
+              <widget class="QGroupBox" name="groupBox_2">
+               <property name="title">
+                <string>Подготовка исходных кодов</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <item>
+                 <widget class="QTableWidget" name="twPrep">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::CustomContextMenu</enum>
+                  </property>
+                  <column>
+                   <property name="text">
+                    <string>CMD</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>DIR</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Opt</string>
+                   </property>
+                  </column>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="2" column="0" colspan="2">
+              <widget class="QGroupBox" name="groupBox_3">
+               <property name="title">
+                <string>Конфигурирование</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <item>
+                 <widget class="QTableWidget" name="twConfig">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::CustomContextMenu</enum>
+                  </property>
+                  <column>
+                   <property name="text">
+                    <string>CMD</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>DIR</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Opt</string>
+                   </property>
+                  </column>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QGroupBox" name="groupBox_7">
+               <property name="title">
+                <string>Зависимости</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_8">
+                <item>
+                 <widget class="QTableWidget" name="twDeps">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::CustomContextMenu</enum>
+                  </property>
+                  <column>
+                   <property name="text">
+                    <string>PKG</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Opt</string>
+                   </property>
+                  </column>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="QGroupBox" name="groupBox_8">
+               <property name="title">
+                <string>Флаги для пакета</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_9">
+                <item>
+                 <widget class="QListWidget" name="lwOpts">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::CustomContextMenu</enum>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tab_4">
+            <attribute name="title">
+             <string>Tab 2</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_3">
+             <item row="0" column="0">
+              <widget class="QGroupBox" name="groupBox_4">
+               <property name="title">
+                <string>Сборка</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <item>
+                 <widget class="QTableWidget" name="twBuild">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::CustomContextMenu</enum>
+                  </property>
+                  <column>
+                   <property name="text">
+                    <string>CMD</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>DIR</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Opt</string>
+                   </property>
+                  </column>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QGroupBox" name="groupBox_6">
+               <property name="title">
+                <string>После установки</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_6">
+                <item>
+                 <widget class="QTableWidget" name="twPostInst">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::CustomContextMenu</enum>
+                  </property>
+                  <column>
+                   <property name="text">
+                    <string>CMD</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>DIR</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Opt</string>
+                   </property>
+                  </column>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QGroupBox" name="groupBox_5">
+               <property name="title">
+                <string>Установка</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_5">
+                <item>
+                 <widget class="QTableWidget" name="twInstall">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::CustomContextMenu</enum>
+                  </property>
+                  <column>
+                   <property name="text">
+                    <string>CMD</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>DIR</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Opt</string>
+                   </property>
+                  </column>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QTabWidget" name="tabWidget">
-       <property name="currentIndex">
-        <number>1</number>
-       </property>
-       <widget class="QWidget" name="tab">
-        <attribute name="title">
-         <string>Tab 1</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_2">
-         <item row="0" column="0" rowspan="2" colspan="2">
-          <widget class="QGroupBox" name="groupBox_2">
-           <property name="title">
-            <string>Подготовка исходных кодов</string>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <item>
-             <widget class="QTableWidget" name="twPrep">
-              <property name="contextMenuPolicy">
-               <enum>Qt::CustomContextMenu</enum>
-              </property>
-              <column>
-               <property name="text">
-                <string>CMD</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>DIR</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Opt</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="2" column="0" colspan="2">
-          <widget class="QGroupBox" name="groupBox_3">
-           <property name="title">
-            <string>Конфигурирование</string>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="QTableWidget" name="twConfig">
-              <property name="contextMenuPolicy">
-               <enum>Qt::CustomContextMenu</enum>
-              </property>
-              <column>
-               <property name="text">
-                <string>CMD</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>DIR</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Opt</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="2">
-          <widget class="QGroupBox" name="groupBox_7">
-           <property name="title">
-            <string>Зависимости</string>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_8">
-            <item>
-             <widget class="QTableWidget" name="twDeps">
-              <property name="contextMenuPolicy">
-               <enum>Qt::CustomContextMenu</enum>
-              </property>
-              <column>
-               <property name="text">
-                <string>PKG</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Opt</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="2" column="2">
-          <widget class="QGroupBox" name="groupBox_8">
-           <property name="title">
-            <string>Флаги для пакета</string>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_9">
-            <item>
-             <widget class="QListWidget" name="lwOpts">
-              <property name="contextMenuPolicy">
-               <enum>Qt::CustomContextMenu</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tab_2">
-        <attribute name="title">
-         <string>Tab 2</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0">
-          <widget class="QGroupBox" name="groupBox_4">
-           <property name="title">
-            <string>Сборка</string>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="QTableWidget" name="twBuild">
-              <property name="contextMenuPolicy">
-               <enum>Qt::CustomContextMenu</enum>
-              </property>
-              <column>
-               <property name="text">
-                <string>CMD</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>DIR</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Opt</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QGroupBox" name="groupBox_6">
-           <property name="title">
-            <string>После установки</string>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_6">
-            <item>
-             <widget class="QTableWidget" name="twPostInst">
-              <property name="contextMenuPolicy">
-               <enum>Qt::CustomContextMenu</enum>
-              </property>
-              <column>
-               <property name="text">
-                <string>CMD</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>DIR</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Opt</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QGroupBox" name="groupBox_5">
-           <property name="title">
-            <string>Установка</string>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="QTableWidget" name="twInstall">
-              <property name="contextMenuPolicy">
-               <enum>Qt::CustomContextMenu</enum>
-              </property>
-              <column>
-               <property name="text">
-                <string>CMD</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>DIR</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Opt</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </widget>
+      <widget class="QWidget" name="tab_sets">
+       <attribute name="title">
+        <string>Сборки</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_11">
+        <item>
+         <widget class="QListWidget" name="lw_sets"/>
+        </item>
+        <item>
+         <widget class="QListWidget" name="lw_set"/>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -327,8 +354,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1240</width>
-     <height>20</height>
+     <width>1294</width>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="mOpen">

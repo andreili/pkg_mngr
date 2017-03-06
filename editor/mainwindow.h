@@ -106,6 +106,8 @@ private slots:
 
     void m_pkg_list_item_changed(int index);
 
+    void on_lw_sets_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+
 private:
     Ui::MainWindow *ui;
 
@@ -126,6 +128,7 @@ private:
     QWidget         *m_cur_list;
 
     void fill_cats();
+    void fill_sets();
 };
 
 #endif // MAINWINDOW_H

@@ -50,7 +50,11 @@ void MainWindow::on_aOpenDB_triggered()
     {
         QString fn = dialog.selectedFiles()[0].toUpper();*/
         //QString fn = "d:/Projects/pkg_mngr/build-pkg_mngr-Desktop-Debug/packages.sql3";
+        #ifdef _WIN32
         QString fn = "d:/Dev/Projects/pkg_mngr/packages.sql3";
+        #else
+        QString fn = "/mnt/lfs/var/lib/pkg/packages.sql3";
+        #endif
         m_db = QSqlDatabase::addDatabase("QSQLITE");
         m_db.setDatabaseName(fn);
         if (!m_db.open())
@@ -62,6 +66,7 @@ void MainWindow::on_aOpenDB_triggered()
         else
         {
             fill_cats();
+            fill_sets();
         }
    // }
 }
@@ -100,6 +105,21 @@ void MainWindow::fill_cats()
             item->setData(0, Qt::UserRole, q.value("id"));
             item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
             ui->twPckgs->addTopLevelItem(item);
+        }
+}
+
+void MainWindow::fill_sets()
+{
+    ui->lw_sets->clear();
+
+    QSqlQuery q("SELECT * FROM sets;");
+    if (q.exec())
+        while (q.next())
+        {
+            QListWidgetItem* item = new QListWidgetItem();
+            item->setText(q.value("name").toString());
+            item->setData(Qt::UserRole, q.value("id"));
+            ui->lw_sets->addItem(item);
         }
 }
 
@@ -1010,7 +1030,7 @@ void MainWindow::on_twDeps_currentCellChanged(int currentRow, int currentColumn,
 {
     proc_opts_list(ui->twDeps, 1);
 
-    if (currentColumn == 0)
+    if ((currentColumn == 0) && (currentRow >= 0) && (previousRow >= 0))
     {
         QTableWidgetItem *item = ui->twDeps->item(currentRow, currentColumn);
         int opt_id = item->data(Qt::UserRole + 1).toInt();
@@ -1110,7 +1130,16 @@ void MainWindow::m_use_list_item_changed(int index)
     else if (m_cur_list == ui->twInstall)
         update_opt_cmd(ui->twInstall, "UPDATE install_cmds SET dep_by_opt_id=:opt WHERE id=:id;")
     else if (m_cur_list == ui->twPostInst)
-        update_opt_cmd(ui->twPostInst, "UPDATE postinst_cmds SET dep_by_opt_id=:opt WHERE id=:id;")
+        {
+            int opt = m_use_list->itemData(index, Qt::UserRole).toInt();
+            QSqlQuery q;
+            q.prepare("UPDATE postinstall_cmds SET dep_by_opt_id=:opt WHERE id=:id;");
+            q.bindValue(":id", ui->twPostInst->currentItem()->data(Qt::UserRole).toInt());
+            q.bindValue(":opt", opt);
+            q.exec();
+            ui->twPostInst->currentItem()->setData(Qt::UserRole + 1, opt);
+        }
+        //update_opt_cmd(ui->twPostInst, "UPDATE postinstall_cmds SET dep_by_opt_id=:opt WHERE id=:id;")
 }
 
 void MainWindow::on_lwOpts_customContextMenuRequested(const QPoint &pos)
@@ -1128,4 +1157,23 @@ void MainWindow::m_pkg_list_item_changed(int index)
     q.bindValue(":pkg", pkg);
     q.exec();
     ui->twDeps->currentItem()->setText(m_pkg_list->currentText());
+}
+
+void MainWindow::on_lw_sets_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+{
+    UNUSED(previous);
+    ui->lw_set->clear();
+    int set_id = current->data(Qt::UserRole).toInt();
+    QSqlQuery q;
+    q.prepare("select set_pkgs.id, package_meta.name FROM set_pkgs INNER JOIN package ON set_pkgs.pkg_id=package.id "
+              "INNER JOIN package_meta ON package.pkg_meta_id=package_meta.id WHERE set_pkgs.set_id=1;");
+    q.bindValue(":set", set_id);
+    if (q.exec())
+        while (q.next())
+        {
+            QListWidgetItem *item = new QListWidgetItem();
+            item->setText(q.value(1).toString());
+            item->setData(Qt::UserRole, q.value(0));
+            ui->lw_set->addItem(item);
+        }
 }
