@@ -108,7 +108,6 @@ INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (25, 27, '
 INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (26, 28, 'patch -Np1 -i ${PKG_SOURCES}/bc-1.06.95-memory_leak-1.patch', '${SRC_DIR}/${PS}-${PV}', NULL);
 INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (27, 36, 'sed -i ''s:\\\${:\\\$\\{:'' intltool-update.in', '${SRC_DIR}/${PS}-${PV}', NULL);
 INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (28, 38, 'sed -i ''s:/\\\${:/\\\$\\{:'' bin/automake.in', '${SRC_DIR}/${PS}-${PV}', NULL);
-INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (29, 39, 'sed -e ''/mf\.buffer = NULL/a next->coder->mf.size = 0;'' -i src/liblzma/lz/lz_encoder.c', '${SRC_DIR}/${PS}-${PV}', NULL);
 INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (30, 42, 'sed -i "s:blkid/::" $(grep -rl "blkid/blkid.h")', '${SRC_DIR}/${PS}-${PV}', NULL);
 INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (31, 42, 'sed -e ''s:test/udev-test.pl ::g'' -e ''s:test-copy$(EXEEXT) ::g'' -i Makefile.in', '${SRC_DIR}/${PS}-${PV}', NULL);
 INSERT INTO prepare_cmds (id, pkg_id, cmd, dir, dep_by_opt_id) VALUES (33, 44, 'sed -i -e ''s:\[\.-\]::'' tests/filter.sed', '${SRC_DIR}/${PS}-${PV}', NULL);
