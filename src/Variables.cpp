@@ -9,7 +9,7 @@
 namespace package_manager
 {
 
-#define DEBUG_OPTS
+//#define DEBUG_OPTS
 
 Variables* Variables::m_instance = nullptr;
 
@@ -92,10 +92,14 @@ EOptState Variables::get_pkg_opt(Category *cat, Package *pkg, ConfigurationOptio
     return EOptState::OPT_UNDEF;
 }
 
+std::string Variables::parse_vars(Package *pkg, EPKGVariable var)
+{
+    return parse_vars(pkg, m_vars[variable_names[var]]);
+}
+
 std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
 {
     std::string str = str_raw;
-
 
     while (str.find_first_of('$') != std::string::npos)
     {
@@ -128,7 +132,7 @@ std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
         str = std::regex_replace(str, std::regex("\\$\\{(LDFLAGS)\\}"), get_var(variable_names[(int)PKG_VAR_LDFLAGS]));
         str = std::regex_replace(str, std::regex("\\$\\{(OPTS_LOC)\\}"), get_var(variable_names[(int)PKG_VAR_OPTS_LOC]));
 
-        str = std::regex_replace(str, std::regex("\\$\\{(MAKEOPTS)\\}"), get_var("MAKEOPTS"));
+        //str = std::regex_replace(str, std::regex("\\$\\{(MAKEOPTS)\\}"), get_var("MAKEOPTS"));
 
         if ((name_pos != std::string::npos) && (str[name_pos] == '$'))
             str = std::regex_replace(str, std::regex("\\$\\{(" + name + ")\\}"), getenv(name.c_str()));
@@ -147,7 +151,7 @@ void Variables::set_defaults()
         m_vars[variable_names[i]] = variable_defs[i];
 	}
 	
-    Stream *str = new Stream(parse_vars(nullptr, "${OPTS_LOC}") + "packages.conf", FILE_OPEN_READ_ST);
+    Stream *str = new Stream(parse_vars(nullptr, PKG_VAR_OPTS_LOC) + "packages.conf", FILE_OPEN_READ_ST);
     if (str->opened())
         while (!str->atEnd())
         {
@@ -165,16 +169,6 @@ void Variables::set_defaults()
         }
     delete str;
 
-    std::deque<std::string> opts;
-    Utils::parse_str(m_vars["OPTS"], " \t\n\r", opts);
-    if (opts.size())
-        for (std::string opt_str : opts)
-        {
-            option_config_t opt;
-            if (parse_opt(opt_str, nullptr, nullptr, opt))
-                m_opts.push_back(opt);
-        }
-
     putenv(const_cast<char *>((variable_names[(int)PKG_VAR_MAKEOPTS] + "\"" + m_vars[variable_names[(int)PKG_VAR_MAKEOPTS]]).c_str()));
     putenv(const_cast<char *>((variable_names[(int)PKG_VAR_CFLAGS] + "\"" + m_vars[variable_names[(int)PKG_VAR_CFLAGS]]).c_str()));
     putenv(const_cast<char *>((variable_names[(int)PKG_VAR_CPPFLAGS] + "\"" + m_vars[variable_names[(int)PKG_VAR_CPPFLAGS]]).c_str()));
@@ -183,7 +177,7 @@ void Variables::set_defaults()
 
 void Variables::read_opts()
 {
-    std::string dir = parse_vars(nullptr, "${OPTS_LOC}") + "packages.use/";
+    std::string dir = parse_vars(nullptr, PKG_VAR_OPTS_LOC) + "packages.use/";
     FileSystem::list_files(dir, [this, &dir](const std::string &name, bool is_dir)
                            {
                                if (!is_dir)
@@ -237,6 +231,16 @@ void Variables::read_opts()
                                    delete str;
                                }
                            });
+
+    std::deque<std::string> opts;
+    Utils::parse_str(m_vars["OPTS"], " \t\n\r", opts);
+    if (opts.size())
+        for (std::string opt_str : opts)
+        {
+            option_config_t opt;
+            if (parse_opt(opt_str, nullptr, nullptr, opt))
+                m_opts.push_back(opt);
+        }
 }
 
 bool Variables::parse_opt(std::string opt_str, Category *cat, Package *pkg, option_config_t& opt_rec)

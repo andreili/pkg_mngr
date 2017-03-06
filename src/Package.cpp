@@ -31,10 +31,11 @@ Package::Package(PackageMeta *meta, SQLite::Statement &data)
     m_id = data.getColumn("id");
     m_version = data.getColumn("version").getText();
     m_source = data.getColumn("source_name").getText();
-    m_tmp_dir = Variables::get_instance()->get_var(PKG_VAR_PATH_TMP) + m_meta->get_name() + '-' + m_version + '/';
+    m_tmp_dir = Variables::get_instance()->parse_vars(this, PKG_VAR_PATH_TMP) + m_meta->get_name() + '-' + m_version + '/';
     update_opts();
 
     PackageManager::add_pkg(this);
+    //parse_opts("--enable-languages=c${OPT cxx FLAGON ,c++}${OPT go FLAGON ,go}");
 }
 
 Package::Package(PackageMeta *meta)
@@ -348,7 +349,7 @@ bool Package::stage_unpack()
         std::string file_name = url.substr(url.find_last_of('/') + 1);
         if (file_name.find(".tar.") == std::string::npos)
             continue;
-        std::string cmd = "tar -xf " + Variables::get_instance()->get_var(PKG_VAR_PATH_SOURCES) + file_name +
+        std::string cmd = "tar -xf " + Variables::get_instance()->parse_vars(this, PKG_VAR_PATH_SOURCES) + file_name +
                           " -C " + m_tmp_dir + "source/";
         FileSystem::mkpath(m_tmp_dir + "source/", 0700);
         run_cmd("", cmd);
@@ -360,6 +361,7 @@ bool Package::stage_clean()
 {
     printf("\tClean\n");
     std::string cmd = "rm -rf " + m_tmp_dir;
+    printf("%s\n", cmd.c_str());
     return run_cmd("", cmd);
 }
 
@@ -483,7 +485,7 @@ bool Package::stage_mkpkg()
 bool Package::stage_merge()
 {
     printf("\tMerge to /\n");
-    return run_cmd("", Variables::get_instance()->parse_vars(this, "tar xf ${PKG_DIR}/${PN}-${PV}.tar.xz -C /"));
+    return run_cmd("", Variables::get_instance()->parse_vars(this, "tar xf ${PKG_DIR}/${PN}-${PV}.tar.xz -C ${ROOT}/"));
 }
 
 bool Package::run_cmd(const std::string dir, const std::string cmd)

@@ -57,9 +57,9 @@ bool Fetch::load_source(std::string &url)
     if (check_source(url))
         return true;
 
-    printf("Fetch package\n");
-    std::string file_name = Variables::get_instance()->get_var(PKG_VAR_PATH_SOURCES) + '/' +
+    std::string file_name = Variables::get_instance()->parse_vars(nullptr, PKG_VAR_PATH_SOURCES) + '/' +
                             url.substr(url.find_last_of('/') + 1);
+    printf("Fetch package to %s\n", file_name.c_str());
     Stream *str = new Stream(file_name, FILE_OPEN_WRITE_ST);
 
     CURL *curl;
