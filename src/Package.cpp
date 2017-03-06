@@ -221,8 +221,8 @@ bool Package::install()
         || !stage_clean_unneeded()
         || !stage_strip()
         || !stage_mkpkg()
-        //|| !stage_merge()
-        //|| !stage_clean()
+        || !stage_merge()
+        || !stage_clean()
         )
     {
         printf(COLOR_RED "Error!\n" COLOR_RESET);
