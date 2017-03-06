@@ -361,7 +361,6 @@ bool Package::stage_clean()
 {
     printf("\tClean\n");
     std::string cmd = "rm -rf " + m_tmp_dir;
-    printf("%s\n", cmd.c_str());
     return run_cmd("", cmd);
 }
 
@@ -493,7 +492,6 @@ bool Package::run_cmd(const std::string dir, const std::string cmd)
     if (cmd.size() == 0)
         return false;
 
-    //printf("%s %s\n", dir.c_str(), cmd.c_str());
     log_str(cmd + '\n');
 
     chdir(dir.c_str());

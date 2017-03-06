@@ -104,7 +104,6 @@ std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
     size_t str_len;
     do
     {
-        printf("%s\n", str.c_str());
         str_len = str.length();
         std::smatch sm;
         std::string name = "";
