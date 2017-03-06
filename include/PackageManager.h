@@ -76,10 +76,13 @@ namespace package_manager
             bool        m_ask;
             bool        m_verbose;
             bool        m_without_deps;
+            bool        m_pretend;
 
             void check_depedencies(Package* pkg);
             void add_to_actions(Package *pkg);
             void clear_unchanged_pkgs();
+
+            bool user_yes_no();
     };
 }
 

@@ -53,6 +53,7 @@ void PackageManager::init(int argc, char *argv[], char **envp)
     m_cmd->add_bool_param(L"ask", L"a", &m_ask, false, L"ask before apply actions");
     m_cmd->add_bool_param(L"verbose", L"v", &m_verbose, false, L"print detailed information about actions");
     m_cmd->add_bool_param(L"without-deps", L"O", &m_without_deps, false, L"proceed packages wothout depedencies");
+    m_cmd->add_bool_param(L"pretend", L"p", &m_pretend, false, L"just to show what should be done");
     m_cmd->parse();
 
     if (argc == 1)
@@ -137,31 +138,22 @@ void PackageManager::proc()
     if (m_install)
     {
         printf("Waiting to install:\n");
-        for(auto pkg=m_packages_to_action_list.begin() ; pkg!=m_packages_to_action_list.end() ; pkg++)
-            (*pkg)->print_short_info();
+    }
 
-        if (m_ask)
-        {
-            char reply[100];
-            do
-            {
-                printf(COLOR_GREEN BOLD_ON "Start apply changes (%li packages)? [" "Y" COLOR_RED "/n] " COLOR_RESET, m_packages_to_action_list.size());
+    for(auto pkg=m_packages_to_action_list.begin() ; pkg!=m_packages_to_action_list.end() ; pkg++)
+        (*pkg)->print_short_info();
 
-                fgets(reply, 100, stdin);
+    if (m_pretend)
+        return;
 
-                if ((strcmp(reply, "n\n") == 0) || (strcmp(reply, "N\n") == 0))
-                {
-                    printf("Nothing to work, exiting!\n");
-                    return;
-                }
+    if (m_ask)
+    {
+        if (!user_yes_no())
+            return;
+    }
 
-                if ((strlen(reply) == 1) || (strcmp(reply, "y\n") == 0) || (strcmp(reply, "Y\n") == 0))
-                    break;
-
-                printf("Wrong answer, retry...\n");
-            } while (1);
-        }
-
+    if (m_install)
+    {
         for(auto pkg=m_packages_to_action_list.begin() ; pkg!=m_packages_to_action_list.end() ; pkg++)
             m_fetch->add_to_queue(*pkg);
         m_fetch->start_fetch();
@@ -360,6 +352,29 @@ void PackageManager::clear_unchanged_pkgs()
             pkg_it++;
         }
     }
+}
+
+bool PackageManager::user_yes_no()
+{
+    char reply[100];
+    do
+    {
+        printf(COLOR_GREEN BOLD_ON "Start apply changes (%li packages)? [" "Y" COLOR_RED "/n] " COLOR_RESET, m_packages_to_action_list.size());
+
+        fgets(reply, 100, stdin);
+
+        if ((strcmp(reply, "n\n") == 0) || (strcmp(reply, "N\n") == 0))
+        {
+            printf("Nothing to work, exiting!\n");
+            return false;
+        }
+
+        if ((strlen(reply) == 1) || (strcmp(reply, "y\n") == 0) || (strcmp(reply, "Y\n") == 0))
+            break;
+
+        printf("Wrong answer, retry...\n");
+    } while (1);
+    return true;
 }
 
 
