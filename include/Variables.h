@@ -16,14 +16,17 @@ namespace package_manager
         PKG_VAR_CFLAGS = 5,
         PKG_VAR_CPPFLAGS = 6,
         PKG_VAR_LDFLAGS = 7,
+        PKG_VAR_OPTS_LOC = 8,
     };
 
+    class Category;
     class Package;
     class ConfigurationOption;
     enum class EOptState;
 
     typedef struct
     {
+        Category *cat;
         Package *pkg;
         ConfigurationOption *opt;
         EOptState   opt_state;
@@ -43,7 +46,7 @@ namespace package_manager
 
         void init_env(char **envp);
 
-        EOptState get_pkg_opt(Package *pkg, ConfigurationOption *opt);
+        EOptState get_pkg_opt(Category *cat, Package *pkg, ConfigurationOption *opt);
     protected:
     private:
         static Variables    *m_instance;
@@ -52,6 +55,7 @@ namespace package_manager
 
         void set_defaults();
         void read_opts();
+        bool parse_opt(std::string opt_str, Category *cat, Package *pkg, option_config_t &opt_rec);
     };
 
 }

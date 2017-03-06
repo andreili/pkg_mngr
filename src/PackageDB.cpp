@@ -10,7 +10,7 @@ namespace package_manager
 
 PackageDB::PackageDB()
 {
-    std::string path = Variables::get_instance()->get_var("PKG_DB") + "packages.sql3";
+    std::string path = Variables::get_instance()->parse_vars(nullptr, "${PKG_DB}") + "packages.sql3";
     //std::string path = "d:/Dev/Projects/pkg_mngr/packages.sql3";
     m_db = new SQLite::Database(path, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
 }
