@@ -503,6 +503,7 @@ bool Package::run_cmd(const std::string dir, const std::string cmd)
     while(fgets(buf, MAX_LOG_STRING, in))
         log_data(buf);
     int exit_code = pclose(in);
+    chdir("/");
     if (exit_code)
         return false;
     return true;
