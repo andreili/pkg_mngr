@@ -156,9 +156,9 @@ void Variables::set_defaults()
         while (!str->atEnd())
         {
             std::string line = str->readLine();
-            size_t pos = line.find_first_of('=');
+            size_t pos = line.find_first_of(" =\t");
             std::string name = line.substr(0, pos);
-            std::string val = line.substr(pos + 1);
+            std::string val = line.substr(line.find_first_not_of("= \t", pos));
 
             if (val[0] == '"')
                 val.erase(0, 1);
