@@ -68,7 +68,7 @@ void Package::update_opts()
     PackageManager::get_db_obj()->get_pkg_opts(this, [this](ConfigurationOption *opt, bool def_on)
         {
             EOptState old_state = PackageManager::get_db_obj()->get_opt_state(this, opt);
-            EOptState new_state = Variables::get_instance()->get_pkg_opt(this, opt);
+            EOptState new_state = Variables::get_instance()->get_pkg_opt(this->get_meta()->get_cat(), this, opt);
             this->m_options.push_back({default_on: def_on,
                                        state: new_state,
                                        changed: (new_state != old_state),

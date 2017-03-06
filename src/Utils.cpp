@@ -98,3 +98,18 @@ std::string Utils::wstrToUtf8(const std::wstring& src)
     }
     return dest;
 }
+
+void Utils::parse_str(const std::string &str, std::string delimiters, std::deque<std::string> &lst)
+{
+    lst.clear();
+    size_t pos_trim = str.find_first_not_of(' ');
+    size_t last_pos = str.find_first_not_of(delimiters, pos_trim);
+    size_t pos = str.find_first_of(delimiters);
+
+    while ((pos != std::string::npos)  || (last_pos != std::string::npos))
+    {
+        lst.push_back(str.substr(last_pos, pos - last_pos));
+        last_pos = str.find_first_not_of(delimiters, pos);
+        pos = str.find_first_of(delimiters, last_pos);
+    }
+}

@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include <string>
+#include <deque>
 
 #define COLOR_RESET "\x1B[0m"
 #define BOLD_ON "\x1b[1m"
@@ -15,6 +16,7 @@ class Utils
 public:
     static std::wstring utf8toWStr(const std::string& src);
     static std::string wstrToUtf8(const std::wstring& src);
+    static void parse_str(const std::string &str, std::string delimiters, std::deque<std::string> &lst);
 };
 
 #endif // UTILS_H
