@@ -142,11 +142,13 @@ EOptState Package::check_opt(int opt_id)
     for (config_opt_rec_t &opt : m_options)
         if (opt.option->get_id() == opt_id)
         {
-            if (opt.state == EOptState::OPT_SET)
+            if (opt.state == EOptState::OPT_CLEAR)
+                return EOptState::OPT_CLEAR;
+            else if (opt.state == EOptState::OPT_SET)
                 return EOptState::OPT_SET;
-            if ((opt.state == EOptState::OPT_UNDEF) && (opt.default_on))
+            else if ((opt.state == EOptState::OPT_UNDEF) && (opt.default_on))
                 return EOptState::OPT_SET;
-            if ((opt.state == EOptState::OPT_UNDEF) && (!opt.default_on))
+            else if ((opt.state == EOptState::OPT_UNDEF) && (!opt.default_on))
                 return EOptState::OPT_UNDEF;
         }
     return EOptState::OPT_CLEAR;
