@@ -108,7 +108,7 @@ std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
         std::smatch sm;
         std::string name = "";
         size_t name_pos = std::string::npos;
-        if (std::regex_match(str, sm, std::regex(".*\\$\\{(.*)\\}.*")))
+        if (std::regex_match(str, sm, std::regex(".*\\$\\{(\\w+)\\}.*")))
         {
             name = sm[1];
             name_pos = str.find("${" + name + "}");
