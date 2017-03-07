@@ -208,7 +208,7 @@ void PackageDB::set_installed_opt(Package *pkg, ConfigurationOption *opt, EOptSt
             SQLite::Statement query_upd(*m_db, "UPDATE installed_pkg_opts SET selected=:sel WHERE (pkg_id=:pkg AND opt_id=:opt);");
             query_upd.bind(":pkg", pkg->get_meta()->get_id());
             query_upd.bind(":opt", opt->get_id());
-            query_upd.bind(":set", (state == EOptState::OPT_SET));
+            query_upd.bind(":sel", (state == EOptState::OPT_SET));
             query_upd.exec();
         }
         else
@@ -223,10 +223,10 @@ void PackageDB::set_installed_opt(Package *pkg, ConfigurationOption *opt, EOptSt
     else if (state != EOptState::OPT_UNDEF)
     {
         //insert new state
-        SQLite::Statement query_ins(*m_db, "INSERT INTO installed_pkg_opts (pkg_id, opt_id, selected) VALUES (:pkg, :opt, :set);");
-        query_ins.bind(":pkg", pkg->get_id());
+        SQLite::Statement query_ins(*m_db, "INSERT INTO installed_pkg_opts (pkg_id, opt_id, selected) VALUES (:pkg, :opt, :sel);");
+        query_ins.bind(":pkg", pkg->get_meta()->get_id());
         query_ins.bind(":opt", opt->get_id());
-        query_ins.bind(":set", (state == EOptState::OPT_SET));
+        query_ins.bind(":sel", (state == EOptState::OPT_SET));
         query_ins.exec();
     }
 }
