@@ -50,6 +50,8 @@ namespace package_manager
             static ConfigurationAlias* get_alias(std::string &name);
 
             static bool is_verbose() { return m_instance->m_verbose; }
+
+            static bool is_locale_active(std::string locale);
         protected:
         private:
             PackageDB   *m_db;
@@ -65,6 +67,7 @@ namespace package_manager
             std::deque<Category*>       m_category_list;
             std::deque<ConfigurationOption*>    m_options_list;
             std::deque<ConfigurationAlias*>     m_alias_list;
+            std::deque<std::string>             m_locales;
 
             bool        m_show_help;
             bool        m_params_ok;
@@ -84,6 +87,7 @@ namespace package_manager
             void clear_unchanged_pkgs();
 
             bool user_yes_no();
+            void parse_locales();
     };
 }
 

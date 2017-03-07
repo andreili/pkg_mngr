@@ -447,19 +447,17 @@ std::string doc_dirs[] = {"/usr/share/info",
 
 bool Package::stage_clean_unneeded()
 {
-    printf("\tClean unneeded\n");
-
     std::string root = Variables::get_instance()->parse_vars(this, "${BIN_DIR}");
     for (size_t i=0 ; i<ARRAY_SIZE(locale_dirs) ; i++)
     {
-        FileSystem::list_files(root + locale_dirs[i], [this, root](const std::string &name, bool is_dir)
+        std::string dir = root + locale_dirs[i];
+        FileSystem::list_files(dir, [this, dir](const std::string &name, bool is_dir)
                                {
                                    if (is_dir)
                                    {
                                        //check locales
-                                       #warning
-                                       ///if (true)    ///TODO
-                                       ///     run_cmd(root, "rm -rf " + root + name);
+                                       if (!PackageManager::is_locale_active(name))
+                                            run_cmd(dir, "rm -rf " + dir + name);
                                    }
                                });
     }

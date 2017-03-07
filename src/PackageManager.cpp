@@ -68,6 +68,7 @@ void PackageManager::init(int argc, char *argv[], char **envp)
     for (auto package :m_packages_list)
         package->update_opts();
     m_db->fill_aliases();
+    parse_locales();
 }
 
 bool PackageManager::prepare()
@@ -307,22 +308,33 @@ ConfigurationAlias* PackageManager::get_alias(std::string &name)
     return nullptr;
 }
 
+bool PackageManager::is_locale_active(std::string locale)
+{
+    if (m_instance->m_locales.size() == 0)
+        return true;
+    else return (std::find(m_instance->m_locales.begin(), m_instance->m_locales.end(), locale) != m_instance->m_locales.end());
+}
+
 void PackageManager::check_depedencies(Package* pkg)
 {
+    //printf("Build depedencies %s\n", pkg->get_meta()->get_name().c_str());
     pkg->build_install_deps([this](Package *new_pkg)
         {
             if (new_pkg != nullptr)
             {
+                //printf("PKG %s: ", new_pkg->get_meta()->get_name().c_str());
                 bool contains = false;
                 for (auto it=m_packages_to_action_list.begin() ;
                      it != m_packages_to_action_list.end() ; it++)
                      if (*it == new_pkg)
                      {
+                         //printf("skip deps\n");
                          contains = true;
                          break;
                      }
                 if (!contains)
                 {
+                    //printf("check deps\n");
                     // если пакета еще нет в списке - добавляем
                     this->m_packages_to_action_list.push_back(new_pkg);
                     // и проверим зависимости и для него
@@ -389,6 +401,11 @@ bool PackageManager::user_yes_no()
         printf("Wrong answer, retry...\n");
     } while (1);
     return true;
+}
+
+void PackageManager::parse_locales()
+{
+    Utils::parse_str(m_vars->get_var("LOCALES"), " ", m_locales);
 }
 
 
