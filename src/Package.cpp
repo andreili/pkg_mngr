@@ -221,6 +221,7 @@ bool Package::install()
         || !stage_clean_unneeded()
         || !stage_strip()
         || !stage_mkpkg()
+        || !stage_list()
         || !stage_merge()
         || !stage_clean()
         )
@@ -233,11 +234,6 @@ bool Package::install()
     PackageManager::get_db_obj()->set_installed(this);
     for (config_opt_rec_t &opt : m_options)
         PackageManager::get_db_obj()->set_installed_opt(this, opt.option, opt.state);
-
-    PackageManager::get_db_obj()->clear_installed_files(this);
-    std::string root = Variables::get_instance()->parse_vars(this, "${BIN_DIR}");
-    std::string dir = "";
-    store_installed_files(root, dir);
 
     PackageManager::get_db_obj()->print_posinst(m_meta);
     printf("Installation suscessful.\n");
@@ -481,6 +477,17 @@ bool Package::stage_mkpkg()
         Variables::get_instance()->parse_vars(this, "tar cJpf ${PKG_DIR}/${PN}-${PV}.tar.xz ."));
 }
 
+bool Package::stage_list()
+{
+    PackageManager::get_db_obj()->clear_installed_files(this);
+    std::string root = Variables::get_instance()->parse_vars(this, "${BIN_DIR}");
+    std::string dir = "";
+    PackageManager::get_db_obj()->transaction_start();
+    store_installed_files(root, dir);
+    PackageManager::get_db_obj()->transaction_commit();
+    return true;
+}
+
 bool Package::stage_merge()
 {
     printf("\tMerge to /\n");
@@ -575,7 +582,6 @@ void Package::print_opts()
 
 void Package::store_installed_files(std::string &root, std::string &dir)
 {
-    //PackageManager::get_db_obj()->transaction_start();
     FileSystem::list_files(root + dir, [this, &root, &dir](const std::string &name, bool is_dir)
                            {
                                std::string fn = dir + '/' + name;
@@ -584,7 +590,6 @@ void Package::store_installed_files(std::string &root, std::string &dir)
                                else
                                    PackageManager::get_db_obj()->add_installed_file(this, fn);
                            });
-    //PackageManager::get_db_obj()->transaction_commit();
 }
 
 }

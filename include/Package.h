@@ -95,6 +95,7 @@ namespace package_manager
             bool stage_strip();
             bool stage_clean_unneeded();
             bool stage_mkpkg();
+            bool stage_list();
             bool stage_merge();
 
             bool run_cmd(const std::string dir, const std::string cmd);

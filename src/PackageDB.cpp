@@ -29,14 +29,14 @@ void PackageDB::fill_aliases()
 
 void PackageDB::transaction_start()
 {
-    m_db->exec("BEGIN");
+    m_db->exec("BEGIN;");
 }
 
 void PackageDB::transaction_commit()
 {
     try
     {
-        m_db->exec("COMMIT");
+        m_db->exec("COMMIT;");
     }
     catch (SQLite::Exception& e)
     {
