@@ -98,6 +98,7 @@ std::string Package::parse_opts(const std::string &str_raw)
             return "";
         }
 
+        bool opt_ok = false;
         for (config_opt_rec_t &opt : m_options)
             if (opt.option->get_id() == opt_obj->get_id())
             {
@@ -124,15 +125,24 @@ std::string Package::parse_opts(const std::string &str_raw)
                     case EOptState::OPT_UNDEF:
                         str = std::regex_replace(str, std::regex(ex),
                                                  val);
+                        opt_ok = true;
                         continue;
                         break;
                     }
 
                     val = std::regex_replace(val, std::regex("\\$\\{OPT\\}"), conf_name);
                     str = std::regex_replace(str, std::regex(ex), val);
+                    opt_ok = true;
                     break;
                 }
             }
+        //option not found
+        if (!opt_ok)
+        {
+            printf(COLOR_RED "Error: option not found! ([%s])!\n" COLOR_RESET, opt_name.c_str());
+            log_stop();
+            return "";
+        }
     }
 
     return str;
@@ -143,6 +153,7 @@ EOptState Package::check_opt(int opt_id)
     for (config_opt_rec_t &opt : m_options)
         if (opt.option->get_id() == opt_id)
         {
+            //printf("Check opt %s\n", opt.option->get_name().c_str());
             if (opt.state == EOptState::OPT_CLEAR)
                 return EOptState::OPT_CLEAR;
             else if (opt.state == EOptState::OPT_SET)
@@ -472,7 +483,7 @@ bool Package::stage_mkpkg()
 {
     printf("\tMake binary package\n");
     return run_cmd(get_var(PKG_PATH_BIN),
-        Variables::get_instance()->parse_vars(this, "tar cJpf ${PKG_DIR}/${PN}-${PV}.tar.xz ."));
+        Variables::get_instance()->parse_vars(this, "XZ_OPT=--threads=0 tar cJpf ${PKG_DIR}/${PN}-${PV}.tar.xz ."));
 }
 
 bool Package::stage_list()

@@ -134,8 +134,9 @@ std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
         str = std::regex_replace(str, std::regex("\\$\\{(LDFLAGS)\\}"), get_var(variable_names[(int)PKG_VAR_LDFLAGS]));
         str = std::regex_replace(str, std::regex("\\$\\{(OPTS_LOC)\\}"), get_var(variable_names[(int)PKG_VAR_OPTS_LOC]));
 
-        if ((name_pos != std::string::npos) && (str[name_pos] == '$'))
-            str = std::regex_replace(str, std::regex("\\$\\{(" + name + ")\\}"), getenv(name.c_str()));
+        char* env = getenv(name.c_str());
+        if ((name_pos != std::string::npos) && (str[name_pos] == '$') && (env != nullptr))
+            str = std::regex_replace(str, std::regex("\\$\\{(" + name + ")\\}"), env);
     } while (str_len != str.length());
 
     if (pkg != nullptr)
