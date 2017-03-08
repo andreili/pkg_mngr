@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_pkg">
        <attribute name="title">
@@ -114,7 +114,7 @@
           </widget>
           <widget class="QTabWidget" name="tabWidget_2">
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="tab_3">
             <attribute name="title">
@@ -216,10 +216,20 @@
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_9">
                 <item>
-                 <widget class="QListWidget" name="lwOpts">
+                 <widget class="QTableWidget" name="twOpts">
                   <property name="contextMenuPolicy">
                    <enum>Qt::CustomContextMenu</enum>
                   </property>
+                  <column>
+                   <property name="text">
+                    <string>OPT</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Default</string>
+                   </property>
+                  </column>
                  </widget>
                 </item>
                </layout>

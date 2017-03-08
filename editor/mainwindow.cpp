@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     add_menu(inst, ui->twInstall);
     add_menu(postinst, ui->twPostInst);
     add_menu(deps, ui->twDeps);
-    add_menu(opt, ui->lwOpts);
+    add_menu(opt, ui->twOpts);
 
     m_use_list = new QComboBox(this);
     m_use_list->setVisible(false);
@@ -156,20 +156,32 @@ void MainWindow::on_twPckgs_currentItemChanged(QTreeWidgetItem *current, QTreeWi
                 ++idx;
             }
 
-        ui->lwOpts->clear();
-        q.prepare("SELECT pkg_opts.id, pkg_opts.opt_id, cfg.name AS opt_name"
+        //ui->twOpts->clear();
+        q.prepare("SELECT pkg_opts.id, pkg_opts.`default` AS `default`, pkg_opts.opt_id, cfg.name AS opt_name"
                   " FROM pkg_opts"
                   " INNER JOIN config_opts AS cfg ON cfg.id=pkg_opts.opt_id"
                   " WHERE pkg_opts.pkg_id=:pkg;");
         q.bindValue(":pkg", meta);
+        idx = 0;
+        ui->twOpts->setRowCount(idx);
         if (q.exec())
             while (q.next())
             {
-                QListWidgetItem *item = new QListWidgetItem(q.value("opt_name").toString());
+                ui->twOpts->setRowCount(idx + 1);
+
+                QTableWidgetItem *item = new QTableWidgetItem(q.value("opt_name").toString());
                 item->setData(Qt::UserRole, q.value("opt_id"));
                 item->setData(Qt::UserRole + 1, meta);
                 item->setData(Qt::UserRole + 2, q.value("id"));
-                ui->lwOpts->addItem(item);
+                ui->twOpts->setItem(idx, 0, item);
+
+                item = new QTableWidgetItem(q.value("default").toString());
+                item->setData(Qt::UserRole, q.value("opt_id"));
+                item->setData(Qt::UserRole + 1, meta);
+                item->setData(Qt::UserRole + 2, q.value("id"));
+                ui->twOpts->setItem(idx, 1, item);
+
+                ++idx;
             }
 
         ui->twDeps->setRowCount(0);
@@ -734,11 +746,21 @@ void MainWindow::on_opt_add()
         q.exec();
 
         int id = q.lastInsertId().toInt();
-        QListWidgetItem *item = new QListWidgetItem("<new>");
+        int idx = ui->twOpts->rowCount();
+
+        ui->twOpts->setRowCount(idx + 1);
+
+        QTableWidgetItem *item = new QTableWidgetItem("<new>");
         item->setData(Qt::UserRole, QVariant());
         item->setData(Qt::UserRole + 1, pkg_item->data(0, Qt::UserRole).toInt());
         item->setData(Qt::UserRole + 2, id);
-        ui->lwOpts->addItem(item);
+        ui->twOpts->setItem(idx, 0, item);
+
+        item = new QTableWidgetItem("0");
+        item->setData(Qt::UserRole, QVariant());
+        item->setData(Qt::UserRole + 1, pkg_item->data(0, Qt::UserRole).toInt());
+        item->setData(Qt::UserRole + 2, id);
+        ui->twOpts->setItem(idx, 1, item);
     }
 }
 
@@ -749,9 +771,9 @@ void MainWindow::on_opt_del()
 
     QSqlQuery query;
     query.prepare("DELETE FROM pkg_opts WHERE id = :id ;");
-    query.bindValue(":id", ui->lwOpts->selectedItems()[0]->data(Qt::UserRole).toInt());
+    query.bindValue(":id", ui->twOpts->selectedItems()[0]->data(Qt::UserRole).toInt());
     if (query.exec())
-        ui->lwOpts->removeItemWidget(ui->lwOpts->selectedItems()[0]);
+        ui->twOpts->removeRow(ui->twOpts->selectedItems()[0]->row());
 }
 
 void MainWindow::on_twVersions_customContextMenuRequested(const QPoint &pos)
@@ -1069,14 +1091,14 @@ void MainWindow::on_twPostInst_currentCellChanged(int currentRow, int currentCol
     proc_opts_list(ui->twPostInst, 2);
 }
 
-void MainWindow::on_lwOpts_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+void MainWindow::on_twOpts_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous)
 {
     UNUSED(previous);
-    if (current == nullptr)
+    if ((current == nullptr) || (current->column() != 0))
         return;
 
     int opt_id = current->data(Qt::UserRole).toInt();
-    m_cur_list = ui->lwOpts;
+    m_cur_list = ui->twOpts;
 
     m_use_list->clear();
     m_use_list->addItem("<none>", QVariant());
@@ -1085,8 +1107,8 @@ void MainWindow::on_lwOpts_currentItemChanged(QListWidgetItem *current, QListWid
     while (q.next())
         m_use_list->addItem(q.value("name").toString(), q.value("id").toInt());
 
-    QRect qRect(ui->lwOpts->visualItemRect(current));
-    QPoint pos = ui->lwOpts->viewport()->mapTo(this, QPoint(qRect.left(), qRect.top()));
+    QRect qRect(ui->twOpts->visualItemRect(current));
+    QPoint pos = ui->twOpts->viewport()->mapTo(this, QPoint(qRect.left(), qRect.top()));
     m_use_list->setGeometry(qRect);
     m_use_list->move(pos);
     m_use_list->setCurrentIndex(m_use_list->findData(opt_id, Qt::UserRole));
@@ -1097,11 +1119,12 @@ void MainWindow::on_lwOpts_currentItemChanged(QListWidgetItem *current, QListWid
     { \
         int opt = m_use_list->itemData(index, Qt::UserRole).toInt(); \
         QSqlQuery q; \
-        q.prepare("UPDATE pkg_opts SET opt_id=:opt WHERE id=:id;"); \
+        q.prepare("UPDATE pkg_opts SET opt_id=:opt `default`=:def WHERE id=:id;"); \
         q.bindValue(":id", tw->currentItem()->data(Qt::UserRole + 2).toInt()); \
         q.bindValue(":opt", opt); \
+        q.bindValue(":def", tw->item(tw->currentItem()->row(), 1)->text().toInt()); \
         q.exec(); \
-        ui->lwOpts->currentItem()->setText(m_use_list->currentText()); \
+        ui->twOpts->currentItem()->setText(m_use_list->currentText()); \
     }
 
 #define update_opt_cmd(tw, sql) \
@@ -1117,8 +1140,20 @@ void MainWindow::on_lwOpts_currentItemChanged(QListWidgetItem *current, QListWid
 
 void MainWindow::m_use_list_item_changed(int index)
 {
-    if (m_cur_list == ui->lwOpts)
-        update_opt(ui->lwOpts)
+    if (m_cur_list == ui->twOpts)
+    {
+        int opt = m_use_list->itemData(index, Qt::UserRole).toInt();
+        int def = ui->twOpts->item(ui->twOpts->currentItem()->row(), 1)->text().toInt();
+        int id = ui->twOpts->currentItem()->data(Qt::UserRole + 2).toInt();
+        QSqlQuery q;
+        q.prepare("UPDATE pkg_opts SET opt_id=:opt, `default`=:def WHERE id=:id;");
+        q.bindValue(":id", id);
+        q.bindValue(":opt", opt);
+        q.bindValue(":def", def);
+        q.exec();
+        ui->twOpts->currentItem()->setText(m_use_list->currentText());
+    }
+        //update_opt(ui->twOpts)
     else if (m_cur_list == ui->twPrep)
         update_opt_cmd(ui->twPrep, "UPDATE prepare_cmds SET dep_by_opt_id=:opt WHERE id=:id;")
     else if (m_cur_list == ui->twConfig)
@@ -1142,10 +1177,10 @@ void MainWindow::m_use_list_item_changed(int index)
         //update_opt_cmd(ui->twPostInst, "UPDATE postinstall_cmds SET dep_by_opt_id=:opt WHERE id=:id;")
 }
 
-void MainWindow::on_lwOpts_customContextMenuRequested(const QPoint &pos)
+void MainWindow::on_twOpts_customContextMenuRequested(const QPoint &pos)
 {
-    m_opt_menu->actions().at(1)->setEnabled(ui->lwOpts->selectedItems().size() != 0);
-    m_opt_menu->popup(ui->lwOpts->viewport()->mapToGlobal(pos));
+    m_opt_menu->actions().at(1)->setEnabled(ui->twOpts->selectedItems().size() != 0);
+    m_opt_menu->popup(ui->twOpts->viewport()->mapToGlobal(pos));
 }
 
 void MainWindow::m_pkg_list_item_changed(int index)
@@ -1176,4 +1211,15 @@ void MainWindow::on_lw_sets_currentItemChanged(QListWidgetItem *current, QListWi
             item->setData(Qt::UserRole, q.value(0));
             ui->lw_set->addItem(item);
         }
+}
+
+void MainWindow::on_twOpts_itemChanged(QTableWidgetItem *item)
+{
+    if (item->column() != 1)
+        return;
+    QSqlQuery q;
+    q.prepare("UPDATE pkg_opts SET `default`=:def WHERE id=:id;");
+    q.bindValue(":id", item->data(Qt::UserRole + 2).toInt());
+    q.bindValue(":def", item->text().toInt());
+    q.exec();
 }

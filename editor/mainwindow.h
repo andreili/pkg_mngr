@@ -98,15 +98,17 @@ private slots:
 
     void on_twPostInst_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
 
-    void on_lwOpts_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+    void on_twOpts_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
 
     void m_use_list_item_changed(int index);
 
-    void on_lwOpts_customContextMenuRequested(const QPoint &pos);
+    void on_twOpts_customContextMenuRequested(const QPoint &pos);
 
     void m_pkg_list_item_changed(int index);
 
     void on_lw_sets_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+
+    void on_twOpts_itemChanged(QTableWidgetItem *item);
 
 private:
     Ui::MainWindow *ui;
