@@ -57,9 +57,7 @@ void PackageManager::init(int argc, char *argv[], char **envp)
     m_cmd->add_bool_param(L"fetch", L"f", &m_to_fetch, false, L"only files fetch");
     m_cmd->parse();
 
-    if (argc == 1)
-        m_show_help = true;
-    else for (int i=1 ; i<argc ; i++)
+    for (int i=1 ; i<argc ; i++)
         if (argv[i][0] != '-')
             m_package_names.push_front(argv[i]);
 
@@ -73,7 +71,14 @@ void PackageManager::init(int argc, char *argv[], char **envp)
 
 bool PackageManager::prepare()
 {
-    if (m_show_help || (!m_params_ok))
+    m_params_ok = m_install || m_clean || m_to_fetch;
+
+    if (m_show_help)
+    {
+        m_cmd->show_desc();
+        return false;
+    }
+    else if (!m_params_ok)
     {
         m_cmd->show_desc();
         printf("Package name template: [=][category name]/pkg_name[:version]\n");
@@ -82,6 +87,7 @@ bool PackageManager::prepare()
     else
     {
         // check packages
+        printf("check packages\n");
         if ((m_install || m_clean) && (m_package_names.size() == 0))
         {
             printf("No packets selected!\n");
