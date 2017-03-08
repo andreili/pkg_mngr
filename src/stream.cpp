@@ -428,6 +428,8 @@ std::string Stream::readLine()
     std::string str(tmp);
     size_t del_pos = str.find_first_of("\n\r");
     size_t del_max = str.find_first_not_of("\n\r", del_pos);
+    if (del_max == std::string::npos)
+        del_max = del_pos;
     str.resize(del_pos);
 
     setPosition(start_pos + del_max);
