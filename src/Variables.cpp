@@ -133,10 +133,17 @@ std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
         str = std::regex_replace(str, std::regex("\\$\\{(CPPFLAGS)\\}"), get_var(variable_names[(int)PKG_VAR_CPPFLAGS]));
         str = std::regex_replace(str, std::regex("\\$\\{(LDFLAGS)\\}"), get_var(variable_names[(int)PKG_VAR_LDFLAGS]));
         str = std::regex_replace(str, std::regex("\\$\\{(OPTS_LOC)\\}"), get_var(variable_names[(int)PKG_VAR_OPTS_LOC]));
+        
+        //str = std::regex_replace(str, std::regex("\\$\\{(ROOT)\\}"), m_vars["ROOT"]);
 
         char* env = getenv(name.c_str());
         if ((name_pos != std::string::npos) && (str[name_pos] == '$') && (env != nullptr))
             str = std::regex_replace(str, std::regex("\\$\\{(" + name + ")\\}"), env);
+        else
+        {
+            //if (name.compare("ROOT") == 0)
+                //str = std::regex_replace(str, std::regex("\\$\\{(ROOT)\\}"), "");
+        }
     } while (str_len != str.length());
 
     if (pkg != nullptr)
@@ -147,6 +154,7 @@ std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
 
 void Variables::set_defaults()
 {
+    m_vars.clear();
     for (int i=0 ; i<OPTS_COUNT ; ++i)
 	{
         m_vars[variable_names[i]] = variable_defs[i];
@@ -185,14 +193,17 @@ void Variables::read_opts()
                                {
                                    Stream *str = new Stream(dir + '/' + name, FILE_OPEN_READ_ST);
                                    #ifdef DEBUG_OPTS
-                                   printf("%s\n", (dir + '/' + name).c_str());
+                                   printf("start read opts from file: %s\n", (dir + '/' + name).c_str());
                                    #endif
                                    while (!str->atEnd())
                                    {
                                        std::string line = str->readLine();
-                                       if (line[0] == '#')
+                                       if ((line[0] == '#') || (line.length() == 0))
                                            continue;
 
+                                       #ifdef DEBUG_OPTS
+                                       printf("OPT line: %s\n", line.c_str());
+                                       #endif
                                        size_t pos = line.find_first_of(" \t");
                                        std::string pkg_name = line.substr(0, pos);
                                        std::string pkg_opts = line.substr(pos + 1);
