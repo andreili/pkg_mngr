@@ -52,6 +52,8 @@ namespace package_manager
             static bool is_verbose() { return m_instance->m_verbose; }
 
             static bool is_locale_active(std::string locale);
+
+            static void debug(std::string format, ...);
         protected:
         private:
             PackageDB   *m_db;
@@ -81,6 +83,7 @@ namespace package_manager
             bool        m_without_deps;
             bool        m_pretend;
             bool        m_to_fetch;
+            bool        m_debug;
 
             void check_depedencies(Package* pkg);
             void add_to_actions(Package *pkg);

@@ -25,6 +25,9 @@ PackageManager::PackageManager()
     , m_ask (false)
     , m_verbose (false)
     , m_without_deps (false)
+    , m_pretend (false)
+    , m_to_fetch (false)
+    , m_debug(false)
 {
     m_instance = this;
     m_vars = new Variables();
@@ -55,6 +58,7 @@ void PackageManager::init(int argc, char *argv[], char **envp)
     m_cmd->add_bool_param(L"without-deps", L"O", &m_without_deps, false, L"proceed packages wothout depedencies");
     m_cmd->add_bool_param(L"pretend", L"p", &m_pretend, false, L"just to show what should be done");
     m_cmd->add_bool_param(L"fetch", L"f", &m_to_fetch, false, L"only files fetch");
+    m_cmd->add_bool_param(L"debug", L"D", &m_debug, false, L"output debug messages");
     m_cmd->parse();
 
     for (int i=1 ; i<argc ; i++)
@@ -87,7 +91,7 @@ bool PackageManager::prepare()
     else
     {
         // check packages
-        printf("check packages\n");
+        debug("check packages\n");
         if ((m_install || m_clean) && (m_package_names.size() == 0))
         {
             printf("No packets selected!\n");
@@ -102,8 +106,10 @@ bool PackageManager::prepare()
             if (name[0] == '@')
             {
                 // добавляем список пакетов указанного набора
+                debug("Add packages for set %s\n", name.c_str());
                 m_db->get_set_pkgs(&name[1], [this](std::string pkg_name)
                 {
+                    debug("Add package %s\n", pkg_name.c_str());
                     Package *pkg = Package::get_pkg_by_name(pkg_name);
                     if (pkg != nullptr)
                     {
@@ -122,7 +128,10 @@ bool PackageManager::prepare()
                 }
 
                 if (!m_without_deps)
+                {
+                    debug("Add dependies for package %s\n", name.c_str());
                     check_depedencies(pkg);
+                }
 
                 add_to_actions(pkg);
                 m_packages_to_action_world.push_back(pkg->get_id());
@@ -321,33 +330,52 @@ bool PackageManager::is_locale_active(std::string locale)
     else return (std::find(m_instance->m_locales.begin(), m_instance->m_locales.end(), locale) != m_instance->m_locales.end());
 }
 
+void PackageManager::debug(std::string format, ...)
+{
+    if (!m_instance->m_debug)
+        return;
+
+    char        text[1024];
+    va_list		ap;
+
+    if (format.length() != 0)
+    {
+        va_start(ap, format);
+        vsprintf(text, format.c_str(), ap);
+        va_end(ap);
+    }
+    printf("\x1B[31m%s\x1B[0m ", text);
+}
+
 void PackageManager::check_depedencies(Package* pkg)
 {
-    //printf("Build depedencies %s\n", pkg->get_meta()->get_name().c_str());
+    debug(">>>Build depedencies %s\n", pkg->get_meta()->get_name().c_str());
     pkg->build_install_deps([this](Package *new_pkg)
         {
             if (new_pkg != nullptr)
             {
-                //printf("PKG %s: ", new_pkg->get_meta()->get_name().c_str());
+                debug("\tPKG %s: ", new_pkg->get_meta()->get_name().c_str());
                 bool contains = false;
                 for (auto it=m_packages_to_action_list.begin() ;
                      it != m_packages_to_action_list.end() ; it++)
                      if (*it == new_pkg)
                      {
-                         //printf("skip deps\n");
+                         debug("\tskip deps\n");
                          contains = true;
                          break;
                      }
                 if (!contains)
                 {
-                    //printf("check deps\n");
-                    // если пакета еще нет в списке - добавляем
-                    this->m_packages_to_action_list.push_back(new_pkg);
-                    // и проверим зависимости и для него
+                    debug("\tcheck deps\n");
+                    // проверим зависимости и для него
                     check_depedencies(new_pkg);
+                    // и добавляем в список
+                    debug("\tAdd %s to list\n", new_pkg->get_meta()->get_name().c_str());
+                    this->m_packages_to_action_list.push_back(new_pkg);
                 }
             }
         });
+    debug("<<<End build deps for package %s\n", pkg->get_meta()->get_name().c_str());
 }
 
 void PackageManager::add_to_actions(Package *pkg)

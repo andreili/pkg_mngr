@@ -32,6 +32,9 @@ Package::Package(PackageMeta *meta, SQLite::Statement &data)
     m_version = data.getColumn("version").getText();
     m_source = data.getColumn("source_name").getText();
     m_tmp_dir = Variables::get_instance()->parse_vars(this, PKG_VAR_PATH_TMP) + m_meta->get_name() + '-' + m_version + '/';
+
+    PackageManager::debug("Allocate new package object: %s\n", m_meta->get_name().c_str());
+
     update_opts();
 
     PackageManager::add_pkg(this);
@@ -66,10 +69,13 @@ bool Package::check_installed()
 void Package::update_opts()
 {
     m_options.clear();
+    PackageManager::debug("Update opts %s\n", m_meta->get_name().c_str());
     PackageManager::get_db_obj()->get_pkg_opts(this, [this](ConfigurationOption *opt, bool def_on)
         {
+            PackageManager::debug("Update opts %s: ", opt->get_name().c_str());
             EOptState old_state = PackageManager::get_db_obj()->get_opt_state(this, opt);
             EOptState new_state = Variables::get_instance()->get_pkg_opt(this->get_meta()->get_cat(), this, opt);
+            PackageManager::debug("%i->%i\n", (int)old_state, (int)new_state);
             this->m_options.push_back({default_on: def_on,
                                        state: new_state,
                                        changed: (new_state != old_state),
@@ -153,7 +159,7 @@ EOptState Package::check_opt(int opt_id)
     for (config_opt_rec_t &opt : m_options)
         if (opt.option->get_id() == opt_id)
         {
-            //printf("Check opt %s\n", opt.option->get_name().c_str());
+            PackageManager::debug("Check opt %s\n", opt.option->get_name().c_str());
             if (opt.state == EOptState::OPT_CLEAR)
                 return EOptState::OPT_CLEAR;
             else if (opt.state == EOptState::OPT_SET)
