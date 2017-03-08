@@ -567,10 +567,9 @@ void Package::print_opts()
 {
     for (config_opt_rec_t &opt : m_options)
     {
-        std::string color = std::string(opt.changed ? BOLD_ON : "") + (opt.state == EOptState::OPT_UNDEF ?
-                                                                           (opt.default_on ? COLOR_YELLOW : COLOR_RED) :
-                                                                           (opt.state == EOptState::OPT_SET) ? COLOR_GREEN : COLOR_RED) +
-                (opt.changed ? BOLD_OFF : "");
+        const char* color = (opt.state == EOptState::OPT_UNDEF ?
+                             (opt.default_on ? COLOR_YELLOW : COLOR_RED) :
+                             (opt.state == EOptState::OPT_SET) ? COLOR_GREEN : COLOR_RED);
         std::string def;
         switch (check_opt(opt.option->get_id()))
         {
@@ -585,7 +584,7 @@ void Package::print_opts()
             break;
         }
 
-        printf("%s%s%s\x1B[0m ", color.c_str(), def.c_str(), opt.option->get_name().c_str());
+        printf("%s%s%s%s%s\x1B[0m ", color, opt.changed ? BOLD_ON : "", def.c_str(), opt.option->get_name().c_str(), opt.changed ? BOLD_OFF : "");
     }
 }
 
