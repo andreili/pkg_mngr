@@ -17,7 +17,7 @@ Variables* Variables::m_instance = nullptr;
 std::string variable_names[] = {"PKG_SOURCES", "PKG_DB", "PKG_TMP", "PKG_DIR", "MAKEOPTS",
                                 "CFLAGS", "CPPFLAGS", "LDFLAGS", "OPTS_LOC"};
 
-std::string variable_defs[] = {"${ROOT}/usr/packages/srcs/", "${ROOT}/var/lib/pkg/", "${ROOT}/var/tmp/packages/", "${ROOT}/usr/packages/pkgs/", "-j1",
+std::string variable_defs[] = {"${ROOT}/var/lib/pkg/srcs/", "${ROOT}/var/lib/pkg/", "${ROOT}/var/tmp/packages/", "${ROOT}/var/lib/pkg/pkgs/", "-j1",
                                 "-O2 -pipe -march=native", "${CFLAGS}", "-s", "${ROOT}/etc/packages/"};
 
 Variables::Variables()
