@@ -126,6 +126,7 @@ void MainWindow::fill_sets()
 void MainWindow::on_twPckgs_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
     UNUSED(previous);
+    m_use_list->setVisible(false);
     if (current->parent() != nullptr)
     {
         int idx = 0;
@@ -1094,6 +1095,7 @@ void MainWindow::on_twPostInst_currentCellChanged(int currentRow, int currentCol
 void MainWindow::on_twOpts_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous)
 {
     UNUSED(previous);
+    m_use_list->setVisible(false);
     if ((current == nullptr) || (current->column() != 0))
         return;
 
