@@ -58,3 +58,29 @@ HEADERS += \
     sqlite3/sqlite3.h \
     include/CmdlineParser.h \
     include/Utils.h
+
+unix { 
+    # VARIABLES
+    isEmpty(PREFIX):PREFIX = /usr #PREFIX - это путь установки
+    BINDIR = $$PREFIX/bin # путь к бинарникам
+    DATADIR = $$PREFIX/share # путь к различным компонентам приложения, от которых можно отказаться
+    DEFINES += DATADIR=\"$$DATADIR\" \
+        PKGDATADIR=\"$$PKGDATADIR\"
+    
+    # MAKE INSTALL
+    INSTALLS += target mkdb etc_dir pkg_dir src_dir
+
+    target.path = $$BINDIR
+
+    mkdb.path = /var/lib/pkg
+    mkdb.commands = cat $$PWD/packages.sql | sqlite3 $(INSTALL_ROOT)$$mkdb.path/packages.sql3
+    
+    etc_dir.path = /etc/packages
+    etc_dir.commands = touch $(INSTALL_ROOT)$$etc_dir.path/packages.conf
+    
+    pkg_dir.path = /var/lib/pkg/pkgs
+    pkg_dir.commands = touch .nil
+    
+    src_dir.path = /var/lib/pkg/srcs
+    src_dir.commands = touch .nil
+}
