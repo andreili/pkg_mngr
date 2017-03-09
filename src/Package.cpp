@@ -92,6 +92,7 @@ std::string Package::parse_opts(const std::string &str_raw)
 
     while (std::regex_search(str, sm, opt_reg))
     {
+        PackageManager::debug("Package opts: %s\n", str.c_str());
         std::string opt_name = sm[1];
         std::string alias_name = sm[2];
         std::string conf_name = sm[3];
