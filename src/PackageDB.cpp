@@ -202,31 +202,19 @@ void PackageDB::set_installed_opt(Package *pkg, ConfigurationOption *opt, EOptSt
     query.bind(":opt", opt->get_id());
     if (query.executeStep())
     {
-        if (state != EOptState::OPT_UNDEF)
-        {
-            //update exist record
-            SQLite::Statement query_upd(*m_db, "UPDATE installed_pkg_opts SET selected=:sel WHERE (pkg_id=:pkg AND opt_id=:opt);");
-            query_upd.bind(":pkg", pkg->get_meta()->get_id());
-            query_upd.bind(":opt", opt->get_id());
-            query_upd.bind(":sel", (state == EOptState::OPT_SET));
-            query_upd.exec();
-        }
-        else
-        {
-            //delete outdated state
-            SQLite::Statement query_del(*m_db, "DELETE FROM installed_pkg_opts WHERE (pkg_id=:pkg AND opt_id=:opt);");
-            query_del.bind(":pkg", pkg->get_meta()->get_id());
-            query_del.bind(":opt", opt->get_id());
-            while (query_del.executeStep());
-        }
+        SQLite::Statement query_upd(*m_db, "UPDATE installed_pkg_opts SET selected=:sel WHERE (pkg_id=:pkg AND opt_id=:opt);");
+        query_upd.bind(":pkg", pkg->get_meta()->get_id());
+        query_upd.bind(":opt", opt->get_id());
+        query_upd.bind(":sel", (int)state);
+        query_upd.exec();
     }
-    else if (state != EOptState::OPT_UNDEF)
+    else
     {
         //insert new state
         SQLite::Statement query_ins(*m_db, "INSERT INTO installed_pkg_opts (pkg_id, opt_id, selected) VALUES (:pkg, :opt, :sel);");
         query_ins.bind(":pkg", pkg->get_meta()->get_id());
         query_ins.bind(":opt", opt->get_id());
-        query_ins.bind(":sel", (state == EOptState::OPT_SET));
+        query_ins.bind(":sel", (int)state);
         query_ins.exec();
     }
 }
