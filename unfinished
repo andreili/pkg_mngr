@@ -1,10 +1,8 @@
-cracklib
-python
-iconv
-http
-idn
-nat
-pam
-pcre
-berkdb
-guile
+sandbox!
+elfutils (systemd)
+gcrypt (systemd)
+libidn (systemd)
+qrencode (systemd)
+libxkbcommon (systemd)
+
+gnu-efi (systemd)
