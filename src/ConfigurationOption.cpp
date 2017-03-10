@@ -10,7 +10,6 @@ ConfigurationOption::ConfigurationOption(SQLite::Statement &data)
     m_name = data.getColumn("name").getText();
     m_name = data.getColumn("name").getText();
     m_descr = data.getColumn("descr").getText();
-    m_opt = data.getColumn("opt").getText();
     PackageManager::add_opt(this);
 }
 

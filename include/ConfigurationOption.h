@@ -34,7 +34,6 @@ namespace package_manager
             int                 m_id;
             std::string         m_name;
             std::string         m_descr;
-            std::string         m_opt;
             ConfigurationAlias  *m_alias;
 
     };
