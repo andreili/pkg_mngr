@@ -77,7 +77,7 @@ void MainWindow::on_twPckgs_itemExpanded(QTreeWidgetItem *item)
     int cat = item->data(0, Qt::UserRole).toInt();
     int idx = 0;
     QSqlQuery q;
-    q.prepare("SELECT * FROM package_meta WHERE cat_id=:cat;");
+    q.prepare("SELECT * FROM package_meta WHERE cat_id=:cat ORDER BY name;");
     q.bindValue(":cat", cat);
     if (q.exec())
         while (q.next())
@@ -1022,7 +1022,7 @@ void MainWindow::on_twPckgs_itemChanged(QTreeWidgetItem *item, int column)
             q.prepare("SELECT pkg_opts.opt_id, cfg.name AS opt_name" \
                       " FROM pkg_opts" \
                       " INNER JOIN config_opts AS cfg ON cfg.id=pkg_opts.opt_id" \
-                      " WHERE pkg_opts.pkg_id=:pkg;"); \
+                      " WHERE pkg_opts.pkg_id=:pkg ORDER BY opt_name;"); \
             q.bindValue(":pkg", ui->twPckgs->currentItem()->data(0, Qt::UserRole).toInt()); \
             q.exec(); \
             while (q.next()) \
@@ -1061,7 +1061,7 @@ void MainWindow::on_twDeps_currentCellChanged(int currentRow, int currentColumn,
         m_pkg_list->clear();
         m_pkg_list->addItem("<none>", QVariant());
         QSqlQuery q;
-        q.prepare("SELECT * FROM package_meta;");
+        q.prepare("SELECT * FROM package_meta ORDER BY name;");
         q.exec();
         while (q.next())
             m_pkg_list->addItem(q.value("name").toString(), q.value("id").toInt());
@@ -1104,7 +1104,7 @@ void MainWindow::on_twOpts_currentItemChanged(QTableWidgetItem *current, QTableW
 
     m_use_list->clear();
     m_use_list->addItem("<none>", QVariant());
-    QSqlQuery q("SELECT * FROM config_opts;");
+    QSqlQuery q("SELECT * FROM config_opts ORDER BY name;");
     q.exec();
     while (q.next())
         m_use_list->addItem(q.value("name").toString(), q.value("id").toInt());
