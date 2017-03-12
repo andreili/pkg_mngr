@@ -214,8 +214,9 @@ bool Package::install()
 
     if (!stage_clean())
     {
-        printf(COLOR_RED "Error!\n" COLOR_RESET);
+        printf(COLOR_RED "Error on clean stage!\n" COLOR_RESET);
         log_stop();
+        log_tail();
         return false;
     }
 
@@ -246,6 +247,7 @@ bool Package::install()
     {
         printf(COLOR_RED "Error!\n" COLOR_RESET);
         log_stop();
+        log_tail();
         return false;
     }
 
@@ -515,7 +517,7 @@ bool Package::run_cmd(const std::string dir, const std::string cmd)
     if (cmd.size() == 0)
         return false;
 
-    log_str(cmd + '\n');
+    log_str("[" + dir + "]" + cmd + '\n');
 
     chdir(dir.c_str());
     FILE *in;
@@ -568,6 +570,19 @@ void Package::log_data(char *buf)
         if (PackageManager::is_verbose())
             printf("%s", buf);
     }
+}
+
+void Package::log_tail()
+{
+    std::string cmd = "tail -n 20 " + m_tmp_dir + "/pkg.log";
+    FILE *in;
+    if(!(in = popen(cmd.c_str(), "r")))
+        return;
+    char *buf = new char[MAX_LOG_STRING];
+    while(fgets(buf, MAX_LOG_STRING, in))
+        printf("%s", buf);
+    pclose(in);
+    delete buf;
 }
 
 void Package::print_opts()
