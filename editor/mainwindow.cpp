@@ -320,27 +320,27 @@ void MainWindow::on_twVersions_currentItemChanged(QTableWidgetItem *current, QTa
                                    " FROM prepare_cmds AS cmds"
                                    " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
                                    " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
-                                   " WHERE cmds.pkg_id=:pkg;");
+                                   " WHERE cmds.pkg_id=:pkg GROUP BY cmds.id;");
         fill_opts_list(ui->twConfig, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
                                      " FROM config_cmds AS cmds"
                                      " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
                                      " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
-                                     " WHERE cmds.pkg_id=:pkg;");
+                                     " WHERE cmds.pkg_id=:pkg GROUP BY cmds.id;");
         fill_opts_list(ui->twBuild, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
                                     " FROM make_cmds AS cmds"
                                     " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
                                     " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
-                                    " WHERE cmds.pkg_id=:pkg;");
+                                    " WHERE cmds.pkg_id=:pkg GROUP BY cmds.id;");
         fill_opts_list(ui->twInstall, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
                                       " FROM install_cmds AS cmds"
                                       " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
                                       " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
-                                      " WHERE cmds.pkg_id=:pkg;");
+                                      " WHERE cmds.pkg_id=:pkg GROUP BY cmds.id;");
         fill_opts_list(ui->twPostInst, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
                                        " FROM postinstall_cmds AS cmds"
                                        " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
                                        " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
-                                       " WHERE cmds.pkg_id=:pkg;");
+                                       " WHERE cmds.pkg_id=:pkg GROUP BY cmds.id;");
     }
 }
 
