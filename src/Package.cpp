@@ -364,12 +364,19 @@ bool Package::stage_unpack()
     for (std::string &url : urls)
     {
         std::string file_name = url.substr(url.find_last_of('/') + 1);
-        if (file_name.find(".tar.") == std::string::npos)
-            continue;
-        std::string cmd = "tar -xf " + Variables::get_instance()->parse_vars(this, PKG_VAR_PATH_SOURCES) + file_name +
-                          " -C " + m_tmp_dir + "source/";
-        FileSystem::mkpath(m_tmp_dir + "source/", 0700);
-        run_cmd("", cmd);
+        if ((file_name.find(".tar.") != std::string::npos) || (file_name.find(".tgz") != std::string::npos))
+        {
+            std::string cmd = "tar -xf " + Variables::get_instance()->parse_vars(this, PKG_VAR_PATH_SOURCES) + file_name +
+                              " -C " + m_tmp_dir + "source/";
+            FileSystem::mkpath(m_tmp_dir + "source/", 0700);
+            run_cmd("", cmd);
+        }
+        else if (file_name.find(".zip") != std::string::npos)
+        {
+            std::string cmd = "unzip " + Variables::get_instance()->parse_vars(this, PKG_VAR_PATH_SOURCES) + file_name;
+            FileSystem::mkpath(m_tmp_dir + "source/", 0700);
+            run_cmd(m_tmp_dir + "source/", cmd);
+        }
     }
     return true;
 }
