@@ -24,9 +24,10 @@ PackageManager::PackageManager()
     , m_from_pkg (false)
     , m_ask (false)
     , m_verbose (false)
+    , m_verbose_cmds (false)
     , m_without_deps (false)
     , m_pretend (false)
-    , m_to_fetch (false)
+    , m_fetch_only (false)
     , m_debug(false)
 {
     m_instance = this;
@@ -55,9 +56,10 @@ void PackageManager::init(int argc, char *argv[], char **envp)
     m_cmd->add_bool_param(L"from-pkg", L"p", &m_from_pkg, false, L"usage binary packages");
     m_cmd->add_bool_param(L"ask", L"a", &m_ask, false, L"ask before apply actions");
     m_cmd->add_bool_param(L"verbose", L"v", &m_verbose, false, L"print detailed information about actions");
+    m_cmd->add_bool_param(L"verbose-cmds", L"V", &m_verbose_cmds, false, L"print detailed information about running commands");
     m_cmd->add_bool_param(L"without-deps", L"O", &m_without_deps, false, L"proceed packages wothout depedencies");
     m_cmd->add_bool_param(L"pretend", L"p", &m_pretend, false, L"just to show what should be done");
-    m_cmd->add_bool_param(L"fetch", L"f", &m_to_fetch, false, L"only files fetch");
+    m_cmd->add_bool_param(L"fetch", L"f", &m_fetch_only, false, L"only files fetch");
     m_cmd->add_bool_param(L"debug", L"D", &m_debug, false, L"output debug messages");
     m_cmd->parse();
 
@@ -75,7 +77,7 @@ void PackageManager::init(int argc, char *argv[], char **envp)
 
 bool PackageManager::prepare()
 {
-    m_params_ok = m_install || m_clean || m_to_fetch;
+    m_params_ok = m_install || m_clean || m_fetch_only;
 
     if (m_show_help)
     {
@@ -155,7 +157,7 @@ void PackageManager::proc()
         return;
     }
 
-    if (m_to_fetch)
+    if (m_fetch_only)
         printf("Waiting to fetch:\n");
     else if (m_install)
         printf("Waiting to install:\n");
@@ -172,24 +174,27 @@ void PackageManager::proc()
             return;
     }
 
-    if (m_to_fetch || m_install)
+    if (m_fetch_only || m_install)
     {
         for(auto pkg=m_packages_to_action_list.begin() ; pkg!=m_packages_to_action_list.end() ; pkg++)
             m_fetch->add_to_queue(*pkg);
         m_fetch->start_fetch();
     }
 
-    if (m_to_fetch) {}
+    if (m_fetch_only) {}
     else if (m_install)
     {
+        int idx = 0;
+        int all_c = m_packages_to_action_list.size();
         for(auto pkg=m_packages_to_action_list.begin() ; pkg!=m_packages_to_action_list.end() ; pkg++)
         {
+            printf(BOLD_ON "[ " COLOR_GREEN "%03i" COLOR_RESET BOLD_ON "/" COLOR_YELLOW "%03i" COLOR_RESET BOLD_ON " ]:" BOLD_OFF, ++idx, all_c);
             if (!(*pkg)->install())
                 break;
         }
     }
 
-    if (m_to_fetch)
+    if (m_fetch_only)
     {
         while (m_fetch->is_active())
             std::this_thread::sleep_for(std::chrono::milliseconds(100));

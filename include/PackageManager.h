@@ -50,6 +50,7 @@ namespace package_manager
             static ConfigurationAlias* get_alias(std::string &name);
 
             static bool is_verbose() { return m_instance->m_verbose; }
+            static bool is_verbose_cmds() { return m_instance->m_verbose_cmds; }
 
             static bool is_locale_active(std::string locale);
 
@@ -80,9 +81,10 @@ namespace package_manager
             bool        m_from_pkg;
             bool        m_ask;
             bool        m_verbose;
+            bool        m_verbose_cmds;
             bool        m_without_deps;
             bool        m_pretend;
-            bool        m_to_fetch;
+            bool        m_fetch_only;
             bool        m_debug;
 
             void check_depedencies(Package* pkg);

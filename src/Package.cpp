@@ -354,7 +354,8 @@ Package* Package::get_pkg_by_name(std::string &pkg_name)
 
 bool Package::stage_unpack()
 {
-    printf("\tUnpacking source\n");
+    if (PackageManager::is_verbose())
+        printf("\tUnpacking source\n");
     std::deque<std::string> urls;
     PackageManager::get_db_obj()->get_pkg_urls(this, [&urls](std::string url)
                                                {
@@ -375,14 +376,16 @@ bool Package::stage_unpack()
 
 bool Package::stage_clean()
 {
-    printf("\tClean\n");
+    if (PackageManager::is_verbose())
+        printf("\tClean\n");
     std::string cmd = "rm -rf " + m_tmp_dir;
     return run_cmd("", cmd);
 }
 
 bool Package::stage_prepare()
 {
-    printf("\tPreparing source\n");
+    if (PackageManager::is_verbose())
+        printf("\tPreparing source\n");
     bool ret = true;
     PackageManager::get_db_obj()->get_pkg_prepare(this, [this, &ret](std::string dir, std::string cmd)
                                                   {
@@ -395,7 +398,8 @@ bool Package::stage_prepare()
 
 bool Package::stage_configure()
 {
-    printf("\tConfiguring\n");
+    if (PackageManager::is_verbose())
+        printf("\tConfiguring\n");
     bool ret = true;
     PackageManager::get_db_obj()->get_pkg_configure(this, [this, &ret](std::string dir, std::string cmd)
                                                   {
@@ -409,7 +413,8 @@ bool Package::stage_configure()
 
 bool Package::stage_compile()
 {
-    printf("\tCompiling\n");
+    if (PackageManager::is_verbose())
+        printf("\tCompiling\n");
     bool ret = true;
     PackageManager::get_db_obj()->get_pkg_compile(this, [this, &ret](std::string dir, std::string cmd)
                                                   {
@@ -422,7 +427,8 @@ bool Package::stage_compile()
 
 bool Package::stage_install()
 {
-    printf("\tInstall to temporary directory\n");
+    if (PackageManager::is_verbose())
+        printf("\tInstall to temporary directory\n");
     bool ret = true;
     PackageManager::get_db_obj()->get_pkg_install(this, [this, &ret](std::string dir, std::string cmd)
                                                   {
@@ -436,7 +442,8 @@ bool Package::stage_install()
 
 bool Package::stage_postinstall()
 {
-    printf("\tPost-installation preparation\n");
+    if (PackageManager::is_verbose())
+        printf("\tPost-installation preparation\n");
     bool ret = true;
     PackageManager::get_db_obj()->get_pkg_postinstall(this, [this, &ret](std::string dir, std::string cmd)
                                                   {
@@ -450,7 +457,8 @@ bool Package::stage_postinstall()
 
 bool Package::stage_strip()
 {
-    printf("\tStrip binaries\n");
+    if (PackageManager::is_verbose())
+        printf("\tStrip binaries\n");
     return run_cmd(Variables::get_instance()->parse_vars(this, "${BIN_DIR}"),
                    "find . -type f -exec strip --strip-debug '{}' \\;");
 }
@@ -490,7 +498,8 @@ bool Package::stage_clean_unneeded()
 
 bool Package::stage_mkpkg()
 {
-    printf("\tMake binary package\n");
+    if (PackageManager::is_verbose())
+        printf("\tMake binary package\n");
     return run_cmd(get_var(PKG_PATH_BIN),
         Variables::get_instance()->parse_vars(this, "XZ_OPT=--threads=0 tar cJpf ${PKG_DIR}/${PN}-${PV}.tar.xz ."));
 }
@@ -508,7 +517,8 @@ bool Package::stage_list()
 
 bool Package::stage_merge()
 {
-    printf("\tMerge to /\n");
+    if (PackageManager::is_verbose())
+        printf("\tMerge to /\n");
     return run_cmd("", Variables::get_instance()->parse_vars(this, "tar xf ${PKG_DIR}/${PN}-${PV}.tar.xz -C ${ROOT}/"));
 }
 
@@ -557,7 +567,7 @@ void Package::log_str(const std::string line)
     {
         m_log->writeStr(line);
         m_log->write("\n", 1);
-        if (PackageManager::is_verbose())
+        if (PackageManager::is_verbose_cmds())
             printf("%s\n", line.c_str());
     }
 }
@@ -567,7 +577,7 @@ void Package::log_data(char *buf)
     if (m_log_enabled)
     {
         m_log->writeStr(buf);
-        if (PackageManager::is_verbose())
+        if (PackageManager::is_verbose_cmds())
             printf("%s", buf);
     }
 }
