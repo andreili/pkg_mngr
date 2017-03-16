@@ -139,10 +139,14 @@ std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
         char* env = getenv(name.c_str());
         if ((name_pos != std::string::npos) && (str[name_pos] == '$') && (env != nullptr))
             str = std::regex_replace(str, std::regex("\\$\\{(" + name + ")\\}"), env);
+        else if (m_vars.count(name))
+        {
+            str = std::regex_replace(str, std::regex("\\$\\{(" + name + ")\\}"), m_vars[name]);
+        }
         else
         {
-            //if (name.compare("ROOT") == 0)
-                //str = std::regex_replace(str, std::regex("\\$\\{(ROOT)\\}"), "");
+            if (name.compare("ROOT") == 0)
+                str = std::regex_replace(str, std::regex("\\$\\{(ROOT)\\}"), "");
         }
     } while (str_len != str.length());
 
@@ -178,10 +182,11 @@ void Variables::set_defaults()
         }
     delete str;
 
-    putenv(const_cast<char *>((variable_names[(int)PKG_VAR_MAKEOPTS] + "\"" + m_vars[variable_names[(int)PKG_VAR_MAKEOPTS]]).c_str()));
-    putenv(const_cast<char *>((variable_names[(int)PKG_VAR_CFLAGS] + "\"" + m_vars[variable_names[(int)PKG_VAR_CFLAGS]]).c_str()));
-    putenv(const_cast<char *>((variable_names[(int)PKG_VAR_CPPFLAGS] + "\"" + m_vars[variable_names[(int)PKG_VAR_CPPFLAGS]]).c_str()));
-    putenv(const_cast<char *>((variable_names[(int)PKG_VAR_LDFLAGS] + "\"" + m_vars[variable_names[(int)PKG_VAR_LDFLAGS]]).c_str()));
+    setenv(variable_names[(int)PKG_VAR_MAKEOPTS].c_str(), parse_vars(nullptr, m_vars[variable_names[(int)PKG_VAR_MAKEOPTS]]).c_str(), 1);
+    setenv(variable_names[(int)PKG_VAR_CFLAGS].c_str(), parse_vars(nullptr, m_vars[variable_names[(int)PKG_VAR_CFLAGS]]).c_str(), 1);
+    setenv(variable_names[(int)PKG_VAR_CPPFLAGS].c_str(), parse_vars(nullptr, m_vars[variable_names[(int)PKG_VAR_CPPFLAGS]]).c_str(), 1);
+    setenv("CXXFLAGS", parse_vars(nullptr, m_vars[variable_names[(int)PKG_VAR_CPPFLAGS]]).c_str(), 1);
+    setenv(variable_names[(int)PKG_VAR_LDFLAGS].c_str(), parse_vars(nullptr, m_vars[variable_names[(int)PKG_VAR_LDFLAGS]]).c_str(), 1);
 }
 
 void Variables::read_opts()
