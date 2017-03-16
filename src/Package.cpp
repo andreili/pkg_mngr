@@ -70,13 +70,13 @@ void Package::update_opts()
 {
     m_options.clear();
     PackageManager::debug("Update opts %s\n", m_meta->get_name().c_str());
-    PackageManager::get_db_obj()->get_pkg_opts(this, [this](ConfigurationOption *opt, bool def_on)
+    PackageManager::get_db_obj()->get_pkg_opts(this, [this](ConfigurationOption *opt, EOptState def_on)
         {
             PackageManager::debug("Update opts %s: ", opt->get_name().c_str());
             EOptState old_state = PackageManager::get_db_obj()->get_opt_state(this, opt);
             EOptState new_state = Variables::get_instance()->get_pkg_opt(this->get_meta()->get_cat(), this, opt);
             PackageManager::debug("%i->%i\n", (int)old_state, (int)new_state);
-            this->m_options.push_back({default_on: def_on,
+            this->m_options.push_back({def: def_on,
                                        state: new_state,
                                        changed: (new_state != old_state),
                                        option: opt});
@@ -165,10 +165,8 @@ EOptState Package::check_opt(int opt_id)
                 return EOptState::OPT_CLEAR;
             else if (opt.state == EOptState::OPT_SET)
                 return EOptState::OPT_SET;
-            else if ((opt.state == EOptState::OPT_UNDEF) && (opt.default_on))
-                return EOptState::OPT_SET;
-            else if ((opt.state == EOptState::OPT_UNDEF) && (!opt.default_on))
-                return EOptState::OPT_UNDEF;
+            else if (opt.state == EOptState::OPT_UNDEF)
+                return opt.def;
         }
     return EOptState::OPT_CLEAR;
 }
@@ -606,9 +604,10 @@ void Package::print_opts()
 {
     for (config_opt_rec_t &opt : m_options)
     {
-        const char* color = (opt.state == EOptState::OPT_UNDEF ?
-                             (opt.default_on ? COLOR_YELLOW : COLOR_RED) :
-                             (opt.state == EOptState::OPT_SET) ? COLOR_GREEN : COLOR_RED);
+        EOptState state = (opt.state != EOptState::OPT_UNDEF) ? opt.state : opt.def;
+        const char* color = (state == EOptState::OPT_UNDEF ?
+                             (opt.def == EOptState::OPT_SET ? COLOR_YELLOW : COLOR_RED) :
+                             (state == EOptState::OPT_SET) ? COLOR_GREEN : COLOR_RED);
         std::string def;
         switch (check_opt(opt.option->get_id()))
         {

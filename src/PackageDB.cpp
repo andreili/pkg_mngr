@@ -296,12 +296,12 @@ void PackageDB::get_set_pkgs(std::string set_name, std::function<void(std::strin
         on_pkg(std::string(query.getColumn("cat").getText()) + "/" + query.getColumn("name").getText());
 }
 
-void PackageDB::get_pkg_opts(Package *pkg, std::function<void(ConfigurationOption* opt, bool def_on)>&& on_opt)
+void PackageDB::get_pkg_opts(Package *pkg, std::function<void(ConfigurationOption* opt, EOptState def_on)>&& on_opt)
 {
     SQLite::Statement query(*m_db, "SELECT * FROM pkg_opts WHERE (pkg_id=:id);");
     query.bind(":id", pkg->get_meta()->get_id());
     while (query.executeStep())
-        on_opt(get_config_opt(query.getColumn("opt_id")), query.getColumn("default").getInt());
+        on_opt(get_config_opt(query.getColumn("opt_id")), (EOptState)query.getColumn("default").getInt());
 }
 
 EOptState PackageDB::get_opt_state(Package *pkg, ConfigurationOption* opt)

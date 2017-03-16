@@ -30,7 +30,7 @@ namespace package_manager
 
     typedef struct
     {
-        bool                default_on;
+        EOptState           def;
         EOptState           state;
         bool                changed;
         ConfigurationOption *option;

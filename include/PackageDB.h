@@ -49,7 +49,7 @@ namespace package_manager
 
             void get_set_pkgs(std::string set_name, std::function<void(std::string pkg_name)>&& on_pkg);
 
-            void get_pkg_opts(Package *pkg, std::function<void(ConfigurationOption* opt, bool def_on)>&& on_opt);
+            void get_pkg_opts(Package *pkg, std::function<void(ConfigurationOption* opt, EOptState def_on)>&& on_opt);
             EOptState get_opt_state(Package *pkg, ConfigurationOption* opt);
 
             void get_package_deps(int pkg_id, std::function<void(int depend_by, int dep_by_opt)>&& on_new_dep);
