@@ -199,7 +199,7 @@ void Package::fetch()
     bool all_ok = true;
     for (std::string &url : urls)
     {
-        if (!Fetch::get_instance()->load_source(url))
+        if (!Fetch::get_instance()->load_source(url, this))
             all_ok = false;
     }
     m_fetched = all_ok;

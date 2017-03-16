@@ -23,7 +23,7 @@ namespace package_manager
         void add_to_queue(Package *pkg);
         void start_fetch();
 
-        bool load_source(std::string &url);
+        bool load_source(std::string &url, Package *pkg);
 
         void fetch_proc();
     protected:
@@ -36,7 +36,7 @@ namespace package_manager
         std::thread             *m_thread;
         std::mutex              m_lock;
 
-        bool check_source(std::string &url);
+        bool check_source(std::string &url, Package *pkg);
     };
 
 }

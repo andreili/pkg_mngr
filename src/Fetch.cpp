@@ -52,14 +52,13 @@ void Fetch::start_fetch()
 
 typedef void(*CURL_WRITEFUNCTION_PTR)(char*, size_t, size_t, Stream*);
 
-bool Fetch::load_source(std::string &url)
+bool Fetch::load_source(std::string &url, Package *pkg)
 {
-    if (check_source(url))
+    if (check_source(url, pkg))
         return true;
 
-    std::string file_name = Variables::get_instance()->parse_vars(nullptr, PKG_VAR_PATH_SOURCES) + '/' +
-                            url.substr(url.find_last_of('/') + 1);
-    printf("Fetch package to %s\n", file_name.c_str());
+    std::string file_name = Variables::get_instance()->parse_vars(pkg, "${PKG_SOURCES}/" +
+                            url.substr(url.find_last_of('/') + 1));
     Stream *str = new Stream(file_name, FILE_OPEN_WRITE_ST);
 
     CURL *curl;
@@ -67,7 +66,9 @@ bool Fetch::load_source(std::string &url)
     curl = curl_easy_init();
     if (curl)
     {
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        std::string url_p = Variables::get_instance()->parse_vars(pkg, url);
+        //printf("%s\n", url_p.c_str());
+        curl_easy_setopt(curl, CURLOPT_URL, url_p.c_str());
         auto curl_callback = [](char *data, size_t size, size_t nmemb, Stream *str)
                              {
                                  str->write(data, size * nmemb);
@@ -79,7 +80,7 @@ bool Fetch::load_source(std::string &url)
         curl_easy_cleanup(curl);
 
         if (result == CURLE_OK)
-            return check_source(url);
+            return check_source(url, pkg);
         else
             return false;
     }
@@ -134,16 +135,16 @@ void Fetch::fetch_proc()
 
 #define MD5_CHAIN_SIZE 10 * 1024 * 1024
 
-bool Fetch::check_source(std::string &url)
+bool Fetch::check_source(std::string &url, Package *pkg)
 {
     unsigned char md5[MD5_DIGEST_LENGTH];
     MD5_CTX md5_ctx;
     int original_size;
     std::string original_md5;
-    std::string file_name = Variables::get_instance()->parse_vars(nullptr, PKG_VAR_PATH_SOURCES) + '/' +
-                            url.substr(url.find_last_of('/') + 1);
+    std::string file_name = Variables::get_instance()->parse_vars(pkg, "${PKG_SOURCES}/" +
+                            url.substr(url.find_last_of('/') + 1));
 
-    PackageManager::get_db_obj()->get_url_details(url, &original_md5, &original_size);
+    PackageManager::get_db_obj()->get_url_details(url, pkg->get_id(), &original_md5, &original_size);
 
     //printf("Check package to %s\n", file_name.c_str());
     Stream *str = new Stream(file_name, FILE_OPEN_READ_ST);
@@ -156,8 +157,8 @@ bool Fetch::check_source(std::string &url)
 
     if (str->getSize() != original_size)
     {
+        printf("Size don't matched (expected: %i != %li) [%s]\n", original_size, str->getSize(), file_name.c_str());
         delete str;
-        printf("Size don't matched\n");
         return false;
     }
 
