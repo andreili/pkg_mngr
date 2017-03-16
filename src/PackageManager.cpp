@@ -62,6 +62,8 @@ void PackageManager::init(int argc, char *argv[], char **envp)
     m_cmd->add_bool_param(L"fetch", L"f", &m_fetch_only, false, L"only files fetch");
     m_cmd->add_bool_param(L"debug", L"D", &m_debug, false, L"output debug messages");
     m_cmd->parse();
+    if (m_verbose_cmds)
+        m_verbose = true;
 
     for (int i=1 ; i<argc ; i++)
         if (argv[i][0] != '-')
