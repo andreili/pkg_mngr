@@ -55,7 +55,7 @@ namespace package_manager
             void get_package_deps(int pkg_id, std::function<void(int depend_by, int dep_by_opt)>&& on_new_dep);
 
             void get_pkg_urls(Package *pkg, std::function<void(std::string url)>&& on_url);
-            void get_url_details(std::string &url, std::string *md5, int *file_size);
+            void get_url_details(std::string &url, int pkg_id, std::string *md5, int *file_size);
 
             void get_pkg_prepare(Package *pkg, std::function<void(std::string dir, std::string prepare_cmd)>&& on_cmd);
             void get_pkg_configure(Package *pkg, std::function<void(std::string dir, std::string config_cmd)>&& on_cmd);

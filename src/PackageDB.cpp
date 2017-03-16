@@ -316,9 +316,10 @@ void PackageDB::get_pkg_urls(Package *pkg, std::function<void(std::string url)>&
         on_url(query.getColumn("src_url").getText());
 }
 
-void PackageDB::get_url_details(std::string &url, std::string *md5, int *file_size)
+void PackageDB::get_url_details(std::string &url, int pkg_id, std::string *md5, int *file_size)
 {
-    SQLite::Statement query(*m_db, "SELECT * FROM package_sources WHERE (src_url=:src_url);");
+    SQLite::Statement query(*m_db, "SELECT * FROM package_sources WHERE (pkg_id=:pkg AND src_url=:src_url);");
+    query.bind(":pkg", pkg_id);
     query.bind(":src_url", url);
     if (query.executeStep())
     {
