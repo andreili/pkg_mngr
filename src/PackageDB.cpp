@@ -27,6 +27,9 @@ PackageDB::PackageDB()
               ", opt_id INTEGER, selected INTEGER);").exec();
         SQLite::Statement(*m_db_inst, "CREATE TABLE installed_pkgs (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER);").exec();
     }
+
+    m_db_inst->exec("PRAGMA synchronous = OFF;");
+    m_db_inst->exec("PRAGMA journal_mode = MEMORY;");
 }
 
 PackageDB::~PackageDB()
@@ -43,14 +46,14 @@ void PackageDB::fill_aliases()
 
 void PackageDB::transaction_start()
 {
-    m_db->exec("BEGIN;");
+    m_db_inst->exec("BEGIN TRANSACTION;");
 }
 
 void PackageDB::transaction_commit()
 {
     try
     {
-        m_db->exec("COMMIT;");
+        m_db_inst->exec("END TRANSACTION;");
     }
     catch (SQLite::Exception& e)
     {
@@ -62,7 +65,7 @@ void PackageDB::transaction_commit()
 
 void PackageDB::transaction_rollback()
 {
-    m_db->exec("ROLLBACK");
+    m_db_inst->exec("ROLLBACK");
 }
 
 Category* PackageDB::get_categoty(std::string &name)
