@@ -466,7 +466,7 @@ bool Package::stage_strip()
     if (PackageManager::is_verbose())
         printf("\tStrip binaries\n");
     return run_cmd(Variables::get_instance()->parse_vars(this, "${BIN_DIR}"),
-                   "find . -type f -exec strip --strip-unneeded '{}' \\;");
+                   "find . -type f -exec strip --strip-unneeded -R .comment -R .GCC.command.line -R .note.gnu.gold-version '{}' \\;");
 }
 
 #define ARRAY_SIZE(array) (sizeof((array))/sizeof((array[0])))
