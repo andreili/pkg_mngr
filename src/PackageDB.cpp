@@ -10,9 +10,23 @@ namespace package_manager
 
 PackageDB::PackageDB()
 {
-    std::string path = Variables::get_instance()->parse_vars(nullptr, "${PKG_DB}") + "packages.sql3";
+    std::string path = Variables::get_instance()->parse_vars(nullptr, "${PKG_DB}") + "packages";
     //std::string path = "d:/Dev/Projects/pkg_mngr/packages.sql3";
-    m_db = new SQLite::Database(path, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+    //printf("%s\n", path.c_str());
+    m_db = new SQLite::Database(path + ".sql3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+    try
+    {
+        m_db_inst = new SQLite::Database(path + "_installed.sql3", SQLITE_OPEN_READWRITE);
+    }
+    catch (SQLite::Exception& e)
+    {
+        m_db_inst = new SQLite::Database(path + "_installed.sql3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+        SQLite::Statement(*m_db_inst, "CREATE TABLE installed_pkg_files (id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                      "pkg_id INTEGER, name TEXT);").exec();
+        SQLite::Statement(*m_db_inst, "CREATE TABLE installed_pkg_opts (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER"
+              ", opt_id INTEGER, selected INTEGER);").exec();
+        SQLite::Statement(*m_db_inst, "CREATE TABLE installed_pkgs (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER);").exec();
+    }
 }
 
 PackageDB::~PackageDB()
@@ -180,7 +194,7 @@ Package* PackageDB::get_last_pkg(int meta_id)
 
 bool PackageDB::get_installed(Package *pkg)
 {
-    SQLite::Statement query(*m_db, "SELECT * FROM installed_pkgs WHERE (pkg_id=:id);");
+    SQLite::Statement query(*m_db_inst, "SELECT * FROM installed_pkgs WHERE (pkg_id=:id);");
     query.bind(":id", pkg->get_id());
     return (query.executeStep());
 }
@@ -189,7 +203,7 @@ void PackageDB::set_installed(Package *pkg)
 {
     if (!get_installed(pkg))
     {
-        SQLite::Statement query(*m_db, "INSERT INTO installed_pkgs (pkg_id) VALUES (:id);");
+        SQLite::Statement query(*m_db_inst, "INSERT INTO installed_pkgs (pkg_id) VALUES (:id);");
         query.bind(":id", pkg->get_id());
         query.exec();
     }
@@ -197,12 +211,12 @@ void PackageDB::set_installed(Package *pkg)
 
 void PackageDB::set_installed_opt(Package *pkg, ConfigurationOption *opt, EOptState state)
 {
-    SQLite::Statement query(*m_db, "SELECT * FROM installed_pkg_opts WHERE (pkg_id=:pkg AND opt_id=:opt);");
+    SQLite::Statement query(*m_db_inst, "SELECT * FROM installed_pkg_opts WHERE (pkg_id=:pkg AND opt_id=:opt);");
     query.bind(":pkg", pkg->get_meta()->get_id());
     query.bind(":opt", opt->get_id());
     if (query.executeStep())
     {
-        SQLite::Statement query_upd(*m_db, "UPDATE installed_pkg_opts SET selected=:sel WHERE (pkg_id=:pkg AND opt_id=:opt);");
+        SQLite::Statement query_upd(*m_db_inst, "UPDATE installed_pkg_opts SET selected=:sel WHERE (pkg_id=:pkg AND opt_id=:opt);");
         query_upd.bind(":pkg", pkg->get_meta()->get_id());
         query_upd.bind(":opt", opt->get_id());
         query_upd.bind(":sel", (int)state);
@@ -211,7 +225,7 @@ void PackageDB::set_installed_opt(Package *pkg, ConfigurationOption *opt, EOptSt
     else
     {
         //insert new state
-        SQLite::Statement query_ins(*m_db, "INSERT INTO installed_pkg_opts (pkg_id, opt_id, selected) VALUES (:pkg, :opt, :sel);");
+        SQLite::Statement query_ins(*m_db_inst, "INSERT INTO installed_pkg_opts (pkg_id, opt_id, selected) VALUES (:pkg, :opt, :sel);");
         query_ins.bind(":pkg", pkg->get_meta()->get_id());
         query_ins.bind(":opt", opt->get_id());
         query_ins.bind(":sel", (int)state);
@@ -221,14 +235,14 @@ void PackageDB::set_installed_opt(Package *pkg, ConfigurationOption *opt, EOptSt
 
 void PackageDB::clear_installed_files(Package *pkg)
 {
-    SQLite::Statement query_del(*m_db, "DELETE FROM installed_pkg_files WHERE (pkg_id=:pkg);");
+    SQLite::Statement query_del(*m_db_inst, "DELETE FROM installed_pkg_files WHERE (pkg_id=:pkg);");
     query_del.bind(":pkg", pkg->get_id());
     while (query_del.executeStep());
 }
 
 void PackageDB::add_installed_file(Package *pkg, std::string &file)
 {
-    SQLite::Statement query_ins(*m_db, "INSERT INTO installed_pkg_files (pkg_id, name) VALUES (:pkg, :fn);");
+    SQLite::Statement query_ins(*m_db_inst, "INSERT INTO installed_pkg_files (pkg_id, name) VALUES (:pkg, :fn);");
     query_ins.bind(":pkg", pkg->get_id());
     query_ins.bind(":fn", file);
     query_ins.exec();
@@ -292,7 +306,7 @@ void PackageDB::get_pkg_opts(Package *pkg, std::function<void(ConfigurationOptio
 
 EOptState PackageDB::get_opt_state(Package *pkg, ConfigurationOption* opt)
 {
-    SQLite::Statement query(*m_db, "SELECT selected FROM installed_pkg_opts WHERE (pkg_id=:pkg AND opt_id=:opt);");
+    SQLite::Statement query(*m_db_inst, "SELECT selected FROM installed_pkg_opts WHERE (pkg_id=:pkg AND opt_id=:opt);");
     query.bind(":pkg", pkg->get_meta()->get_id());
     query.bind(":opt", opt->get_id());
     if (query.executeStep())

@@ -64,6 +64,7 @@ namespace package_manager
             void get_pkg_postinstall(Package *pkg, std::function<void(std::string dir, std::string postinst_cmd)>&& on_cmd);
         private:
             SQLite::Database    *m_db;
+            SQLite::Database    *m_db_inst;
     };
 }
 
