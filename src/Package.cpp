@@ -361,6 +361,7 @@ bool Package::stage_unpack()
                                                });
     for (std::string &url : urls)
     {
+        url = Variables::get_instance()->parse_vars(this, url);
         std::string file_name = url.substr(url.find_last_of('/') + 1);
         if ((file_name.find(".tar.") != std::string::npos) || (file_name.find(".tgz") != std::string::npos))
         {
