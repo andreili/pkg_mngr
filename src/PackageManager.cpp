@@ -342,7 +342,7 @@ void PackageManager::debug(std::string format, ...)
     if (!m_instance->m_debug)
         return;
 
-    char        text[1024];
+    char        text[4096];
     va_list		ap;
 
     if (format.length() != 0)
