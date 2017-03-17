@@ -6,3 +6,11 @@ qrencode (systemd)
 libxkbcommon (systemd)
 
 gnu-efi (systemd)
+
+
+
+
+bc -> @system
+mashine-id (after install systemd)
+/etc/login.defs (comment CONSOLE)
+/etc/pam.d/login - invalid file
