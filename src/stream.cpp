@@ -431,6 +431,8 @@ std::string Stream::readLine()
     if (del_max == std::string::npos)
         del_max = del_pos;
     str.resize(del_pos);
+    if ((del_max == 0) && (del_max == 0))
+        del_max = 1;
 
     setPosition(start_pos + del_max);
 
