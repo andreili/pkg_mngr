@@ -53,7 +53,7 @@ void MainWindow::on_aOpenDB_triggered()
         #ifdef _WIN32
         QString fn = "d:/Dev/Projects/pkg_mngr/packages.sql3";
         #else
-        QString fn = "/mnt/lfs/var/lib/pkg/packages.sql3";
+        QString fn = "/mnt/var/lib/pkg/packages.sql3";
         #endif
         m_db = QSqlDatabase::addDatabase("QSQLITE");
         m_db.setDatabaseName(fn);
@@ -187,7 +187,7 @@ void MainWindow::on_twPckgs_currentItemChanged(QTreeWidgetItem *current, QTreeWi
 
         ui->twDeps->setRowCount(0);
         idx = 0;
-        q.prepare("SELECT dep.id, meta.id AS meta_id, dep.dep_by_opt, meta.name, opt.name AS opt_name"
+        q.prepare("SELECT dep.id, meta.id AS meta_id, dep.dep_by_opt, dep.opt_val_trig, meta.name, opt.name AS opt_name"
                   " FROM pkg_deps AS dep"
                   " INNER JOIN package_meta AS meta ON meta.id=dep.dep_by_pkg_id"
                   "  LEFT JOIN config_opts AS opt ON opt.id=dep.dep_by_opt"
@@ -207,6 +207,11 @@ void MainWindow::on_twPckgs_currentItemChanged(QTreeWidgetItem *current, QTreeWi
                 item->setData(Qt::UserRole, q.value("id"));
                 item->setData(Qt::UserRole + 1, q.value("dep_by_opt"));
                 ui->twDeps->setItem(idx, 1, item);
+
+                item = new QTableWidgetItem(q.value("opt_val_trig").toString());
+                item->setData(Qt::UserRole, q.value("id"));
+                item->setData(Qt::UserRole + 1, q.value("opt_val_trig"));
+                ui->twDeps->setItem(idx, 2, item);
 
                 ++idx;
             }
@@ -268,6 +273,10 @@ void MainWindow::on_twVersions_itemChanged(QTableWidgetItem *item)
                     item->setData(Qt::UserRole + 1, q.value("opt_id").toInt()); \
                 } \
                 tw->setItem(idx, 2, item); \
+\
+                item = new QTableWidgetItem(q.value("opt_val_trig").toString()); \
+                item->setData(Qt::UserRole, q.value("id")); \
+                tw->setItem(idx, 3, item); \
  \
                 ++idx; \
             } \
@@ -316,27 +325,27 @@ void MainWindow::on_twVersions_currentItemChanged(QTableWidgetItem *current, QTa
                 ++idx;
             }
 
-        fill_opts_list(ui->twPrep, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
+        fill_opts_list(ui->twPrep, "SELECT cmds.id, cmds.cmd, cmds.dir, cmds.opt_val_trig, opts.opt_id, opt.name AS opt_name"
                                    " FROM prepare_cmds AS cmds"
                                    " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
                                    " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
                                    " WHERE cmds.pkg_id=:pkg GROUP BY cmds.id;");
-        fill_opts_list(ui->twConfig, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
+        fill_opts_list(ui->twConfig, "SELECT cmds.id, cmds.cmd, cmds.dir, cmds.opt_val_trig, opts.opt_id, opt.name AS opt_name"
                                      " FROM config_cmds AS cmds"
                                      " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
                                      " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
                                      " WHERE cmds.pkg_id=:pkg GROUP BY cmds.id;");
-        fill_opts_list(ui->twBuild, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
+        fill_opts_list(ui->twBuild, "SELECT cmds.id, cmds.cmd, cmds.dir, cmds.opt_val_trig, opts.opt_id, opt.name AS opt_name"
                                     " FROM make_cmds AS cmds"
                                     " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
                                     " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
                                     " WHERE cmds.pkg_id=:pkg GROUP BY cmds.id;");
-        fill_opts_list(ui->twInstall, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
+        fill_opts_list(ui->twInstall, "SELECT cmds.id, cmds.cmd, cmds.dir, cmds.opt_val_trig, opts.opt_id, opt.name AS opt_name"
                                       " FROM install_cmds AS cmds"
                                       " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
                                       " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
                                       " WHERE cmds.pkg_id=:pkg GROUP BY cmds.id;");
-        fill_opts_list(ui->twPostInst, "SELECT cmds.id, cmds.cmd, cmds.dir, opts.opt_id, opt.name AS opt_name"
+        fill_opts_list(ui->twPostInst, "SELECT cmds.id, cmds.cmd, cmds.dir, cmds.opt_val_trig, opts.opt_id, opt.name AS opt_name"
                                        " FROM postinstall_cmds AS cmds"
                                        " LEFT JOIN pkg_opts AS opts ON cmds.dep_by_opt_id=opts.opt_id"
                                        " LEFT JOIN config_opts AS opt ON opts.opt_id=opt.id"
@@ -496,7 +505,7 @@ void MainWindow::on_prep_add()
     if (ver_item != nullptr)
     {
         QSqlQuery q;
-        q.prepare("INSERT INTO prepare_cmds (pkg_id, cmd, dir, dep_by_opt_id) VALUES (:pkg, '', '', NULL);");
+        q.prepare("INSERT INTO prepare_cmds (pkg_id, cmd, dir, dep_by_opt_id, opt_val_trig) VALUES (:pkg, '', '', NULL, 1);");
         q.bindValue(":pkg", ver_item->data(Qt::UserRole));
         q.exec();
 
@@ -516,6 +525,10 @@ void MainWindow::on_prep_add()
         item = new QTableWidgetItem("-1");
         item->setData(Qt::UserRole, id);
         ui->twPrep->setItem(idx, 2, item);
+
+        item = new QTableWidgetItem("1");
+        item->setData(Qt::UserRole, id);
+        ui->twPostInst->setItem(idx, 3, item);
     }
 }
 
@@ -537,7 +550,7 @@ void MainWindow::on_config_add()
     if (ver_item != nullptr)
     {
         QSqlQuery q;
-        q.prepare("INSERT INTO config_cmds (pkg_id, cmd, dir, dep_by_opt_id) VALUES (:pkg, '', '', NULL);");
+        q.prepare("INSERT INTO config_cmds (pkg_id, cmd, dir, dep_by_opt_id, opt_val_trig) VALUES (:pkg, '', '', NULL, 1);");
         q.bindValue(":pkg", ver_item->data(Qt::UserRole));
         q.exec();
 
@@ -557,6 +570,10 @@ void MainWindow::on_config_add()
         item = new QTableWidgetItem("-1");
         item->setData(Qt::UserRole, id);
         ui->twConfig->setItem(idx, 2, item);
+
+        item = new QTableWidgetItem("1");
+        item->setData(Qt::UserRole, id);
+        ui->twPostInst->setItem(idx, 3, item);
     }
 }
 
@@ -578,7 +595,7 @@ void MainWindow::on_build_add()
     if (ver_item != nullptr)
     {
         QSqlQuery q;
-        q.prepare("INSERT INTO make_cmds (pkg_id, cmd, dir, dep_by_opt_id) VALUES (:pkg, '', '', NULL);");
+        q.prepare("INSERT INTO make_cmds (pkg_id, cmd, dir, dep_by_opt_id, opt_val_trig) VALUES (:pkg, '', '', NULL, 1);");
         q.bindValue(":pkg", ver_item->data(Qt::UserRole));
         q.exec();
 
@@ -598,6 +615,10 @@ void MainWindow::on_build_add()
         item = new QTableWidgetItem("-1");
         item->setData(Qt::UserRole, id);
         ui->twBuild->setItem(idx, 2, item);
+
+        item = new QTableWidgetItem("1");
+        item->setData(Qt::UserRole, id);
+        ui->twPostInst->setItem(idx, 3, item);
     }
 }
 
@@ -619,7 +640,7 @@ void MainWindow::on_inst_add()
     if (ver_item != nullptr)
     {
         QSqlQuery q;
-        q.prepare("INSERT INTO install_cmds (pkg_id, cmd, dir, dep_by_opt_id) VALUES (:pkg, '', '', NULL);");
+        q.prepare("INSERT INTO install_cmds (pkg_id, cmd, dir, dep_by_opt_id, opt_val_trig) VALUES (:pkg, '', '', NULL, 1);");
         q.bindValue(":pkg", ver_item->data(Qt::UserRole));
         q.exec();
 
@@ -639,6 +660,10 @@ void MainWindow::on_inst_add()
         item = new QTableWidgetItem("-1");
         item->setData(Qt::UserRole, id);
         ui->twInstall->setItem(idx, 2, item);
+
+        item = new QTableWidgetItem("1");
+        item->setData(Qt::UserRole, id);
+        ui->twPostInst->setItem(idx, 3, item);
     }
 }
 
@@ -660,7 +685,7 @@ void MainWindow::on_postinst_add()
     if (ver_item != nullptr)
     {
         QSqlQuery q;
-        q.prepare("INSERT INTO postinstall_cmds (pkg_id, cmd, dir, dep_by_opt_id) VALUES (:pkg, '', '', NULL);");
+        q.prepare("INSERT INTO postinstall_cmds (pkg_id, cmd, dir, dep_by_opt_id, opt_val_trig) VALUES (:pkg, '', '', NULL, 1);");
         q.bindValue(":pkg", ver_item->data(Qt::UserRole));
         q.exec();
 
@@ -680,6 +705,10 @@ void MainWindow::on_postinst_add()
         item = new QTableWidgetItem("-1");
         item->setData(Qt::UserRole, id);
         ui->twPostInst->setItem(idx, 2, item);
+
+        item = new QTableWidgetItem("1");
+        item->setData(Qt::UserRole, id);
+        ui->twPostInst->setItem(idx, 3, item);
     }
 }
 
@@ -872,6 +901,12 @@ void MainWindow::on_twPrep_itemChanged(QTableWidgetItem *item)
         q.bindValue(":id", id);
         q.exec();
         break;
+    case 3:
+        q.prepare("UPDATE prepare_cmds SET opt_val_trig=:val WHERE id=:id;");
+        q.bindValue(":val", item->text().toInt());
+        q.bindValue(":id", id);
+        q.exec();
+        break;
     }
 }
 
@@ -891,6 +926,12 @@ void MainWindow::on_twConfig_itemChanged(QTableWidgetItem *item)
     case 1:
         q.prepare("UPDATE config_cmds SET dir=:dir WHERE id=:id;");
         q.bindValue(":dir", item->text());
+        q.bindValue(":id", id);
+        q.exec();
+        break;
+    case 3:
+        q.prepare("UPDATE config_cmds SET opt_val_trig=:val WHERE id=:id;");
+        q.bindValue(":val", item->text().toInt());
         q.bindValue(":id", id);
         q.exec();
         break;
@@ -916,6 +957,12 @@ void MainWindow::on_twBuild_itemChanged(QTableWidgetItem *item)
         q.bindValue(":id", id);
         q.exec();
         break;
+    case 3:
+        q.prepare("UPDATE make_cmds SET opt_val_trig=:val WHERE id=:id;");
+        q.bindValue(":val", item->text().toInt());
+        q.bindValue(":id", id);
+        q.exec();
+        break;
     }
 }
 
@@ -938,6 +985,12 @@ void MainWindow::on_twInstall_itemChanged(QTableWidgetItem *item)
         q.bindValue(":id", id);
         q.exec();
         break;
+    case 3:
+        q.prepare("UPDATE install_cmds SET opt_val_trig=:val WHERE id=:id;");
+        q.bindValue(":val", item->text().toInt());
+        q.bindValue(":id", id);
+        q.exec();
+        break;
     }
 }
 
@@ -957,6 +1010,12 @@ void MainWindow::on_twPostInst_itemChanged(QTableWidgetItem *item)
     case 1:
         q.prepare("UPDATE postinstall_cmds SET dir=:dir WHERE id=:id;");
         q.bindValue(":dir", item->text());
+        q.bindValue(":id", id);
+        q.exec();
+        break;
+    case 3:
+        q.prepare("UPDATE postinstall_cmds SET opt_val_trig=:val WHERE id=:id;");
+        q.bindValue(":val", item->text().toInt());
         q.bindValue(":id", id);
         q.exec();
         break;

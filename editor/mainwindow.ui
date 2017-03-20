@@ -147,6 +147,11 @@
                     <string>Opt</string>
                    </property>
                   </column>
+                  <column>
+                   <property name="text">
+                    <string>val</string>
+                   </property>
+                  </column>
                  </widget>
                 </item>
                </layout>
@@ -178,6 +183,11 @@
                     <string>Opt</string>
                    </property>
                   </column>
+                  <column>
+                   <property name="text">
+                    <string>val</string>
+                   </property>
+                  </column>
                  </widget>
                 </item>
                </layout>
@@ -202,6 +212,11 @@
                   <column>
                    <property name="text">
                     <string>Opt</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>val</string>
                    </property>
                   </column>
                  </widget>
@@ -268,6 +283,11 @@
                     <string>Opt</string>
                    </property>
                   </column>
+                  <column>
+                   <property name="text">
+                    <string>val</string>
+                   </property>
+                  </column>
                  </widget>
                 </item>
                </layout>
@@ -299,6 +319,11 @@
                     <string>Opt</string>
                    </property>
                   </column>
+                  <column>
+                   <property name="text">
+                    <string>val</string>
+                   </property>
+                  </column>
                  </widget>
                 </item>
                </layout>
@@ -328,6 +353,11 @@
                   <column>
                    <property name="text">
                     <string>Opt</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>val</string>
                    </property>
                   </column>
                  </widget>

@@ -347,60 +347,60 @@ void PackageDB::get_url_details(std::string &url, int pkg_id, std::string *md5, 
 
 void PackageDB::get_pkg_prepare(Package *pkg, std::function<void(std::string dir, std::string prepare_cmd)>&& on_cmd)
 {
-    SQLite::Statement query(*m_db, "SELECT cmd, dir, dep_by_opt_id FROM prepare_cmds WHERE (pkg_id=:id);");
+    SQLite::Statement query(*m_db, "SELECT cmd, dir, dep_by_opt_id, opt_val_trig FROM prepare_cmds WHERE (pkg_id=:id);");
     query.bind(":id", pkg->get_id());
     while (query.executeStep())
     {
         int opt_id = query.getColumn("dep_by_opt_id").getInt();
-        if ((opt_id == 0) || (pkg->check_opt(opt_id) == EOptState::OPT_SET))
+        if ((opt_id == 0) || (pkg->check_opt(opt_id) == (EOptState)query.getColumn("opt_val_trig").getInt()))
             on_cmd(query.getColumn("dir").getText(), query.getColumn("cmd").getText());
     }
 }
 
 void PackageDB::get_pkg_configure(Package *pkg, std::function<void(std::string dir, std::string config_cmd)>&& on_cmd)
 {
-    SQLite::Statement query(*m_db, "SELECT cmd, dir, dep_by_opt_id FROM config_cmds WHERE (pkg_id=:id);");
+    SQLite::Statement query(*m_db, "SELECT cmd, dir, dep_by_opt_id, opt_val_trig FROM config_cmds WHERE (pkg_id=:id);");
     query.bind(":id", pkg->get_id());
     while (query.executeStep())
     {
         int opt_id = query.getColumn("dep_by_opt_id").getInt();
-        if ((opt_id == 0) || (pkg->check_opt(opt_id) == EOptState::OPT_SET))
+        if ((opt_id == 0) || (pkg->check_opt(opt_id) == (EOptState)query.getColumn("opt_val_trig").getInt()))
             on_cmd(query.getColumn("dir").getText(), query.getColumn("cmd").getText());
     }
 }
 
 void PackageDB::get_pkg_compile(Package *pkg, std::function<void(std::string dir, std::string make_cmd)>&& on_cmd)
 {
-    SQLite::Statement query(*m_db, "SELECT cmd, dir, dep_by_opt_id FROM make_cmds WHERE (pkg_id=:id);");
+    SQLite::Statement query(*m_db, "SELECT cmd, dir, dep_by_opt_id, opt_val_trig FROM make_cmds WHERE (pkg_id=:id);");
     query.bind(":id", pkg->get_id());
     while (query.executeStep())
     {
         int opt_id = query.getColumn("dep_by_opt_id").getInt();
-        if ((opt_id == 0) || (pkg->check_opt(opt_id) == EOptState::OPT_SET))
+        if ((opt_id == 0) || (pkg->check_opt(opt_id) == (EOptState)query.getColumn("opt_val_trig").getInt()))
             on_cmd(query.getColumn("dir").getText(), query.getColumn("cmd").getText());
     }
 }
 
 void PackageDB::get_pkg_install(Package *pkg, std::function<void(std::string dir, std::string inst_cmd)>&& on_cmd)
 {
-    SQLite::Statement query(*m_db, "SELECT cmd, dir, dep_by_opt_id FROM install_cmds WHERE (pkg_id=:id);");
+    SQLite::Statement query(*m_db, "SELECT cmd, dir, dep_by_opt_id, opt_val_trig FROM install_cmds WHERE (pkg_id=:id);");
     query.bind(":id", pkg->get_id());
     while (query.executeStep())
     {
         int opt_id = query.getColumn("dep_by_opt_id").getInt();
-        if ((opt_id == 0) || (pkg->check_opt(opt_id) == EOptState::OPT_SET))
+        if ((opt_id == 0) || (pkg->check_opt(opt_id) == (EOptState)query.getColumn("opt_val_trig").getInt()))
             on_cmd(query.getColumn("dir").getText(), query.getColumn("cmd").getText());
     }
 }
 
 void PackageDB::get_pkg_postinstall(Package *pkg, std::function<void(std::string dir, std::string postinst_cmd)>&& on_cmd)
 {
-    SQLite::Statement query(*m_db, "SELECT cmd, dir, dep_by_opt_id FROM postinstall_cmds WHERE (pkg_id=:id);");
+    SQLite::Statement query(*m_db, "SELECT cmd, dir, dep_by_opt_id, opt_val_trig FROM postinstall_cmds WHERE (pkg_id=:id);");
     query.bind(":id", pkg->get_id());
     while (query.executeStep())
     {
         int opt_id = query.getColumn("dep_by_opt_id").getInt();
-        if ((opt_id == 0) || (pkg->check_opt(opt_id) == EOptState::OPT_SET))
+        if ((opt_id == 0) || (pkg->check_opt(opt_id) == (EOptState)query.getColumn("opt_val_trig").getInt()))
             on_cmd(query.getColumn("dir").getText(), query.getColumn("cmd").getText());
     }
 }
