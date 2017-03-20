@@ -537,7 +537,9 @@ bool Package::run_cmd(const std::string dir, const std::string cmd)
 
     chdir(dir.c_str());
     FILE *in;
-    std::string cmd_ex = cmd + " 2>&1";
+    std::string cmd_ex = cmd;
+    if (cmd.substr(0, 3).compare("cat") != 0)
+        cmd_ex += " 2>&1";
     if(!(in = popen(cmd_ex.c_str(), "r")))
         return false;
     char *buf = new char[MAX_LOG_STRING];
