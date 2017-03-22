@@ -5,6 +5,7 @@
 #include "Fetch.h"
 #include "Variables.h"
 #include "Utils.h"
+#include <FileSystem.h>
 #include <stdio.h>
 #include <algorithm>
 
@@ -61,6 +62,12 @@ void PackageManager::init(int argc, char *argv[], char **envp)
     m_cmd->add_bool_param(L"pretend", L"p", &m_pretend, false, L"just to show what should be done");
     m_cmd->add_bool_param(L"fetch", L"f", &m_fetch_only, false, L"only files fetch");
     m_cmd->add_bool_param(L"debug", L"D", &m_debug, false, L"output debug messages");
+
+    m_cmd->add_string_param(L"profile", &m_profile_action, "", L"Profile managing. Actions: list, set");
+
+    m_cmd->add_int_param(L"idx", &m_param_idx, 0, L"Parameter index (for profile, etc.");
+    m_cmd->add_string_param(L"str", &m_param_string, "", L"Parameter string (for profile, etc.");
+
     m_cmd->parse();
     if (m_verbose_cmds)
         m_verbose = true;
@@ -79,6 +86,12 @@ void PackageManager::init(int argc, char *argv[], char **envp)
 
 bool PackageManager::prepare()
 {
+    if (m_profile_action.length() != 0)
+    {
+        profile_managment();
+        return false;
+    }
+
     m_params_ok = m_install || m_clean || m_fetch_only;
 
     if (m_show_help)
@@ -443,6 +456,46 @@ bool PackageManager::user_yes_no()
 void PackageManager::parse_locales()
 {
     Utils::parse_str(m_vars->get_var("LOCALES"), " ", m_locales);
+}
+
+void PackageManager::profile_managment()
+{
+    std::string profiles_root = m_vars->parse_vars(nullptr, "${PROFILE_ROOT}");
+    std::deque<std::string> profiles_list;
+    FileSystem::list_files(profiles_root, true, [profiles_root, &profiles_list](std::string name, bool is_dir)
+           {
+               if (is_dir)
+                   profiles_list.push_back(name.replace(0, profiles_root.length(), ""));
+           });
+
+    if (m_profile_action.compare("list") == 0)
+    {
+        printf(COLOR_YELLOW "Profiles list:\n" COLOR_RESET);
+        int idx = 0;
+        for (std::string profile : profiles_list)
+            printf("\t" COLOR_GREEN "%s%i] " COLOR_RESET "%s\n", m_vars->get_profile().compare(profile) == 0 ? "*" : " ",
+                   ++idx, profile.c_str());
+    }
+    else if (m_profile_action.compare("set") == 0)
+    {
+        std::string to_profile = "";
+        if (m_param_idx != 0)
+            to_profile = profiles_list[m_param_idx - 1];
+        else if (m_param_string.length() > 0)
+            to_profile = m_param_string;
+
+        if (to_profile.length() == 0)
+            printf(COLOR_RED "No profile specified\n" COLOR_RESET);
+        else if (!FileSystem::is_exist(profiles_root + to_profile))
+            printf(COLOR_RED "The specified profile does not exist\n" COLOR_RESET);
+        else
+        {
+            Utils::run_cmd("", "rm " + m_vars->parse_vars(nullptr, "${PROFILE}"));
+            Utils::run_cmd("", "ln -s ../../var/lib/pkg/profiles/" + to_profile + " " +
+                               m_vars->parse_vars(nullptr, "${PROFILE}"));
+            printf(COLOR_YELLOW "Profile was successfully changed\n" COLOR_RESET);
+        }
+    }
 }
 
 

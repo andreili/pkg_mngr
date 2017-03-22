@@ -60,7 +60,7 @@ int FileSystem::mkpath(const std::string path, mode_t mode)
     return status;
 }
 
-void FileSystem::list_files(std::string path, std::function<void(const std::string &name, bool is_dir)>&& on_entry)
+void FileSystem::list_files(std::string path, bool recursion, std::function<void(std::string, bool)>&& on_entry)
 {
     DIR *dir;
     struct dirent *ent;
@@ -73,10 +73,23 @@ void FileSystem::list_files(std::string path, std::function<void(const std::stri
             if (stat(full_file_name.c_str(), &st) == -1)
                 continue;
             if (ent->d_name[0] != '.')
-                on_entry(std::string(ent->d_name), (st.st_mode & S_IFDIR));
+            {
+                on_entry(full_file_name, (st.st_mode & S_IFDIR));
+                if ((st.st_mode & S_IFDIR) && recursion)
+                    list_files(full_file_name, true, [&on_entry](std::string name, bool is_dir)
+                    {
+                        on_entry(name, is_dir);
+                    });
+            }
         }
         closedir (dir);
     }
+}
+
+bool FileSystem::is_exist(std::string path)
+{
+    struct stat st;
+    return (stat(path.c_str(), &st) != -1);
 }
 
 }

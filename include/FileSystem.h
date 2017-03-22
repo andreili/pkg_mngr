@@ -13,7 +13,8 @@ public:
     virtual ~FileSystem();
 
     static int mkpath(const std::string path, mode_t mode);
-    static void list_files(std::string path, std::function<void(const std::string &name, bool is_dir)>&& on_entry);
+    static void list_files(std::string path, bool recursion, std::function<void(std::string, bool)>&& on_entry);
+    static bool is_exist(std::string path);
 protected:
 private:
 };

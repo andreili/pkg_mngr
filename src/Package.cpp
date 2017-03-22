@@ -480,7 +480,7 @@ bool Package::stage_clean_unneeded()
     for (size_t i=0 ; i<ARRAY_SIZE(locale_dirs) ; i++)
     {
         std::string dir = root + locale_dirs[i];
-        FileSystem::list_files(dir, [this, dir](const std::string &name, bool is_dir)
+        FileSystem::list_files(dir, false, [this, dir](const std::string &name, bool is_dir)
                                {
                                    if (is_dir)
                                    {
@@ -626,7 +626,7 @@ void Package::print_opts()
 
 void Package::store_installed_files(std::string &root, std::string &dir)
 {
-    FileSystem::list_files(root + dir, [this, &root, &dir](const std::string &name, bool is_dir)
+    FileSystem::list_files(root + dir, false, [this, &root, &dir](const std::string &name, bool is_dir)
                            {
                                std::string fn = dir + '/' + name;
                                if (is_dir)

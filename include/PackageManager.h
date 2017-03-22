@@ -87,12 +87,18 @@ namespace package_manager
             bool        m_fetch_only;
             bool        m_debug;
 
+            std::string m_profile_action;
+
+            int         m_param_idx;
+            std::string m_param_string;
+
             void check_depedencies(Package* pkg);
             void add_to_actions(Package *pkg);
             void clear_unchanged_pkgs();
 
             bool user_yes_no();
             void parse_locales();
+            void profile_managment();
     };
 }
 

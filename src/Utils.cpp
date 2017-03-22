@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include <unistd.h>
 
 /**
  * @brief Конвертирование строки UTF-8 -> WideString
@@ -112,4 +113,33 @@ void Utils::parse_str(const std::string &str, std::string delimiters, std::deque
         last_pos = str.find_first_not_of(delimiters, pos);
         pos = str.find_first_of(delimiters, last_pos);
     }
+}
+
+std::string Utils::run_cmd(const std::string dir, const std::string cmd)
+{
+    if (cmd.size() == 0)
+        return "";
+
+    chdir(dir.c_str());
+    FILE *in;
+    std::string buf_str = "";
+
+    if(!(in = popen(cmd.c_str(), "r")))
+        return "";
+    char *buf = new char[1024];
+    while(fgets(buf, 1024, in))
+        buf_str += buf;
+    int exit_code = pclose(in);
+    chdir("/");
+    if (exit_code)
+        return "";
+    return buf_str;
+}
+
+std::string Utils::replace_str(std::string str, std::string from, std::string to)
+{
+    size_t pos;
+    while ((pos = str.find(from)) != std::string::npos)
+        str.replace(pos, from.length(), to);
+    return str;
 }

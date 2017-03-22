@@ -47,15 +47,21 @@ namespace package_manager
 
         void init_env(char **envp);
 
+        std::string get_profile() { return m_profile; }
+
         EOptState get_pkg_opt(Category *cat, Package *pkg, ConfigurationOption *opt);
     protected:
     private:
         static Variables    *m_instance;
+        std::string         m_profile;
         std::map<std::string,std::string>   m_vars;
         std::deque<option_config_t>         m_opts;
 
+        void read_profile(std::string dir);
+        void read_user_set();
         void set_defaults();
         void read_opts();
+        void read_opts_from_file(std::string file_name);
         bool parse_opt(std::string opt_str, Category *cat, Package *pkg, option_config_t &opt_rec);
     };
 
