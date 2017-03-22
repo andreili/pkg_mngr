@@ -114,31 +114,27 @@ bool PackageManager::prepare()
                 m_db->get_set_pkgs(&name[1], [this](std::string pkg_name)
                 {
                     debug("Add package %s\n", pkg_name.c_str());
-                    Package *pkg = Package::get_pkg_by_name(pkg_name);
-                    if (pkg != nullptr)
+                    Package::get_pkg_by_name(pkg_name, [this](Package* pkg)
                     {
                         check_depedencies(pkg);
                         add_to_actions(pkg);
-                    }
+                    });
                 });
             }
             else
             {
-                Package* pkg = Package::get_pkg_by_name(name);
-                if (pkg == nullptr)
+                Package::get_pkg_by_name(name, [this](Package* pkg)
                 {
-                    printf("Unable to find package \"%s\"!\n", name.c_str());
-                    return false;
-                }
-
-                if (!m_without_deps)
-                {
-                    debug("Add dependies for package %s\n", name.c_str());
-                    check_depedencies(pkg);
-                }
-
-                add_to_actions(pkg);
-                m_packages_to_action_world.push_back(pkg->get_id());
+                    if (pkg == nullptr)
+                        return;
+                    if (!m_without_deps)
+                    {
+                        debug("Add dependies for package %s\n", pkg->get_meta()->get_name().c_str());
+                        check_depedencies(pkg);
+                    }
+                    add_to_actions(pkg);
+                    m_packages_to_action_world.push_back(pkg->get_id());
+                });
             }
         }
 

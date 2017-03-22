@@ -24,24 +24,25 @@ Category::~Category()
     //dtor
 }
 
-Package* Category::get_pkg(std::string &pkg_name, std::string &pkg_ver)
+void Category::get_pkg(std::string &pkg_name, std::string &pkg_ver, std::function<void(Package*)>&& on_pkg)
 {
-    PackageMeta *meta = PackageManager::get_db_obj()->get_package_meta(this, pkg_name);
-    if (meta == nullptr)
+    PackageManager::get_db_obj()->get_package_meta(this, pkg_name, [&on_pkg, &pkg_ver](PackageMeta* meta)
     {
-        printf("Unable to find package \"%s/%s\"!\n", m_name.c_str(), pkg_name.c_str());
-        return nullptr;
-    }
-    Package *ret = meta->get_pkg(pkg_ver);
-    return ret;
+        if (meta != nullptr)
+            meta->get_pkg(pkg_ver, [&on_pkg](Package* pkg)
+            {
+                on_pkg(pkg);
+            });
+    });
 }
 
-Category* Category::get_by_name(std::string &cat_name)
+void Category::get_by_name(std::string &cat_name, std::function<void(Category*)>&& on_cat)
 {
-    Category *cat = PackageManager::get_cat(cat_name);
-    if (cat == nullptr)
-        cat = PackageManager::get_db_obj()->get_categoty(cat_name);
-    return cat;
+    on_cat(PackageManager::get_cat(cat_name));
+    PackageManager::get_db_obj()->get_category(cat_name, [&on_cat](Category* cat)
+    {
+        on_cat(cat);
+    });
 }
 
 Category* Category::get_by_pkg(std::string &pkg_name)

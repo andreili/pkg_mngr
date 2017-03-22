@@ -25,17 +25,13 @@ PackageMeta::~PackageMeta()
     //dtor
 }
 
-Package* PackageMeta::get_pkg(std::string &version)
+void PackageMeta::get_pkg(std::string &version, std::function<void(Package*)> &&on_pkg)
 {
-    Package *pkg = PackageManager::get_pkg_meta(m_id, version);
-    if (pkg == nullptr)
-        pkg = PackageManager::get_db_obj()->get_pkg(this, version);
-    if (pkg == nullptr)
+    on_pkg(PackageManager::get_pkg_meta(m_id, version));
+    PackageManager::get_db_obj()->get_pkg(this, version, [&on_pkg](Package* pkg)
     {
-        printf("Unable to find package \"%s/%s:%s\"!\n", m_cat->get_name().c_str(), m_name.c_str(), version.c_str());
-        return nullptr;
-    }
-    return pkg;
+        on_pkg(pkg);
+    });
 }
 
 }

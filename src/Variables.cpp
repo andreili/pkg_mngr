@@ -182,11 +182,13 @@ void Variables::set_defaults()
         }
     delete str;
 
+    #ifndef _WIN32
     setenv(variable_names[(int)PKG_VAR_MAKEOPTS].c_str(), parse_vars(nullptr, m_vars[variable_names[(int)PKG_VAR_MAKEOPTS]]).c_str(), 1);
     setenv(variable_names[(int)PKG_VAR_CFLAGS].c_str(), parse_vars(nullptr, m_vars[variable_names[(int)PKG_VAR_CFLAGS]]).c_str(), 1);
     setenv(variable_names[(int)PKG_VAR_CPPFLAGS].c_str(), parse_vars(nullptr, m_vars[variable_names[(int)PKG_VAR_CPPFLAGS]]).c_str(), 1);
     setenv("CXXFLAGS", parse_vars(nullptr, m_vars[variable_names[(int)PKG_VAR_CPPFLAGS]]).c_str(), 1);
     setenv(variable_names[(int)PKG_VAR_LDFLAGS].c_str(), parse_vars(nullptr, m_vars[variable_names[(int)PKG_VAR_LDFLAGS]]).c_str(), 1);
+    #endif
 }
 
 void Variables::read_opts()
@@ -223,12 +225,18 @@ void Variables::read_opts()
                                            std::string cat_name = pkg_name.substr(0, del_pos);
                                            if (pkg_name[pkg_name.length() - 1] == '*')
                                            {
-                                                cat = Category::get_by_name(cat_name);
+                                                Category::get_by_name(cat_name, [&cat](Category*c)
+                                                {
+                                                    cat = c;
+                                                });
                                            }
                                            else
                                            {
                                                pkg_name = pkg_name.substr(del_pos);
-                                               pkg = Package::get_pkg_by_name(pkg_name);
+                                               Package::get_pkg_by_name(pkg_name, [this, &pkg](Package* obj)
+                                               {
+                                                   pkg = obj;
+                                               });
                                            }
                                        }
 

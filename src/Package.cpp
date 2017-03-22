@@ -263,7 +263,7 @@ bool Package::install()
 void Package::print_short_info()
 {
     printf("\t[%s] =%s/%s-%s ( ",
-           (check_installed() ? "\x1B[33mR\x1B[0m" : "\x1B[1;32mN\x1B[0m"),
+           (check_installed() ? COLOR_YELLOW "R" COLOR_RESET : COLOR_GREEN "N" COLOR_RESET),
            m_meta->get_cat()->get_name().c_str(),
            m_meta->get_name().c_str(),
            m_version.c_str());
@@ -291,63 +291,58 @@ std::string Package::get_var(EPackageVar var)
     return "";
 }
 
-Package* Package::get_pkg_by_name(std::string &pkg_name)
+void Package::get_pkg_by_name(std::string &pkg_name, std::function<void(Package*)>&& on_pkg)
 {
     std::string category_name = "";
     std::string package_name = "";
     std::string package_version = "";
-    size_t ver_start = std::string::npos;
+    size_t ver_start = 0;
     size_t pkg_start = std::string::npos;
-
-    if (pkg_name[0] == '=')
-    {
-        // get version
-        ver_start = pkg_name.find_last_of(':');
-        if (ver_start != std::string::npos)
-            package_version = pkg_name.substr(ver_start + 1);
-    }
 
     pkg_start = pkg_name.find_last_of('/');
     if (pkg_start != std::string::npos)
     {
         int offset = (pkg_name[0] == '=' ? 1 : 0);
         category_name = pkg_name.substr(offset, pkg_start - offset);
-        ver_start -= pkg_start + 1;
+        ver_start = pkg_start + 1;
     }
     else if (pkg_name[0] == '=')
     {
         pkg_start = 0;
-        --ver_start;
+        ++ver_start;
     }
+
+    ver_start = pkg_name.find_last_of(ver_start, '-');
+    if (ver_start != std::string::npos)
+        package_version = pkg_name.substr(ver_start + 1);
 
     package_name = pkg_name.substr((pkg_start == std::string::npos ? 0 : pkg_start + 1), ver_start);
 
-    Category *cat;
     if (category_name.length() == 0)
     {
-        cat = Category::get_by_pkg(package_name);
+        Category *cat = Category::get_by_pkg(package_name);
         if (cat == nullptr)
         {
             printf("Unable to find category for package \"%s\"!\n", package_name.c_str());
-            return nullptr;
+            return;
         }
+        else
+            cat->get_pkg(package_name, package_version, [&on_pkg](Package* pkg)
+            {
+               on_pkg(pkg);
+            });
     }
     else
     {
-        cat = Category::get_by_name(category_name);
-        if (cat == nullptr)
+        Category::get_by_name(category_name, [&on_pkg, &package_name, &package_version](Category* cat)
         {
-            printf("Unable to find category \"%s\"!\n", category_name.c_str());
-            return nullptr;
-        }
+            if (cat != nullptr)
+                cat->get_pkg(package_name, package_version, [&on_pkg](Package* pkg)
+                {
+                   on_pkg(pkg);
+                });
+        });
     }
-
-    Package* ret = cat->get_pkg(package_name, package_version);
-    if (ret == nullptr)
-        delete cat;
-    return ret;
-
-    return nullptr;
 }
 
 bool Package::stage_unpack()
@@ -625,7 +620,7 @@ void Package::print_opts()
             break;
         }
 
-        printf("%s%s%s%s%s\x1B[0m ", color, opt.changed ? BOLD_ON : "", def.c_str(), opt.option->get_name().c_str(), opt.changed ? BOLD_OFF : "");
+        printf("%s%s%s%s%s%s ", color, opt.changed ? BOLD_ON : "", def.c_str(), opt.option->get_name().c_str(), opt.changed ? BOLD_OFF : "", COLOR_RESET);
     }
 }
 

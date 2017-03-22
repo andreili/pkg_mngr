@@ -19,7 +19,7 @@ namespace package_manager
             std::string get_name() { return m_name; }
             Category* get_cat() { return m_cat; }
 
-            Package* get_pkg(std::string &version);
+            void get_pkg(std::string &version, std::function<void(Package*)>&& on_pkg);
         protected:
         private:
             Category        *m_cat;

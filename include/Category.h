@@ -4,6 +4,7 @@
 #include <SQLiteCpp.h>
 #include <cstring>
 #include <string>
+#include <functional>
 
 namespace package_manager
 {
@@ -20,9 +21,9 @@ namespace package_manager
             int get_id() { return m_id; }
             std::string get_name() { return m_name; }
 
-            Package* get_pkg(std::string &pkg_name, std::string &pkg_ver);
+            void get_pkg(std::string &pkg_name, std::string &pkg_ver, std::function<void(Package*)> &&on_pkg);
 
-            static Category* get_by_name(std::string &cat_name);
+            static void get_by_name(std::string &cat_name, std::function<void(Category*)>&& on_cat);
             static Category* get_by_pkg(std::string &pkg_name);
         protected:
         private:

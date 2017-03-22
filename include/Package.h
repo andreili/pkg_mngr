@@ -65,7 +65,7 @@ namespace package_manager
 
             std::string get_var(EPackageVar var);
 
-            static Package* get_pkg_by_name(std::string &pkg_name);
+            static void get_pkg_by_name(std::string &pkg_name, std::function<void(Package*)>&& on_pkg);
         protected:
         private:
             PackageMeta     *m_meta;

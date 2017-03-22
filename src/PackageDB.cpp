@@ -8,12 +8,24 @@
 namespace package_manager
 {
 
+#define SQL_MASK_REPLACE(str) \
+    size_t ch_pos; \
+    while ((ch_pos = str.find('*')) != std::string::npos) \
+        str = str.replace(ch_pos, 1, "%"); \
+
 PackageDB::PackageDB()
 {
     std::string path = Variables::get_instance()->parse_vars(nullptr, "${PKG_DB}") + "packages";
     //std::string path = "d:/Dev/Projects/pkg_mngr/packages.sql3";
     //printf("%s\n", path.c_str());
-    m_db = new SQLite::Database(path + ".sql3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+    try
+    {
+        m_db = new SQLite::Database(path + ".sql3", SQLITE_OPEN_READWRITE);
+    }
+    catch (SQLite::Exception& e)
+    {
+    }
+
     try
     {
         m_db_inst = new SQLite::Database(path + "_installed.sql3", SQLITE_OPEN_READWRITE);
@@ -68,14 +80,14 @@ void PackageDB::transaction_rollback()
     m_db_inst->exec("ROLLBACK");
 }
 
-Category* PackageDB::get_categoty(std::string &name)
+void PackageDB::get_category(std::string &name, std::function<void(Category*)>&& on_cat)
 {
-    SQLite::Statement query(*m_db, "SELECT * FROM category WHERE (name=:name COLLATE NOCASE);");
+    SQL_MASK_REPLACE(name);
+
+    SQLite::Statement query(*m_db, "SELECT * FROM category WHERE (name LIKE :name COLLATE NOCASE);");
     query.bind(":name", name);
-    if (query.executeStep())
-        return new Category(query);
-    else
-        return nullptr;
+    while (query.executeStep())
+        on_cat(new Category(query));
 }
 
 Category* PackageDB::get_category_by_pkg(std::string &name)
@@ -112,19 +124,28 @@ Category* PackageDB::get_category(int cat_id)
         return nullptr;
 }
 
-PackageMeta* PackageDB::get_package_meta(Category *cat, std::string &name)
+void PackageDB::get_package_meta(Category *cat, std::string name, std::function<void(PackageMeta*)> &&on_meta)
 {
     PackageMeta* meta = PackageManager::get_meta(cat->get_id(), name);
     if (meta != nullptr)
-        return meta;
+    {
+        on_meta(meta);
+        return;
+    }
 
-    SQLite::Statement query(*m_db, "SELECT * FROM package_meta WHERE (name=:name COLLATE NOCASE AND cat_id=:cat);");
+    SQL_MASK_REPLACE(name);
+
+    SQLite::Statement query(*m_db, "SELECT * FROM package_meta WHERE (name LIKE :name COLLATE NOCASE AND cat_id=:cat);");
     query.bind(":name", name);
     query.bind(":cat", cat->get_id());
-    if (query.executeStep())
-        return new PackageMeta(cat, query);
-    else
-        return nullptr;
+    while (query.executeStep())
+    {
+        meta = PackageManager::get_meta(cat->get_id(), query.getColumn("name").getText());
+        if (meta != nullptr)
+            on_meta(meta);
+        else
+            on_meta(new PackageMeta(cat, query));
+    }
 }
 
 PackageMeta* PackageDB::get_package_meta(int meta_id)
@@ -141,25 +162,28 @@ PackageMeta* PackageDB::get_package_meta(int meta_id)
         return nullptr;
 }
 
-Package* PackageDB::get_pkg(PackageMeta *meta, std::string &version)
+void PackageDB::get_pkg(PackageMeta *meta, std::string version, std::function<void(Package*)>&& on_pkg)
 {
     Package* pkg = PackageManager::get_pkg_meta(meta->get_id(), version);
     if (pkg != nullptr)
-        return pkg;
+    {
+        on_pkg(pkg);
+        return;
+    }
+
+    SQL_MASK_REPLACE(version);
 
     std::string statement;
     if (version.length() == 0)
         statement = "SELECT * FROM package WHERE (pkg_meta_id=:meta);";
     else
-        statement = "SELECT * FROM package WHERE (version=:version AND pkg_meta_id=:meta);";
+        statement = "SELECT * FROM package WHERE (version LIKE :version AND pkg_meta_id=:meta);";
     SQLite::Statement query(*m_db, statement);
     if (version.length() > 0)
         query.bind(":version", version);
     query.bind(":meta", meta->get_id());
-    if (query.executeStep())
-        return new Package(meta, query);
-    else
-        return nullptr;
+    while (query.executeStep())
+        on_pkg(new Package(meta, query));
 }
 
 Package* PackageDB::get_pkg(int pkg_id)

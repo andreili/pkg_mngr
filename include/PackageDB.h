@@ -26,15 +26,15 @@ namespace package_manager
             void transaction_commit();
             void transaction_rollback();
 
-            Category* get_categoty(std::string &name);
+            void get_category(std::string &name, std::function<void(Category*)>&& on_cat);
             Category* get_category_by_pkg(std::string &name);
             Category* get_category_by_meta(PackageMeta *meta);
             Category* get_category(int cat_id);
 
-            PackageMeta* get_package_meta(Category *cat, std::string &name);
+            void get_package_meta(Category *cat, std::string name, std::function<void(PackageMeta*)>&& on_meta);
             PackageMeta* get_package_meta(int meta_id);
 
-            Package* get_pkg(PackageMeta *meta, std::string &version);
+            void get_pkg(PackageMeta *meta, std::string version, std::function<void(Package*)>&& on_pkg);
             Package* get_pkg(int pkg_id);
             Package* get_last_pkg(int meta_id);
             bool get_installed(Package *pkg);
