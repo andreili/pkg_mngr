@@ -133,15 +133,8 @@ std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
             str = std::regex_replace(str, std::regex("\\$\\{(PV)\\}"), pkg->get_var(PKG_VERSION));
         }
 
-        str = std::regex_replace(str, std::regex("\\$\\{(PKG_SOURCES)\\}"), get_var(variable_names[(int)PKG_VAR_PATH_SOURCES]));
-        str = std::regex_replace(str, std::regex("\\$\\{(PKG_DB)\\}"), get_var(variable_names[(int)PKG_VAR_PATH_DB]));
-        str = std::regex_replace(str, std::regex("\\$\\{(PKG_TMP)\\}"), get_var(variable_names[(int)PKG_VAR_PATH_TMP]));
-        str = std::regex_replace(str, std::regex("\\$\\{(PKG_DIR)\\}"), get_var(variable_names[(int)PKG_VAR_PATH_PKGS]));
-        str = std::regex_replace(str, std::regex("\\$\\{(MAKEOPTS)\\}"), get_var(variable_names[(int)PKG_VAR_MAKEOPTS]));
-        str = std::regex_replace(str, std::regex("\\$\\{(CFLAGS)\\}"), get_var(variable_names[(int)PKG_VAR_CFLAGS]));
-        str = std::regex_replace(str, std::regex("\\$\\{(CPPFLAGS)\\}"), get_var(variable_names[(int)PKG_VAR_CPPFLAGS]));
-        str = std::regex_replace(str, std::regex("\\$\\{(LDFLAGS)\\}"), get_var(variable_names[(int)PKG_VAR_LDFLAGS]));
-        str = std::regex_replace(str, std::regex("\\$\\{(OPTS_LOC)\\}"), get_var(variable_names[(int)PKG_VAR_OPTS_LOC]));
+        for (std::string &var_name : variable_names)
+            str = std::regex_replace(str, std::regex("\\$\\{(" + var_name + ")\\}"), m_vars[var_name]);
         
         //str = std::regex_replace(str, std::regex("\\$\\{(ROOT)\\}"), m_vars["ROOT"]);
 
