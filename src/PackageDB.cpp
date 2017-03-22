@@ -78,27 +78,27 @@ Category* PackageDB::get_categoty(std::string &name)
         return nullptr;
 }
 
-Category* PackageDB::get_categoty_by_pkg(std::string &name)
+Category* PackageDB::get_category_by_pkg(std::string &name)
 {
     SQLite::Statement query(*m_db, "SELECT cat_id FROM package_meta WHERE (name=:name COLLATE NOCASE);");
     query.bind(":name", name);
     if (query.executeStep())
-        return get_categoty(query.getColumn("cat_id").getInt());
+        return get_category(query.getColumn("cat_id").getInt());
     else
         return nullptr;
 }
 
-Category* PackageDB::get_categoty_by_meta(PackageMeta *meta)
+Category* PackageDB::get_category_by_meta(PackageMeta *meta)
 {
     SQLite::Statement query(*m_db, "SELECT cat_id FROM package_meta WHERE (id=:id);");
     query.bind(":id", meta->get_id());
     if (query.executeStep())
-        return get_categoty(query.getColumn("cat_id").getInt());
+        return get_category(query.getColumn("cat_id").getInt());
     else
         return nullptr;
 }
 
-Category* PackageDB::get_categoty(int cat_id)
+Category* PackageDB::get_category(int cat_id)
 {
     Category* cat = PackageManager::get_cat(cat_id);
     if (cat != nullptr)

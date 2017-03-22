@@ -46,7 +46,7 @@ Category* Category::get_by_name(std::string &cat_name)
 
 Category* Category::get_by_pkg(std::string &pkg_name)
 {
-    return PackageManager::get_db_obj()->get_categoty_by_pkg(pkg_name);
+    return PackageManager::get_db_obj()->get_category_by_pkg(pkg_name);
 }
 
 }

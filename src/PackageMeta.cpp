@@ -10,7 +10,7 @@ PackageMeta::PackageMeta(Category *cat, SQLite::Statement &data)
     m_id = data.getColumn("id");
     m_name = data.getColumn("name").getText();
     if (m_cat == nullptr)
-        m_cat =PackageManager::get_db_obj()->get_categoty_by_meta(this);
+        m_cat =PackageManager::get_db_obj()->get_category_by_meta(this);
     PackageManager::add_meta(this);
 }
 

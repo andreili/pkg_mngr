@@ -27,9 +27,9 @@ namespace package_manager
             void transaction_rollback();
 
             Category* get_categoty(std::string &name);
-            Category* get_categoty_by_pkg(std::string &name);
-            Category* get_categoty_by_meta(PackageMeta *meta);
-            Category* get_categoty(int cat_id);
+            Category* get_category_by_pkg(std::string &name);
+            Category* get_category_by_meta(PackageMeta *meta);
+            Category* get_category(int cat_id);
 
             PackageMeta* get_package_meta(Category *cat, std::string &name);
             PackageMeta* get_package_meta(int meta_id);
