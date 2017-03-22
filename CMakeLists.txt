@@ -37,7 +37,7 @@ target_link_libraries(pkg_mngr sqlite3)
 target_link_libraries(pkg_mngr pthread)
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND mkdir -p ./var/{tmp/packages,lib/pkg/{pkgs,srcs}})
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND cat ${CMAKE_SOURCE_DIR}/packages.sql | sqlite3 ./var/lib/pkg/packages.sql3)
+#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND cat ${CMAKE_SOURCE_DIR}/packages.sql | sqlite3 ./var/lib/pkg/packages.sql3)
 
 install(TARGETS pkg_mngr DESTINATION bin)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/var DESTINATION /)

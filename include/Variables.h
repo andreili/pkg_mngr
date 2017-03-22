@@ -61,7 +61,9 @@ namespace package_manager
         void read_user_set();
         void set_defaults();
         void read_opts();
+        void read_conf_from_file(std::string file_name);
         void read_opts_from_file(std::string file_name);
+        bool parse_pkg(std::string pkg_name, Category* &cat, Package* &pkg);
         bool parse_opt(std::string opt_str, Category *cat, Package *pkg, option_config_t &opt_rec);
     };
 

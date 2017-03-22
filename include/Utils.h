@@ -3,6 +3,7 @@
 
 #include <string>
 #include <deque>
+#include <functional>
 
 #define COLOR_RESET "\x1B[0m"
 #define BOLD_ON "\x1b[1m"
@@ -19,6 +20,7 @@ public:
     static void parse_str(const std::string &str, std::string delimiters, std::deque<std::string> &lst);
     static std::string run_cmd(const std::string dir, const std::string cmd);
     static std::string replace_str(std::string str, std::string from, std::string to);
+    static void read_text_file(std::string path, std::function<void(std::string)>&& on_line);
 };
 
 #endif // UTILS_H

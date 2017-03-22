@@ -322,10 +322,7 @@ void Package::get_pkg_by_name(std::string &pkg_name, std::function<void(Package*
     {
         Category *cat = Category::get_by_pkg(package_name);
         if (cat == nullptr)
-        {
-            printf("Unable to find category for package \"%s\"!\n", package_name.c_str());
             return;
-        }
         else
             cat->get_pkg(package_name, package_version, [&on_pkg](Package* pkg)
             {

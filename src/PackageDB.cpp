@@ -94,8 +94,10 @@ Category* PackageDB::get_category_by_pkg(std::string &name)
 {
     SQLite::Statement query(*m_db, "SELECT cat_id FROM package_meta WHERE (name=:name COLLATE NOCASE);");
     query.bind(":name", name);
-    if (query.executeStep())
+    if ((query.executeStep()) && (query.getColumnCount()))
+    {
         return get_category(query.getColumn("cat_id").getInt());
+    }
     else
         return nullptr;
 }

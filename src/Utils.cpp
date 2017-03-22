@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include <stream.h>
 #include <unistd.h>
 
 /**
@@ -142,4 +143,20 @@ std::string Utils::replace_str(std::string str, std::string from, std::string to
     while ((pos = str.find(from)) != std::string::npos)
         str.replace(pos, from.length(), to);
     return str;
+}
+
+void Utils::read_text_file(std::string path, std::function<void(std::string)>&& on_line)
+{
+    Stream *str = new Stream(path, FILE_OPEN_READ_ST);
+    if (str->opened())
+    {
+        std::string line;
+        while (!str->atEnd())
+        {
+            line = str->readLine();
+            if ((line[0] != '#') && (line.length() > 0))
+                on_line(line);
+        }
+    }
+    delete str;
 }

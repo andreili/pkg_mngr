@@ -29,10 +29,6 @@ Variables::Variables()
     m_profile = Utils::run_cmd("", parse_vars(nullptr, "readlink ${PROFILE}"));
     m_profile = Utils::replace_str(m_profile, "../../var/lib/pkg/profiles/", "");
     m_profile = Utils::replace_str(m_profile, "\n", "");
-
-    read_profile(parse_vars(nullptr, "${PROFILE}"));
-
-    read_user_set();
 }
 
 Variables::~Variables()
@@ -63,7 +59,29 @@ void Variables::init_env(char **envp)
         m_vars[env_str.substr(0, pos)] = env_str.substr(pos + 1);
     }
 
+    read_profile(parse_vars(nullptr, "${PROFILE_ROOT}" + m_profile));
+
+    read_user_set();
+
+    #ifdef DEBUG_OPTS
+    printf("OPTS>>>\n");
+    for (option_config_t &opt : m_opts)
+        printf("%p %p %s %i\n", opt.cat,
+               opt.pkg, opt.opt->get_name().c_str(),
+               (int)opt.opt_state);
+    printf("<<<OPTS\n");
+    #endif
+
     read_opts();
+
+    #ifdef DEBUG_OPTS
+    printf("OPTS>>>\n");
+    for (option_config_t &opt : m_opts)
+        printf("%p %p %s %i\n", opt.cat,
+               opt.pkg, opt.opt->get_name().c_str(),
+               (int)opt.opt_state);
+    printf("<<<OPTS\n");
+    #endif
 }
 
 EOptState Variables::get_pkg_opt(Category *cat, Package *pkg, ConfigurationOption *opt)
@@ -160,35 +178,17 @@ std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
 
 void Variables::read_profile(std::string dir)
 {
-    /*FileSystem::list_files(dir, [this](const std::string &name, bool is_dir)
-       {
-           if (!is_dir)
-           {
-               //
-           }
-       });*/
+    Utils::read_text_file(dir + "/parent", [this, &dir](std::string line)
+    {
+        read_profile(dir + "/" + line);
+    });
+    read_conf_from_file(dir + "/packages.conf");
+    read_opts_from_file(dir + "/packages.use");
 }
 
 void Variables::read_user_set()
 {
-    Stream *str = new Stream(parse_vars(nullptr, PKG_VAR_OPTS_LOC) + "packages.conf", FILE_OPEN_READ_ST);
-    if (str->opened())
-        while (!str->atEnd())
-        {
-            std::string line = str->readLine();
-            size_t pos = line.find_first_of(" =\t");
-            std::string name = line.substr(0, pos);
-            std::string val = line.substr(line.find_first_not_of("= \t", pos));
-
-            if (val[0] == '"')
-                val.erase(0, 1);
-            if (val[val.size() - 1] == '"')
-                val.erase(val.size() - 1, 1);
-
-            m_vars[name] = val;
-        }
-    delete str;
-
+    read_conf_from_file(parse_vars(nullptr, PKG_VAR_OPTS_LOC) + "packages.conf");
     #ifndef _WIN32
     setenv(variable_names[(int)PKG_VAR_MAKEOPTS].c_str(), parse_vars(nullptr, m_vars[variable_names[(int)PKG_VAR_MAKEOPTS]]).c_str(), 1);
     setenv(variable_names[(int)PKG_VAR_CFLAGS].c_str(), parse_vars(nullptr, m_vars[variable_names[(int)PKG_VAR_CFLAGS]]).c_str(), 1);
@@ -227,18 +227,30 @@ void Variables::read_opts()
         }
 }
 
+void Variables::read_conf_from_file(std::string file_name)
+{
+    Utils::read_text_file(file_name, [this](std::string line)
+    {
+        size_t pos = line.find_first_of(" =\t");
+        std::string name = line.substr(0, pos);
+        std::string val = line.substr(line.find_first_not_of("= \t", pos));
+
+        if (val[0] == '"')
+            val.erase(0, 1);
+        if (val[val.size() - 1] == '"')
+            val.erase(val.size() - 1, 1);
+
+        m_vars[name] = parse_vars(nullptr, val);
+    });
+}
+
 void Variables::read_opts_from_file(std::string file_name)
 {
-    Stream *str = new Stream(file_name, FILE_OPEN_READ_ST);
     #ifdef DEBUG_OPTS
     printf("start read opts from file: %s\n", file_name.c_str());
     #endif
-    while (!str->atEnd())
+    Utils::read_text_file(file_name, [this](std::string line)
     {
-        std::string line = str->readLine();
-        if ((line[0] == '#') || (line.length() == 0))
-            continue;
-
         #ifdef DEBUG_OPTS
         printf("OPT line: %s\n", line.c_str());
         #endif
@@ -248,28 +260,8 @@ void Variables::read_opts_from_file(std::string file_name)
 
         Category *cat = nullptr;
         Package *pkg = nullptr;
-        size_t del_pos = pkg_name.find_first_of('/');
-        if (pkg_name.compare("*/*") == 0)
-        {}
-        else if (del_pos != std::string::npos)
-        {
-            std::string cat_name = pkg_name.substr(0, del_pos);
-            if (pkg_name[pkg_name.length() - 1] == '*')
-            {
-                 Category::get_by_name(cat_name, [&cat](Category*c)
-                 {
-                     cat = c;
-                 });
-            }
-            else
-            {
-                pkg_name = pkg_name.substr(del_pos);
-                Package::get_pkg_by_name(pkg_name, [this, &pkg](Package* obj)
-                {
-                    pkg = obj;
-                });
-            }
-        }
+        if (!parse_pkg(pkg_name, cat, pkg))
+            return;
 
         while (pkg_opts.size())
         {
@@ -283,8 +275,39 @@ void Variables::read_opts_from_file(std::string file_name)
 
         if (pkg != nullptr)
              pkg->update_opts();
+    });
+}
+
+bool Variables::parse_pkg(std::string pkg_name, Category* &cat, Package* &pkg)
+{
+    if (pkg_name.compare("*/*") == 0)
+        return true;
+
+    size_t del_pos = pkg_name.find_first_of('/');
+
+    bool ret_val = false;
+    if (del_pos != std::string::npos)
+    {
+        std::string cat_name = pkg_name.substr(0, del_pos);
+        if (pkg_name.compare("*") == 0)
+        {
+            Category::get_by_name(cat_name, [&ret_val, &cat](Category*c)
+            {
+                cat = c;
+                ret_val = true;
+            });
+        }
+        else
+        {
+            pkg_name = pkg_name.substr(del_pos);
+            Package::get_pkg_by_name(pkg_name, [&ret_val, &pkg](Package* obj)
+            {
+                pkg = obj;
+                ret_val = true;
+            });
+        }
     }
-    delete str;
+    return ret_val;
 }
 
 bool Variables::parse_opt(std::string opt_str, Category *cat, Package *pkg, option_config_t& opt_rec)
@@ -318,10 +341,6 @@ bool Variables::parse_opt(std::string opt_str, Category *cat, Package *pkg, opti
             return false;
         }
     }
-
-    #ifdef DEBUG_OPTS
-    printf("%p %p %s %i\n", cat, pkg, opt_rec.opt->get_name().c_str(), (int)opt_rec.opt_state);
-    #endif
 
     opt_rec.cat = cat;
     opt_rec.pkg = pkg;
