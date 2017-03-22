@@ -129,8 +129,11 @@ bool PackageManager::prepare()
                     debug("Add package %s\n", pkg_name.c_str());
                     Package::get_pkg_by_name(pkg_name, [this](Package* pkg)
                     {
-                        check_depedencies(pkg);
-                        add_to_actions(pkg);
+                        if (pkg != nullptr)
+                        {
+                            check_depedencies(pkg);
+                            add_to_actions(pkg);
+                        }
                     });
                 });
             }
