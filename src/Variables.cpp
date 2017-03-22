@@ -309,6 +309,16 @@ bool Variables::parse_opt(std::string opt_str, Category *cat, Package *pkg, opti
     if (opt_rec.opt == nullptr)
         return false;
 
+    //check on opts list
+    for (option_config_t &opt_list : m_opts)
+    {
+        if ((opt_list.cat == cat) && (opt_list.pkg == pkg) && (opt_list.opt == opt_rec.opt))
+        {
+            opt_list.opt_state = opt_rec.opt_state;
+            return false;
+        }
+    }
+
     #ifdef DEBUG_OPTS
     printf("%p %p %s %i\n", cat, pkg, opt_rec.opt->get_name().c_str(), (int)opt_rec.opt_state);
     #endif
