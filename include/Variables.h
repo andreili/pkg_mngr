@@ -3,6 +3,7 @@
 
 #include <map>
 #include <deque>
+#include <string>
 
 namespace package_manager
 {

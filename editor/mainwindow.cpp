@@ -51,7 +51,7 @@ void MainWindow::on_aOpenDB_triggered()
         QString fn = dialog.selectedFiles()[0].toUpper();*/
         //QString fn = "d:/Projects/pkg_mngr/build-pkg_mngr-Desktop-Debug/packages.sql3";
         #ifdef _WIN32
-        QString fn = "d:/Dev/Projects/pkg_mngr/packages.sql3";
+        QString fn = "./packages.sql3";
         #else
         QString fn = "/mnt/var/lib/pkg/packages.sql3";
         #endif

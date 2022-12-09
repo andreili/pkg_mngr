@@ -2,6 +2,7 @@
 #define FILESYSTEM_H
 
 #include <functional>
+#include <string>
 
 namespace package_manager
 {

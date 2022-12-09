@@ -128,17 +128,24 @@ std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
 {
     std::string str = str_raw;
 
-    size_t str_len;
+    std::regex reg("\\$\\{(\\w+)\\}");
+    bool have_reg;
     do
     {
-        str_len = str.length();
         std::smatch sm;
         std::string name = "";
         size_t name_pos = std::string::npos;
-        if (std::regex_match(str, sm, std::regex(".*\\$\\{(\\w+)\\}.*")))
+        //printf("str: '%s'\n", str.c_str());
+        if (std::regex_search(str, sm, reg))
         {
             name = sm[1];
             name_pos = str.find("${" + name + "}");
+            //printf("Variable: '%s'\n", name.c_str());
+            have_reg = true;
+        }
+        else
+        {
+            have_reg = false;
         }
 
         if (pkg != nullptr)
@@ -151,24 +158,57 @@ std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
             str = std::regex_replace(str, std::regex("\\$\\{(PV)\\}"), pkg->get_var(PKG_VERSION));
         }
 
-        for (std::string &var_name : variable_names)
-            str = std::regex_replace(str, std::regex("\\$\\{(" + var_name + ")\\}"), m_vars[var_name]);
-        
-        //str = std::regex_replace(str, std::regex("\\$\\{(ROOT)\\}"), m_vars["ROOT"]);
-
         char* env = getenv(name.c_str());
-        if ((name_pos != std::string::npos) && (str[name_pos] == '$') && (env != nullptr))
-            str = std::regex_replace(str, std::regex("\\$\\{(" + name + ")\\}"), env);
-        else if (m_vars.count(name))
+        bool is_empty = true;
+        if (m_vars.count(name))
         {
-            str = std::regex_replace(str, std::regex("\\$\\{(" + name + ")\\}"), m_vars[name]);
+            std::string str_new = std::regex_replace(str, std::regex("\\$\\{(" + name + ")\\}"), m_vars[name]);
+            //printf("Variable replace0: '%s'='%s' ('%s'->'%s')\n", name.c_str(), m_vars[name].c_str(),
+            //       str.c_str(), str_new.c_str());
+            str = str_new;
+            is_empty = false;
+        }
+        else if ((name_pos != std::string::npos) && (str[name_pos] == '$') && (env != nullptr))
+        {
+            std::string str_new = std::regex_replace(str, std::regex("\\$\\{(" + name + ")\\}"), env);
+            if (str_new.compare(str) != 0)
+            {
+                //printf("Variable replace1: '%s'='%s' ('%s'->'%s')\n", name.c_str(), env,
+                //       str.c_str(), str_new.c_str());
+                is_empty = false;
+            }
+            str = str_new;
         }
         else
         {
-            if (name.compare("ROOT") == 0)
-                str = std::regex_replace(str, std::regex("\\$\\{(ROOT)\\}"), "");
+            for (std::string &var_name : variable_names)
+            {
+                std::string str_new = std::regex_replace(str, std::regex("\\$\\{(" + var_name + ")\\}"), m_vars[var_name]);
+                if (str_new.compare(str) != 0)
+                {
+                    //printf("Variable replace2: '%s'='%s' ('%s'->'%s')\n", var_name.c_str(), m_vars[var_name].c_str(),
+                    //       str.c_str(), str_new.c_str());
+                    is_empty = false;
+                }
+                str = str_new;
+            }
         }
-    } while (str_len != str.length());
+
+        if (is_empty)
+        {
+            // variable don't finded
+            str = std::regex_replace(str, std::regex("\\$\\{(" + name + ")\\}"), "");
+        }
+
+        /*
+        
+        //str = std::regex_replace(str, std::regex("\\$\\{(ROOT)\\}"), m_vars["ROOT"]);
+
+        {
+            //if (name.compare("ROOT") == 0)
+            //    str = std::regex_replace(str, std::regex("\\$\\{(ROOT)\\}"), "");
+        }*/
+    } while (have_reg);
 
     if (pkg != nullptr)
         return pkg->parse_opts(str);
@@ -209,6 +249,8 @@ void Variables::set_defaults()
 
 void Variables::read_opts()
 {
+    read_opts_from_file(parse_vars(nullptr, PKG_VAR_OPTS_LOC) + "packages.use");
+
     std::string dir = parse_vars(nullptr, PKG_VAR_OPTS_LOC) + "packages.use/";
     FileSystem::list_files(dir, false, [this](const std::string &name, bool is_dir)
        {
@@ -240,7 +282,9 @@ void Variables::read_conf_from_file(std::string file_name)
         if (val[val.size() - 1] == '"')
             val.erase(val.size() - 1, 1);
 
-        m_vars[name] = parse_vars(nullptr, val);
+        //printf("Variable '%s'='%s'\n", name.c_str(), val.c_str());
+        m_vars[name] = val;
+
     });
 }
 
@@ -270,7 +314,9 @@ void Variables::read_opts_from_file(std::string file_name)
             pkg_opts.erase(0, (pos==std::string::npos) ? pos : (pos + 1));
             option_config_t opt;
             if (parse_opt(opt_str, cat, pkg, opt))
+            {
                  m_opts.push_back(opt);
+            }
         }
 
         if (pkg != nullptr)

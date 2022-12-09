@@ -1,6 +1,7 @@
 #include "CmdlineParser.h"
 #include "Utils.h"
 //#include "../types.h"
+#include <string>
 
 CmdlineParser* CmdlineParser::m_instance = nullptr;
 
@@ -71,7 +72,7 @@ void CmdlineParser::add_wstring_param(const std::wstring &name, std::wstring* va
  * @param val_def Значение по умолчанию
  * @param desc Описание параметра
  */
-void CmdlineParser::add_bool_param(const std::wstring &name, const std::__cxx11::wstring &name_short, bool* val, const bool &val_def, const std::wstring &desc)
+void CmdlineParser::add_bool_param(const std::wstring &name, const std::wstring &name_short, bool* val, const bool &val_def, const std::wstring &desc)
 {
     *val = val_def;
     m_instance->m_params.push_back({type: EParamType::BOOLEAN,

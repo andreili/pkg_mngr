@@ -458,7 +458,7 @@ bool Package::stage_strip()
     if (PackageManager::is_verbose())
         printf("\tStrip binaries\n");
     return run_cmd(Variables::get_instance()->parse_vars(this, "${BIN_DIR}"),
-                   "find . -type f -exec strip --strip-unneeded -R .comment -R .GCC.command.line -R .note.gnu.gold-version '{}' \\;");
+                   "find . -type f -exec ${CROSS_COMPILE}strip --strip-unneeded -R .comment -R .GCC.command.line -R .note.gnu.gold-version '{}' \\;");
 }
 
 #define ARRAY_SIZE(array) (sizeof((array))/sizeof((array[0])))
@@ -517,7 +517,7 @@ bool Package::stage_merge()
 {
     if (PackageManager::is_verbose())
         printf("\tMerge to /\n");
-    return run_cmd("", Variables::get_instance()->parse_vars(this, "tar xf ${PKG_DIR}/${PN}-${PV}.tar.xz -C ${ROOT}/"));
+    return run_cmd("", Variables::get_instance()->parse_vars(this, "tar --keep-directory-symlink -xf ${PKG_DIR}/${PN}-${PV}.tar.xz -C ${ROOT}/"));
 }
 
 bool Package::run_cmd(const std::string dir, const std::string cmd)
