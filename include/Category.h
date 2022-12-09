@@ -1,7 +1,6 @@
 #ifndef CATEGORY_H
 #define CATEGORY_H
 
-#include <SQLiteCpp.h>
 #include <cstring>
 #include <string>
 #include <functional>
@@ -14,7 +13,7 @@ namespace package_manager
     {
         public:
             Category();
-            Category(SQLite::Statement &data);
+            Category(int id, std::string name);
             Category(std::wstring m_name);
             virtual ~Category();
 

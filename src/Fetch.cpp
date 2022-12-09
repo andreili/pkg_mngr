@@ -139,7 +139,7 @@ bool Fetch::check_source(std::string &url, Package *pkg)
 {
     unsigned char md5[MD5_DIGEST_LENGTH];
     MD5_CTX md5_ctx;
-    int original_size;
+    int64_t original_size;
     std::string original_md5;
     std::string file_name = Variables::get_instance()->parse_vars(pkg, "${PKG_SOURCES}/" +
                             url.substr(url.find_last_of('/') + 1));
@@ -157,7 +157,7 @@ bool Fetch::check_source(std::string &url, Package *pkg)
 
     if (str->getSize() != original_size)
     {
-        printf("Size don't matched (expected: %i != %li) [%s]\n", original_size, str->getSize(), file_name.c_str());
+        printf("Size don't matched (expected: %li != %li) [%s]\n", original_size, str->getSize(), file_name.c_str());
         delete str;
         return false;
     }

@@ -4,11 +4,11 @@
 namespace package_manager
 {
 
-PackageMeta::PackageMeta(Category *cat, SQLite::Statement &data)
+PackageMeta::PackageMeta(Category *cat, int id, std::string name)
 {
     m_cat = cat;
-    m_id = data.getColumn("id");
-    m_name = data.getColumn("name").getText();
+    m_id = id;
+    m_name = name;
     if (m_cat == nullptr)
         m_cat =PackageManager::get_db_obj()->get_category_by_meta(this);
     PackageManager::add_meta(this);
@@ -27,7 +27,6 @@ PackageMeta::~PackageMeta()
 
 void PackageMeta::get_pkg(std::string &version, std::function<void(Package*)> &&on_pkg)
 {
-    on_pkg(PackageManager::get_pkg_meta(m_id, version));
     PackageManager::get_db_obj()->get_pkg(this, version, [&on_pkg](Package* pkg)
     {
         on_pkg(pkg);

@@ -9,7 +9,7 @@
 namespace package_manager
 {
 
-//#define DEBUG_OPTS
+#define DEBUG_OPTS
 
 Variables* Variables::m_instance = nullptr;
 
@@ -18,7 +18,7 @@ std::string variable_names[] = {"PKG_SOURCES", "PKG_DB", "PKG_TMP", "PKG_DIR", "
                                 "CFLAGS", "CPPFLAGS", "LDFLAGS", "OPTS_LOC", "PROFILE", "PROFILE_ROOT"};
 
 std::string variable_defs[] = {"${ROOT}/var/lib/pkg/srcs/", "${ROOT}/var/lib/pkg/", "${ROOT}/var/tmp/packages/", "${ROOT}/var/lib/pkg/pkgs/", "-j1",
-                                "-O2 -pipe -march=native", "${CFLAGS}", "-s", "${ROOT}/etc/packages/", "${OPTS_LOC}/profile", "${PKG_DB}/profiles/"};
+                                "-O2 -pipe -march=native", "${CFLAGS}", "-s", "${ROOT}/etc/packages/", "${OPTS_LOC}profile", "${PKG_DB}profiles/"};
 
 Variables::Variables()
 {

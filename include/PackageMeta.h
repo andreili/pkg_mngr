@@ -10,7 +10,7 @@ namespace package_manager
     class PackageMeta
     {
         public:
-            PackageMeta(Category *cat, SQLite::Statement &data);
+            PackageMeta(Category *cat, int id, std::string name);
             PackageMeta(Category *cat);
             virtual ~PackageMeta();
 

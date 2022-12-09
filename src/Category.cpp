@@ -12,10 +12,10 @@ Category::Category()
     //ctor
 }
 
-Category::Category(SQLite::Statement &data)
+Category::Category(int id, std::string name)
 {
-    m_id = data.getColumn("id");
-    m_name = data.getColumn("name").getText();
+    m_id = id;
+    m_name = name;
     PackageManager::add_cat(this);
 }
 

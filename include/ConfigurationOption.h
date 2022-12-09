@@ -24,7 +24,7 @@ namespace package_manager
     class ConfigurationOption
     {
         public:
-            ConfigurationOption(SQLite::Statement &data);
+            ConfigurationOption(int id, std::string name, std::string descr);
             virtual ~ConfigurationOption();
 
             int get_id() { return m_id; }

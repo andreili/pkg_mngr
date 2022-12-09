@@ -8,6 +8,7 @@
 #include <FileSystem.h>
 #include <stdio.h>
 #include <algorithm>
+#include <cstdarg>
 
 namespace package_manager
 {

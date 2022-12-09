@@ -1,7 +1,7 @@
 #ifndef PKG_DB_H_INCLUDED
 #define PKG_DB_H_INCLUDED
 
-#include <SQLiteCpp.h>
+#include <sqlite/connection.hpp>
 #include <functional>
 #include <cstring>
 #include <string>
@@ -55,7 +55,7 @@ namespace package_manager
             void get_package_deps(int pkg_id, std::function<void(int depend_by, int dep_by_opt)>&& on_new_dep);
 
             void get_pkg_urls(Package *pkg, std::function<void(std::string url)>&& on_url);
-            void get_url_details(std::string &url, int pkg_id, std::string *md5, int *file_size);
+            void get_url_details(std::string &url, int pkg_id, std::string *md5, int64_t *file_size);
 
             void get_pkg_prepare(Package *pkg, std::function<void(std::string dir, std::string prepare_cmd)>&& on_cmd);
             void get_pkg_configure(Package *pkg, std::function<void(std::string dir, std::string config_cmd)>&& on_cmd);
@@ -63,8 +63,8 @@ namespace package_manager
             void get_pkg_install(Package *pkg, std::function<void(std::string dir, std::string inst_cmd)>&& on_cmd);
             void get_pkg_postinstall(Package *pkg, std::function<void(std::string dir, std::string postinst_cmd)>&& on_cmd);
         private:
-            SQLite::Database    *m_db;
-            SQLite::Database    *m_db_inst;
+            sqlite::connection    *m_db;
+            sqlite::connection    *m_db_inst;
     };
 }
 

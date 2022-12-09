@@ -9,7 +9,6 @@
         * off_value
 **/
 
-#include <SQLiteCpp.h>
 #include <string>
 
 namespace package_manager
@@ -18,7 +17,7 @@ namespace package_manager
     class ConfigurationAlias
     {
         public:
-            ConfigurationAlias(SQLite::Statement &data);
+            ConfigurationAlias(int id, std::string alias, std::string on, std::string off);
             virtual ~ConfigurationAlias();
 
             int get_id() { return m_id; }

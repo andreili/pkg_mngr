@@ -980,7 +980,7 @@ INSERT INTO "set_pkgs" VALUES(40,1,52);
 INSERT INTO "set_pkgs" VALUES(41,1,66);
 INSERT INTO "set_pkgs" VALUES(42,1,58);
 INSERT INTO "set_pkgs" VALUES(43,1,91);
-CREATE TABLE pkg_opts (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package_meta (id), opt_id INTEGER REFERENCES config_opts (id), "default" BOOLEAN DEFAULT (0), opt_alias_id INTEGER REFERENCES config_aliases (id));
+CREATE TABLE pkg_opts (id INTEGER PRIMARY KEY AUTOINCREMENT, pkg_id INTEGER REFERENCES package_meta (id), opt_id INTEGER REFERENCES config_opts (id), "default_value" BOOLEAN DEFAULT (0), opt_alias_id INTEGER REFERENCES config_aliases (id));
 INSERT INTO "pkg_opts" VALUES(1,4,1,0,NULL);
 INSERT INTO "pkg_opts" VALUES(3,13,2,0,NULL);
 INSERT INTO "pkg_opts" VALUES(4,42,5,1,1);

@@ -39,7 +39,7 @@ namespace package_manager
     class Package
     {
         public:
-            Package(PackageMeta *meta, SQLite::Statement &data);
+            Package(PackageMeta *meta, int meta_id, int id, std::string version, std::string source_name);
             Package(PackageMeta *meta);
             virtual ~Package();
 

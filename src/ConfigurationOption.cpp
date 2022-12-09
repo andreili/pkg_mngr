@@ -4,12 +4,11 @@
 namespace package_manager
 {
 
-ConfigurationOption::ConfigurationOption(SQLite::Statement &data)
+ConfigurationOption::ConfigurationOption(int id, std::string name, std::string descr)
 {
-    m_id = data.getColumn("id");
-    m_name = data.getColumn("name").getText();
-    m_name = data.getColumn("name").getText();
-    m_descr = data.getColumn("descr").getText();
+    m_id = id;
+    m_name = name;
+    m_descr = descr;
     PackageManager::add_opt(this);
 }
 

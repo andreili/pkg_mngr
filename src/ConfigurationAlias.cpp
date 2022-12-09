@@ -4,12 +4,12 @@
 namespace package_manager
 {
 
-ConfigurationAlias::ConfigurationAlias(SQLite::Statement &data)
+ConfigurationAlias::ConfigurationAlias(int id, std::string alias, std::string on, std::string off)
 {
-    m_id = data.getColumn("id");
-    m_alias = data.getColumn("alias").getText();
-    m_on = data.getColumn("on_value").getText();
-    m_off = data.getColumn("off_value").getText();
+    m_id = id;
+    m_alias = alias;
+    m_on = on;
+    m_off = off;
 }
 
 ConfigurationAlias::~ConfigurationAlias()

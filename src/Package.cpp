@@ -17,7 +17,7 @@
 namespace package_manager
 {
 
-Package::Package(PackageMeta *meta, SQLite::Statement &data)
+Package::Package(PackageMeta *meta, int meta_id, int id, std::string version, std::string source_name)
     : m_state (INST_STATE_UNK)
     , m_log_enabled (false)
     , m_fetched (false)
@@ -25,12 +25,12 @@ Package::Package(PackageMeta *meta, SQLite::Statement &data)
     , m_fetch_in_queue (false)
 {
     if (meta == nullptr)
-        m_meta = PackageManager::get_db_obj()->get_package_meta(data.getColumn("pkg_meta_id"));
+        m_meta = PackageManager::get_db_obj()->get_package_meta(meta_id);
     else
         m_meta = meta;
-    m_id = data.getColumn("id");
-    m_version = data.getColumn("version").getText();
-    m_source = data.getColumn("source_name").getText();
+    m_id = id;
+    m_version = version;
+    m_source = source_name;
     m_tmp_dir = Variables::get_instance()->parse_vars(this, PKG_VAR_PATH_TMP) + m_meta->get_name() + '-' + m_version + '/';
 
     PackageManager::debug("Allocate new package object: %s\n", m_meta->get_name().c_str());
@@ -326,7 +326,7 @@ void Package::get_pkg_by_name(std::string &pkg_name, std::function<void(Package*
         else
             cat->get_pkg(package_name, package_version, [&on_pkg](Package* pkg)
             {
-               on_pkg(pkg);
+                on_pkg(pkg);
             });
     }
     else
