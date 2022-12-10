@@ -176,7 +176,12 @@ bool Fetch::check_source(std::string &url, Package *pkg)
     char md5_ch[36];
     for(int i = 0; i < 16; ++i)
         sprintf(md5_ch+i*2, "%02x", md5[i]);
-    return (original_md5.compare(md5_ch) == 0);
+    if (original_md5.compare(md5_ch) != 0)
+    {
+        printf("MD5 don't matched (expected: %s != %s) [%s]\n", original_md5.c_str(), md5_ch, file_name.c_str());
+        return false;
+    }
+    return true;
 }
 
 }

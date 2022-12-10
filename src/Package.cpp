@@ -225,7 +225,7 @@ bool Package::install()
     while (!m_fetched && (m_fetch_in_queue || m_fetch_running))
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        ///printf("%i %i %i\n", m_fetched, m_fetch_in_queue, m_fetch_running);
+        //printf("%i %i %i\n", m_fetched, m_fetch_in_queue, m_fetch_running);
     }
 
     if (!m_fetched
@@ -238,6 +238,7 @@ bool Package::install()
         || !stage_clean_unneeded()
         || !stage_strip()
         || !stage_mkpkg()
+        || !(check_installed() && stage_delete())
         || !stage_list()
         || !stage_merge()
         || !stage_clean()
@@ -376,7 +377,7 @@ bool Package::stage_clean()
 {
     if (PackageManager::is_verbose())
         printf("\tClean\n");
-    std::string cmd = "rm -rf " + m_tmp_dir;
+    std::string cmd = "rm -rf " + m_tmp_dir + "{bin,source,build}";
     return run_cmd("", cmd);
 }
 
@@ -506,8 +507,8 @@ bool Package::stage_list()
 {
     PackageManager::get_db_obj()->clear_installed_files(this);
     std::string root = Variables::get_instance()->parse_vars(this, "${BIN_DIR}");
-    std::string dir = "";
     PackageManager::get_db_obj()->transaction_start();
+    std::string dir = "";
     store_installed_files(root, dir);
     PackageManager::get_db_obj()->transaction_commit();
     return true;
@@ -518,6 +519,20 @@ bool Package::stage_merge()
     if (PackageManager::is_verbose())
         printf("\tMerge to /\n");
     return run_cmd("", Variables::get_instance()->parse_vars(this, "tar --keep-directory-symlink -xf ${PKG_DIR}/${PN}-${PV}.tar.xz -C ${ROOT}/"));
+}
+
+bool Package::stage_delete()
+{
+    if (PackageManager::is_verbose())
+        printf("\tDelete previously installed package\n");
+    std::string dir = Variables::get_instance()->parse_vars(this, "${ROOT}");
+    PackageManager::get_db_obj()->list_installed_files(this, [&dir](std::string name)
+    {
+        std::string fn = dir + "/" + name;
+        PackageManager::debug("Delete file: %s\n", fn.c_str());
+        std::remove(fn.c_str());
+    });
+    return true;
 }
 
 bool Package::run_cmd(const std::string dir, const std::string cmd)
@@ -621,13 +636,14 @@ void Package::print_opts()
     }
 }
 
-void Package::store_installed_files(std::string &root, std::string &dir)
+void Package::store_installed_files(const std::string &root, std::string &dir)
 {
-    FileSystem::list_files(root + dir, false, [this, &root, &dir](const std::string &name, bool is_dir)
+    std::string path = root + dir;
+    FileSystem::list_files(path, true, [this, path](const std::string &name, bool is_dir)
                            {
-                               std::string fn = dir + '/' + name;
+                               std::string fn = name.substr(path.length());
                                if (is_dir)
-                                    store_installed_files(root, fn);
+                                    store_installed_files(name, fn);
                                else
                                    PackageManager::get_db_obj()->add_installed_file(this, fn);
                            });

@@ -86,6 +86,8 @@ namespace package_manager
             bool        m_pretend;
             bool        m_fetch_only;
             bool        m_debug;
+            bool        m_export;
+            bool        m_import;
 
             std::string m_profile_action;
 
@@ -99,6 +101,8 @@ namespace package_manager
             bool user_yes_no();
             void parse_locales();
             void profile_managment();
+            void db_export();
+            void db_import();
     };
 }
 

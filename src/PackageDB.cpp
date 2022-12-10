@@ -343,6 +343,28 @@ void PackageDB::add_installed_file(Package *pkg, std::string &file)
     query();
 }
 
+void PackageDB::list_installed_files(Package *pkg, std::function<void(std::string name)>&& on_file)
+{
+    try
+    {
+        sqlite::query query(*m_db_inst, "SELECT id,name FROM installed_pkg_files WHERE (pkg_id=:pkg_id);");
+        query % pkg->get_id();
+        query.emit();
+        boost::shared_ptr<sqlite::result> res = query.get_result();
+        if (res->get_int(0) > 0)
+        {
+            do
+            {
+                on_file(res->get_string(1));
+            } while (res->next_row());
+        }
+    }
+    catch (sqlite::database_exception& e)
+    {
+        printf("Exception at #%i: %s\n", __LINE__, e.what());
+    }
+}
+
 void PackageDB::print_posinst(PackageMeta *meta)
 {
     sqlite::query query(*m_db, "SELECT id,msg FROM postinst_msg WHERE (pkg_id=:id);");
@@ -408,7 +430,7 @@ ConfigurationOption* PackageDB::get_config_opt(std::string &name)
 
 void PackageDB::get_set_pkgs(std::string set_name, std::function<void(std::string pkg_name)>&& on_pkg)
 {
-    sqlite::query query(*m_db, "SELECT id, cat.name AS cat, pm.name FROM category AS cat"
+    sqlite::query query(*m_db, "SELECT cat.id, cat.name AS cat, pm.name FROM category AS cat"
                             " INNER JOIN package_meta AS pm ON cat.id=pm.cat_id"
                             " INNER JOIN package AS pkg ON pkg.pkg_meta_id=pm.id"
                             " INNER JOIN set_pkgs AS ps ON ps.pkg_id=pkg.id"
@@ -462,6 +484,7 @@ EOptState PackageDB::get_opt_state(Package *pkg, ConfigurationOption* opt)
     catch (sqlite::database_exception& e)
     {
         printf("Exception at #%i: %s\n", __LINE__, e.what());
+        return EOptState::OPT_UNDEF;
     }
 }
 

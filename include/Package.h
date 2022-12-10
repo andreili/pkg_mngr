@@ -97,6 +97,7 @@ namespace package_manager
             bool stage_mkpkg();
             bool stage_list();
             bool stage_merge();
+            bool stage_delete();
 
             bool run_cmd(const std::string dir, const std::string cmd);
             void log_start();
@@ -105,7 +106,7 @@ namespace package_manager
             void log_data(char *buf);
             void log_tail();
             void print_opts();
-            void store_installed_files(std::string &root, std::string &dir);
+            void store_installed_files(const std::string &root, std::string &dir);
     };
 
 }

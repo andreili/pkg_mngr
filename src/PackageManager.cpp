@@ -63,6 +63,8 @@ void PackageManager::init(int argc, char *argv[], char **envp)
     m_cmd->add_bool_param(L"pretend", L"p", &m_pretend, false, L"just to show what should be done");
     m_cmd->add_bool_param(L"fetch", L"f", &m_fetch_only, false, L"only files fetch");
     m_cmd->add_bool_param(L"debug", L"D", &m_debug, false, L"output debug messages");
+    m_cmd->add_bool_param(L"export", L"E", &m_export, false, L"export database to set of files");
+    m_cmd->add_bool_param(L"import", L"I", &m_import, false, L"import database from set of files");
 
     m_cmd->add_string_param(L"profile", &m_profile_action, "", L"Profile managing. Actions: list, set");
 
@@ -98,6 +100,16 @@ bool PackageManager::prepare()
     if (m_show_help)
     {
         m_cmd->show_desc();
+        return false;
+    }
+    else if (m_export)
+    {
+        db_export();
+        return false;
+    }
+    else if (m_import)
+    {
+        db_import();
         return false;
     }
     else if (!m_params_ok)
@@ -500,6 +512,16 @@ void PackageManager::profile_managment()
             printf(COLOR_YELLOW "Profile was successfully changed\n" COLOR_RESET);
         }
     }
+}
+
+void PackageManager::db_export()
+{
+    printf(COLOR_GREEN BOLD_ON "Export DB to files.\n" COLOR_RESET);
+}
+
+void PackageManager::db_import()
+{
+    printf(COLOR_GREEN BOLD_ON "Import DB from files.\n" COLOR_RESET);
 }
 
 

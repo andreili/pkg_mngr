@@ -42,6 +42,7 @@ namespace package_manager
             void set_installed_opt(Package *pkg, ConfigurationOption *opt, EOptState state);
             void clear_installed_files(Package *pkg);
             void add_installed_file(Package *pkg, std::string &file);
+            void list_installed_files(Package *pkg, std::function<void(std::string name)>&& on_file);
             void print_posinst(PackageMeta *meta);
 
             ConfigurationOption* get_config_opt(int opt_id);
