@@ -124,91 +124,86 @@ std::string Variables::parse_vars(Package *pkg, EPKGVariable var)
     return parse_vars(pkg, m_vars[variable_names[var]]);
 }
 
+std::string vars_res[] =
+{
+    "d"
+};
+
 std::string Variables::parse_vars(Package *pkg, const std::string &str_raw)
 {
     std::string str = str_raw;
 
     std::regex reg("\\$\\{(\\w+)\\}");
-    bool have_reg;
+    size_t name_pos = std::string::npos;
+    bool replaced;
+    std::string str_new;
     do
     {
         std::smatch sm;
         std::string name = "";
-        size_t name_pos = std::string::npos;
-        //printf("str: '%s'\n", str.c_str());
-        if (std::regex_search(str, sm, reg))
+        replaced = false;
+        str_new = str;
+        if (std::regex_search(str_new, sm, reg))
         {
-            name = sm[1];
-            name_pos = str.find("${" + name + "}");
-            //printf("Variable: '%s'\n", name.c_str());
-            have_reg = true;
-        }
-        else
-        {
-            have_reg = false;
-        }
-
-        if (pkg != nullptr)
-        {
-            str = std::regex_replace(str, std::regex("\\$\\{(SRC_DIR)\\}"), pkg->get_var(PKG_PATH_SOURCE));
-            str = std::regex_replace(str, std::regex("\\$\\{(BUILD_DIR)\\}"), pkg->get_var(PKG_PATH_BUILD));
-            str = std::regex_replace(str, std::regex("\\$\\{(BIN_DIR)\\}"), pkg->get_var(PKG_PATH_BIN));
-            str = std::regex_replace(str, std::regex("\\$\\{(PS)\\}"), pkg->get_var(PKG_SOURCE));
-            str = std::regex_replace(str, std::regex("\\$\\{(PN)\\}"), pkg->get_var(PKG_NAME));
-            str = std::regex_replace(str, std::regex("\\$\\{(PV)\\}"), pkg->get_var(PKG_VERSION));
-        }
-
-        char* env = getenv(name.c_str());
-        bool is_empty = true;
-        if (m_vars.count(name))
-        {
-            std::string str_new = std::regex_replace(str, std::regex("\\$\\{(" + name + ")\\}"), m_vars[name]);
-            //printf("Variable replace0: '%s'='%s' ('%s'->'%s')\n", name.c_str(), m_vars[name].c_str(),
-            //       str.c_str(), str_new.c_str());
-            str = str_new;
-            is_empty = false;
-        }
-        else if ((name_pos != std::string::npos) && (str[name_pos] == '$') && (env != nullptr))
-        {
-            std::string str_new = std::regex_replace(str, std::regex("\\$\\{(" + name + ")\\}"), env);
-            if (str_new.compare(str) != 0)
+            for (size_t idx=1 ; idx<sm.size() ; ++idx)
             {
-                //printf("Variable replace1: '%s'='%s' ('%s'->'%s')\n", name.c_str(), env,
-                //       str.c_str(), str_new.c_str());
-                is_empty = false;
-            }
-            str = str_new;
-        }
-        else
-        {
-            for (std::string &var_name : variable_names)
-            {
-                std::string str_new = std::regex_replace(str, std::regex("\\$\\{(" + var_name + ")\\}"), m_vars[var_name]);
-                if (str_new.compare(str) != 0)
+                name = sm[idx];
+                bool is_reserved = false;
+                for (std::string &s : vars_res)
                 {
-                    //printf("Variable replace2: '%s'='%s' ('%s'->'%s')\n", var_name.c_str(), m_vars[var_name].c_str(),
-                    //       str.c_str(), str_new.c_str());
-                    is_empty = false;
+                    if (s.compare(name) == 0)
+                    {
+                        is_reserved = true;
+                        break;
+                    }
                 }
-                str = str_new;
+                if (is_reserved)
+                {
+                    continue;
+                }
+                name_pos = str.find("${" + name + "}");
+                
+                char* env = getenv(name.c_str());
+            
+                if (m_vars.count(name))
+                {
+                    str_new = std::regex_replace(str_new, std::regex("\\$\\{(" + name + ")\\}"), m_vars[name]);
+                    str = str_new;
+                    replaced = true;
+                }
+                else if ((name_pos != std::string::npos) && (str_new[name_pos] == '$') && (env != nullptr))
+                {
+                    str_new = std::regex_replace(str_new, std::regex("\\$\\{(" + name + ")\\}"), env);
+                }
+                else
+                {
+                    for (std::string &var_name : variable_names)
+                    {
+                        if (name.compare(var_name) == 0)
+                        {
+                            str_new = std::regex_replace(str_new, std::regex("\\$\\{(" + var_name + ")\\}"), m_vars[var_name]);
+                        }
+                    }
+                }
+                if (pkg != nullptr)
+                {
+                    str_new = std::regex_replace(str_new, std::regex("\\$\\{(SRC_DIR)\\}"), pkg->get_var(PKG_PATH_SOURCE));
+                    str_new = std::regex_replace(str_new, std::regex("\\$\\{(BUILD_DIR)\\}"), pkg->get_var(PKG_PATH_BUILD));
+                    str_new = std::regex_replace(str_new, std::regex("\\$\\{(BIN_DIR)\\}"), pkg->get_var(PKG_PATH_BIN));
+                    str_new = std::regex_replace(str_new, std::regex("\\$\\{(PS)\\}"), pkg->get_var(PKG_SOURCE));
+                    str_new = std::regex_replace(str_new, std::regex("\\$\\{(PN)\\}"), pkg->get_var(PKG_NAME));
+                    str_new = std::regex_replace(str_new, std::regex("\\$\\{(PV)\\}"), pkg->get_var(PKG_VERSION));
+                    str_new = std::regex_replace(str_new, std::regex("\\$\\{(CONFIG_DEF)\\}"), ""); // TODO
+                }
             }
         }
 
-        if (is_empty)
+        if (str_new.compare(str) != 0)
         {
-            // variable don't finded
-            str = std::regex_replace(str, std::regex("\\$\\{(" + name + ")\\}"), "");
+            replaced = true;
+            str = str_new;
         }
-
-        /*
-        
-        //str = std::regex_replace(str, std::regex("\\$\\{(ROOT)\\}"), m_vars["ROOT"]);
-
-        {
-            //if (name.compare("ROOT") == 0)
-            //    str = std::regex_replace(str, std::regex("\\$\\{(ROOT)\\}"), "");
-        }*/
-    } while (have_reg);
+    } while (replaced);
 
     if (pkg != nullptr)
         return pkg->parse_opts(str);

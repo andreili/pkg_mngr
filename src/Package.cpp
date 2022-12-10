@@ -377,7 +377,7 @@ bool Package::stage_clean()
 {
     if (PackageManager::is_verbose())
         printf("\tClean\n");
-    std::string cmd = "rm -rf " + m_tmp_dir + "{bin,source,build}";
+    std::string cmd = "rm -rf " + m_tmp_dir;
     return run_cmd("", cmd);
 }
 
