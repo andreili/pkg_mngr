@@ -238,7 +238,7 @@ bool Package::install()
         || !stage_clean_unneeded()
         || !stage_strip()
         || !stage_mkpkg()
-        || !(check_installed() && stage_delete())
+        || !((check_installed() && stage_delete()) || (!check_installed()))
         || !stage_list()
         || !stage_merge()
         || !stage_clean()
@@ -555,7 +555,10 @@ bool Package::run_cmd(const std::string dir, const std::string cmd)
     int exit_code = pclose(in);
     chdir("/");
     if (exit_code)
+    {
+        log_str("Command return error code!\n");
         return false;
+    }
     return true;
 }
 
