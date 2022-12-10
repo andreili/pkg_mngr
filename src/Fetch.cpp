@@ -80,7 +80,17 @@ bool Fetch::load_source(std::string &url, Package *pkg)
         curl_easy_cleanup(curl);
 
         if (result == CURLE_OK)
-            return check_source(url, pkg);
+        {
+            if (!check_source(url, pkg))
+            {
+                std::string fn = Variables::get_instance()->parse_vars(pkg, "${PKG_SOURCES}/" +
+                            url.substr(url.find_last_of('/') + 1));
+                std::remove(fn.c_str());
+                return false;
+            }
+            else
+                return true;
+        }
         else
             return false;
     }
