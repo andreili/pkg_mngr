@@ -9,7 +9,7 @@
 namespace package_manager
 {
 
-#define DEBUG_OPTS
+//#define DEBUG_OPTS
 
 Variables* Variables::m_instance = nullptr;
 

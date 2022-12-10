@@ -222,11 +222,11 @@ void PackageDB::get_pkg(PackageMeta *meta, std::string version, std::function<vo
             query % meta->get_id();
         query.emit();
         boost::shared_ptr<sqlite::result> res = query.get_result();
-        if (res->get_int(0) > 0)
+        if (res->get_int(1) > 0)
         {
             do
             {
-                on_pkg(new Package(meta, res->get_int(0), res->get_int(1), res->get_string(2), res->get_string(3)));
+                on_pkg(new Package(meta, res->get_int(1), res->get_int(1), res->get_string(2), res->get_string(3)));
             } while (res->next_row());
         }
     }
@@ -248,7 +248,7 @@ Package* PackageDB::get_pkg(int pkg_id)
         query % pkg_id;
         query.emit();
         boost::shared_ptr<sqlite::result> res = query.get_result();
-        if (res->get_int(0) > 0)
+        if (res->get_int(1) > 0)
             return new Package(nullptr, res->get_int(0), res->get_int(1), res->get_string(2), res->get_string(3));
         else
             return nullptr;
@@ -266,14 +266,14 @@ Package* PackageDB::get_last_pkg(int meta_id)
 
     try
     {
-        sqlite::query query(*m_db, "SELECT pkg_meta_id,id,version,source_name FROM package WHERE (pkg_meta_id=:id);");
+        sqlite::query query(*m_db, "SELECT id FROM package WHERE (pkg_meta_id=:id);");
         query % meta_id;
         query.emit();
         boost::shared_ptr<sqlite::result> res = query.get_result();
         if (res->get_int(0) > 0)
         {
-            if (last_id < res->get_int(1))
-                last_id = res->get_int(1);
+            if (last_id < res->get_int(0))
+                last_id = res->get_int(0);
         }
         else
             return nullptr;
@@ -345,7 +345,7 @@ void PackageDB::add_installed_file(Package *pkg, std::string &file)
 
 void PackageDB::print_posinst(PackageMeta *meta)
 {
-    sqlite::query query(*m_db, "SELECT msg FROM postinst_msg WHERE (pkg_id=:id);");
+    sqlite::query query(*m_db, "SELECT id,msg FROM postinst_msg WHERE (pkg_id=:id);");
     query % meta->get_id();
     query.emit();
     boost::shared_ptr<sqlite::result> res = query.get_result();
@@ -353,7 +353,7 @@ void PackageDB::print_posinst(PackageMeta *meta)
     {
         do
         {
-            printf("%s\n", res->get_string(0).c_str());
+            printf("%s\n", res->get_string(1).c_str());
         } while (res->next_row());
     }
 }
@@ -408,7 +408,7 @@ ConfigurationOption* PackageDB::get_config_opt(std::string &name)
 
 void PackageDB::get_set_pkgs(std::string set_name, std::function<void(std::string pkg_name)>&& on_pkg)
 {
-    sqlite::query query(*m_db, "SELECT cat.name AS cat, pm.name FROM category AS cat"
+    sqlite::query query(*m_db, "SELECT id, cat.name AS cat, pm.name FROM category AS cat"
                             " INNER JOIN package_meta AS pm ON cat.id=pm.cat_id"
                             " INNER JOIN package AS pkg ON pkg.pkg_meta_id=pm.id"
                             " INNER JOIN set_pkgs AS ps ON ps.pkg_id=pkg.id"
@@ -420,7 +420,7 @@ void PackageDB::get_set_pkgs(std::string set_name, std::function<void(std::strin
     {
         do
         {
-            on_pkg(res->get_string(0) + "/" + res->get_string(1));
+            on_pkg(res->get_string(1) + "/" + res->get_string(2));
         } while (res->next_row());
     }
 }
@@ -451,12 +451,12 @@ EOptState PackageDB::get_opt_state(Package *pkg, ConfigurationOption* opt)
 {
     try
     {
-        sqlite::query query(*m_db_inst, "SELECT selected FROM installed_pkg_opts WHERE (pkg_id=:pkg AND opt_id=:opt);");
+        sqlite::query query(*m_db_inst, "SELECT id,selected FROM installed_pkg_opts WHERE (pkg_id=:pkg AND opt_id=:opt);");
         query % pkg->get_meta()->get_id() % opt->get_id();
         query.emit();
         boost::shared_ptr<sqlite::result> res = query.get_result();
         if (res->get_int(0) > 0)
-            return (EOptState)res->get_int(0);
+            return (EOptState)res->get_int(1);
         return EOptState::OPT_UNDEF;
     }
     catch (sqlite::database_exception& e)
@@ -469,7 +469,7 @@ void PackageDB::get_package_deps(int pkg_id, std::function<void(int depend_by, i
 {
     try
     {
-        sqlite::query query(*m_db, "SELECT dep_by_pkg_id,dep_by_opt FROM pkg_deps WHERE (pkg_id=:id);");
+        sqlite::query query(*m_db, "SELECT id,dep_by_pkg_id,dep_by_opt FROM pkg_deps WHERE (pkg_id=:id);");
         query % pkg_id;
         query.emit();
         boost::shared_ptr<sqlite::result> res = query.get_result();
@@ -477,7 +477,7 @@ void PackageDB::get_package_deps(int pkg_id, std::function<void(int depend_by, i
         {
             do
             {
-                on_new_dep(res->get_int(0), res->get_int(1));
+                on_new_dep(res->get_int(1), res->get_int(2));
             } while (res->next_row());
         }
     }
@@ -491,7 +491,7 @@ void PackageDB::get_pkg_urls(Package *pkg, std::function<void(std::string url)>&
 {
     try
     {
-        sqlite::query query(*m_db, "SELECT src_url FROM package_sources WHERE (pkg_id=:id);");
+        sqlite::query query(*m_db, "SELECT id,src_url FROM package_sources WHERE (pkg_id=:id);");
         query % pkg->get_id();
         query.emit();
         boost::shared_ptr<sqlite::result> res = query.get_result();
@@ -499,7 +499,7 @@ void PackageDB::get_pkg_urls(Package *pkg, std::function<void(std::string url)>&
         {
             do
             {
-                on_url(res->get_string(0));
+                on_url(res->get_string(1));
             } while (res->next_row());
         }
     }
@@ -513,14 +513,14 @@ void PackageDB::get_url_details(std::string &url, int pkg_id, std::string *md5, 
 {
     try
     {
-        sqlite::query query(*m_db, "SELECT md5,size FROM package_sources WHERE (pkg_id=:pkg AND src_url=:src_url);");
+        sqlite::query query(*m_db, "SELECT id,md5,size FROM package_sources WHERE (pkg_id=:pkg AND src_url=:src_url);");
         query % pkg_id % url;
         query.emit();
         boost::shared_ptr<sqlite::result> res = query.get_result();
         if (res->get_int(0) > 0)
         {
-            *md5 = res->get_string(0);
-            *file_size = res->get_int64(1);
+            *md5 = res->get_string(1);
+            *file_size = res->get_int64(2);
         }
     }
     catch (sqlite::database_exception& e)
@@ -531,7 +531,7 @@ void PackageDB::get_url_details(std::string &url, int pkg_id, std::string *md5, 
 
 void PackageDB::get_pkg_prepare(Package *pkg, std::function<void(std::string dir, std::string prepare_cmd)>&& on_cmd)
 {
-    sqlite::query query(*m_db, "SELECT cmd,dir,dep_by_opt_id,opt_val_trig FROM prepare_cmds WHERE (pkg_id=:id);");
+    sqlite::query query(*m_db, "SELECT id,cmd,dir,dep_by_opt_id,opt_val_trig FROM prepare_cmds WHERE (pkg_id=:id);");
     query % pkg->get_id();
     query.emit();
     boost::shared_ptr<sqlite::result> res = query.get_result();
@@ -539,16 +539,16 @@ void PackageDB::get_pkg_prepare(Package *pkg, std::function<void(std::string dir
     {
         do
         {
-            int opt_id = res->get_int(2);
-            if ((opt_id == 0) || (pkg->check_opt(opt_id) == (EOptState)res->get_int(3)))
-                on_cmd(res->get_string(1), res->get_string(0));
+            int opt_id = res->get_int(3);
+            if ((opt_id == 0) || (pkg->check_opt(opt_id) == (EOptState)res->get_int(4)))
+                on_cmd(res->get_string(2), res->get_string(1));
         } while (res->next_row());
     }
 }
 
 void PackageDB::get_pkg_configure(Package *pkg, std::function<void(std::string dir, std::string config_cmd)>&& on_cmd)
 {
-    sqlite::query query(*m_db, "SELECT cmd,dir,dep_by_opt_id,opt_val_trig FROM config_cmds WHERE (pkg_id=:id);");
+    sqlite::query query(*m_db, "SELECT id,cmd,dir,dep_by_opt_id,opt_val_trig FROM config_cmds WHERE (pkg_id=:id);");
     query % pkg->get_id();
     query.emit();
     boost::shared_ptr<sqlite::result> res = query.get_result();
@@ -556,16 +556,16 @@ void PackageDB::get_pkg_configure(Package *pkg, std::function<void(std::string d
     {
         do
         {
-            int opt_id = res->get_int(2);
-            if ((opt_id == 0) || (pkg->check_opt(opt_id) == (EOptState)res->get_int(3)))
-                on_cmd(res->get_string(1), res->get_string(0));
+            int opt_id = res->get_int(3);
+            if ((opt_id == 0) || (pkg->check_opt(opt_id) == (EOptState)res->get_int(4)))
+                on_cmd(res->get_string(2), res->get_string(1));
         } while (res->next_row());
     }
 }
 
 void PackageDB::get_pkg_compile(Package *pkg, std::function<void(std::string dir, std::string make_cmd)>&& on_cmd)
 {
-    sqlite::query query(*m_db, "SELECT cmd,dir,dep_by_opt_id,opt_val_trig FROM make_cmds WHERE (pkg_id=:id);");
+    sqlite::query query(*m_db, "SELECT id,cmd,dir,dep_by_opt_id,opt_val_trig FROM make_cmds WHERE (pkg_id=:id);");
     query % pkg->get_id();
     query.emit();
     boost::shared_ptr<sqlite::result> res = query.get_result();
@@ -573,16 +573,16 @@ void PackageDB::get_pkg_compile(Package *pkg, std::function<void(std::string dir
     {
         do
         {
-            int opt_id = res->get_int(2);
-            if ((opt_id == 0) || (pkg->check_opt(opt_id) == (EOptState)res->get_int(3)))
-                on_cmd(res->get_string(1), res->get_string(0));
+            int opt_id = res->get_int(3);
+            if ((opt_id == 0) || (pkg->check_opt(opt_id) == (EOptState)res->get_int(4)))
+                on_cmd(res->get_string(2), res->get_string(1));
         } while (res->next_row());
     }
 }
 
 void PackageDB::get_pkg_install(Package *pkg, std::function<void(std::string dir, std::string inst_cmd)>&& on_cmd)
 {
-    sqlite::query query(*m_db, "SELECT cmd,dir,dep_by_opt_id,opt_val_trig FROM install_cmds WHERE (pkg_id=:id);");
+    sqlite::query query(*m_db, "SELECT id,cmd,dir,dep_by_opt_id,opt_val_trig FROM install_cmds WHERE (pkg_id=:id);");
     query % pkg->get_id();
     query.emit();
     boost::shared_ptr<sqlite::result> res = query.get_result();
@@ -590,16 +590,16 @@ void PackageDB::get_pkg_install(Package *pkg, std::function<void(std::string dir
     {
         do
         {
-            int opt_id = res->get_int(2);
-            if ((opt_id == 0) || (pkg->check_opt(opt_id) == (EOptState)res->get_int(3)))
-                on_cmd(res->get_string(1), res->get_string(0));
+            int opt_id = res->get_int(3);
+            if ((opt_id == 0) || (pkg->check_opt(opt_id) == (EOptState)res->get_int(4)))
+                on_cmd(res->get_string(2), res->get_string(1));
         } while (res->next_row());
     }
 }
 
 void PackageDB::get_pkg_postinstall(Package *pkg, std::function<void(std::string dir, std::string postinst_cmd)>&& on_cmd)
 {
-    sqlite::query query(*m_db, "SELECT cmd,dir,dep_by_opt_id,opt_val_trig FROM postinstall_cmds WHERE (pkg_id=:id);");
+    sqlite::query query(*m_db, "SELECT id,cmd,dir,dep_by_opt_id,opt_val_trig FROM postinstall_cmds WHERE (pkg_id=:id);");
     query % pkg->get_id();
     query.emit();
     boost::shared_ptr<sqlite::result> res = query.get_result();
@@ -607,9 +607,9 @@ void PackageDB::get_pkg_postinstall(Package *pkg, std::function<void(std::string
     {
         do
         {
-            int opt_id = res->get_int(2);
-            if ((opt_id == 0) || (pkg->check_opt(opt_id) == (EOptState)res->get_int(3)))
-                on_cmd(res->get_string(1), res->get_string(0));
+            int opt_id = res->get_int(3);
+            if ((opt_id == 0) || (pkg->check_opt(opt_id) == (EOptState)res->get_int(4)))
+                on_cmd(res->get_string(2), res->get_string(1));
         } while (res->next_row());
     }
 }
