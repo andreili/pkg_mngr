@@ -77,7 +77,7 @@ void PackageManager::init(int argc, char *argv[], char **envp)
 
     for (int i=1 ; i<argc ; i++)
         if (argv[i][0] != '-')
-            m_package_names.push_front(argv[i]);
+            m_package_names.push_back(argv[i]);
 
     m_vars->init_env(envp);
     //принудительное обновление состояния флагов для пакетов, прописанных в packages.use
