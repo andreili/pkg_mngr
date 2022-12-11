@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <deque>
+#include <list>
 #include "PackageMeta.h"
 #include "ConfigurationOption.h"
 
@@ -84,6 +85,8 @@ namespace package_manager
             bool            m_fetch_in_queue;
 
             std::deque<config_opt_rec_t>    m_options;
+            std::list<std::string>          m_prev_installed;
+            std::list<std::string>          m_curr_installed;
 
             bool stage_unpack();
             bool stage_clean();

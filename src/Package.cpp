@@ -69,7 +69,7 @@ bool Package::check_installed()
 void Package::update_opts()
 {
     m_options.clear();
-    PackageManager::debug("Update opts %s\n", m_meta->get_name().c_str());
+    PackageManager::debug("Update opts for package %s\n", m_meta->get_name().c_str());
     PackageManager::get_db_obj()->get_pkg_opts(this, [this](ConfigurationOption *opt, EOptState def_on)
         {
             PackageManager::debug("Update opts %s: ", opt->get_name().c_str());
@@ -238,10 +238,10 @@ bool Package::install()
         || !stage_clean_unneeded()
         || !stage_strip()
         || !stage_mkpkg()
-        || !((check_installed() && stage_delete()) || (!check_installed()))
         || !stage_list()
         || !stage_merge()
-        || !stage_clean()
+        || !((check_installed() && stage_delete()) || (!check_installed()))
+        //|| !stage_clean()
         )
     {
         printf(COLOR_RED "Error!\n" COLOR_RESET);
@@ -325,10 +325,12 @@ void Package::get_pkg_by_name(std::string &pkg_name, std::function<void(Package*
         if (cat == nullptr)
             return;
         else
+        {
             cat->get_pkg(package_name, package_version, [&on_pkg](Package* pkg)
             {
                 on_pkg(pkg);
             });
+        }
     }
     else
     {
@@ -505,6 +507,13 @@ bool Package::stage_mkpkg()
 
 bool Package::stage_list()
 {
+    m_prev_installed.clear();
+    m_curr_installed.clear();
+    PackageManager::get_db_obj()->list_installed_files(this, [this](std::string name)
+    {
+        m_prev_installed.push_back(name);
+    });
+
     PackageManager::get_db_obj()->clear_installed_files(this);
     std::string root = Variables::get_instance()->parse_vars(this, "${BIN_DIR}");
     PackageManager::get_db_obj()->transaction_start();
@@ -524,14 +533,28 @@ bool Package::stage_merge()
 bool Package::stage_delete()
 {
     if (PackageManager::is_verbose())
-        printf("\tDelete previously installed package\n");
+        printf("\tSafe delete previously installed package\n");
     std::string dir = Variables::get_instance()->parse_vars(this, "${ROOT}");
-    PackageManager::get_db_obj()->list_installed_files(this, [&dir](std::string name)
+    for (std::string &fn : m_prev_installed)
     {
-        std::string fn = dir + "/" + name;
-        PackageManager::debug("Delete file: %s\n", fn.c_str());
-        std::remove(fn.c_str());
-    });
+        bool finded = false;
+        for (std::string &fn1 : m_curr_installed)
+        {
+            if (fn.compare(fn1) == 0)
+            {
+                finded = true;
+                break;
+            }
+        }
+        if (!finded)
+        {
+            std::string fn_full = dir + "/" + fn;
+            PackageManager::debug("Delete file: %s\n", fn_full.c_str());
+            std::remove(fn_full.c_str());
+        }
+    }
+    m_prev_installed.clear();
+    m_curr_installed.clear();
     return true;
 }
 
@@ -648,7 +671,10 @@ void Package::store_installed_files(const std::string &root, std::string &dir)
                                if (is_dir)
                                     store_installed_files(name, fn);
                                else
+                               {
                                    PackageManager::get_db_obj()->add_installed_file(this, fn);
+                                   m_curr_installed.push_back(fn);
+                               }
                            });
 }
 
