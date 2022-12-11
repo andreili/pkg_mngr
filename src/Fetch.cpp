@@ -68,6 +68,7 @@ bool Fetch::load_source(std::string &url, Package *pkg)
     {
         std::string url_p = Variables::get_instance()->parse_vars(pkg, url);
         //printf("%s\n", url_p.c_str());
+        PackageManager::debug("Start downloading URL '%s'\n", url_p.c_str());
         curl_easy_setopt(curl, CURLOPT_URL, url_p.c_str());
         auto curl_callback = [](char *data, size_t size, size_t nmemb, Stream *str)
                              {
@@ -76,6 +77,7 @@ bool Fetch::load_source(std::string &url, Package *pkg)
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, static_cast<CURL_WRITEFUNCTION_PTR>(curl_callback));
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, str);
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, "CURL lib");
         result = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
 
